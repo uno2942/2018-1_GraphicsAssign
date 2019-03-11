@@ -11,6 +11,7 @@ void display(void) {
 	glRectf(10.0, 10.0, 90.0, 90.0);
 	glutSwapBuffers();
 }
+/*
 void main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
@@ -20,3 +21,4 @@ void main(int argc, char **argv)
 	glutDisplayFunc(display);
 	glutMainLoop();
 }
+*/
