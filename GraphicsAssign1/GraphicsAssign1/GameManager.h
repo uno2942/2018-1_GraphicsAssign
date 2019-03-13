@@ -37,6 +37,12 @@ public:
 
 	GameManager(GameManager const&) = delete;
 	void operator=(GameManager const&) = delete;
+
+	Box playerBox;
+	Box enemyBox;
+	Box net;
+	Box screen;
+	Circle ball;
 private:
 	GameManager();
 //	GameManager(GameManager const&);   // Don't Implement
@@ -46,11 +52,6 @@ private:
 	CollisionManager collisionManager;
 
 	//ObjectData
-	Box playerBox;
-	Box enemyBox;
-	Box net;
-	Box screen;
-	Circle ball;
 
 	int myScore = 0;
 	int enemyScore = 0;

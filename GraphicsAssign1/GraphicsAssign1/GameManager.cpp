@@ -1,7 +1,6 @@
 #include "GameManager.h"
 #include<ctime>
 #include<cmath>
-#include<freeglut.h>
 using namespace std;
 
 /**
@@ -23,8 +22,8 @@ GameManager::GameManager() {
 }
 
 void GameManager::OneFramePipeline() {
-	SetplayerBoxVelocity();
-	collisionManager.CollisionHandler(collisionManager.CollisionCheck());
+//	SetplayerBoxVelocity();
+//	collisionManager.CollisionHandler(collisionManager.CollisionCheck());
 	SetObjectPosition();
 }
 
@@ -42,7 +41,7 @@ void GameManager::StartGame() {
 	wholeGameEnd = false;
 	WhoFinallyWin = 0;
 	InitObjectsPosition();
-	InitBallVelocity();
+//	InitBallVelocity();
 	/*...*/
 }
 /**

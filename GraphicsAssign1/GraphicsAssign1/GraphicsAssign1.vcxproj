@@ -139,7 +139,6 @@
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
-    <ClCompile Include="source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Draw.h" />

@@ -1,6 +1,6 @@
 #include<iostream>
-#include <glew.h>
-#include <freeglut.h>
+#include<glew.h>
+#include<freeglut.h>
 #include "Draw.h"
 
 /**

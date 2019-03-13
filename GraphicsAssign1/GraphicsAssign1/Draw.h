@@ -1,20 +1,16 @@
 #pragma once
 #include"GameManager.h"
-class Draw {
-public:
-	void myReshape(int width, int height) {
 
-	}
+enum CamMode { WHOLE, FOLLOWBALL };
 
-	void display() {
+extern CamMode camMode;
 
-	}
+void myReshape(int width, int height);
 
-	void idlefunction() {
+void display();
 
-	}
-	/**
-	키보드 상하좌우 키를 받음.
-	**/
-	void specialKeyboard(int key, int x, int y);
-};
+void representBox(const Box& box, int colorR, int colorG, int colorB);
+
+void representCircle(const Circle& circle);
+
+void lookAtByCamMode(CamMode _camMode);

@@ -1,5 +1,6 @@
 #pragma once
-#include<glut.h>
+#include<glew.h>
+#include<freeglut.h>
 
 struct Vector2 {
 public:
