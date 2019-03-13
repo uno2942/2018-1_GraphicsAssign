@@ -1,18 +1,8 @@
 #pragma once
 #include"GameManager.h"
-class Draw {
-public:
-	void myReshape(int width, int height) {
 
-	}
+enum CamMode { WHOLE, FOLLOWBALL };
 
-	void display() {
+void myReshape(int width, int height, CamMode camMode);
 
-	}
-
-	void idlefunction() {
-
-	}
-private:
-	GameManager gameManager;
-};
+void display();
