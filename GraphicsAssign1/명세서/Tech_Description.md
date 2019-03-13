@@ -40,3 +40,8 @@ Derived from: Monobehavior
 
 ## Operators
 
+
+
+한 프레임 당 flow:
+???(키보드 데이터는 이미 받은 상태 by SpecialKeyboardInputHandler)->SetBoxVelocity->Move(Box, ball)(여기서 Draw의 데이터 갱신)->CollisionDetection->SetVel(Ball)->Draw로 넘어감
+
