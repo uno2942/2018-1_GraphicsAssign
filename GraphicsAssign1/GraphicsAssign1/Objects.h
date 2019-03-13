@@ -31,13 +31,14 @@ public:
 	Object() {
 
 	}
-	Vector2& CurrentPosition();
-	Vector2 SetPosition(Vector2 position);
-	Vector2 SetPosition(GLdouble x, GLdouble y);
-	Vector2 CurrentVelocity();
-	Vector2 SetVelocity(Vector2 velocity);
-	Vector2 SetVelocity(GLdouble x, GLdouble y);
-protected:
+	const Vector2& GetCurrentPosition() const;
+	const Vector2& SetPosition(Vector2 position);
+	const Vector2& SetPosition(GLdouble x, GLdouble y);
+	const Vector2& GetCurrentVelocity() const ;
+	const Vector2& SetVelocity(Vector2 velocity);
+	const Vector2& SetVelocity(GLdouble x, GLdouble y);
+	const Vector2& GetSize() const;
+
 	int width;
 	int height;
 	Vector2 position;

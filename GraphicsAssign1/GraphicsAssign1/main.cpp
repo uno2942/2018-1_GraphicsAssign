@@ -1,16 +1,15 @@
 #include<iostream>
-#include<glut.h>
-#include<glew.h>
+#include <glew.h>
+#include <freeglut.h>
 #include "Draw.h"
 
 int main(int argc, char** argv) {
-	Draw draw;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutCreateWindow("Pukimun Bullyball");
-	glutReshapeFunc(draw.myReshape);
-	glutDisplayFunc(draw.display);
-	glutIdleFunc(draw.idlefunction);
+	glutReshapeFunc(myReshape);
+	glutDisplayFunc(display);
+	glutIdleFunc(idlefunction);
 	glutSpecialFunc(specialKeyboard);
 	glutMainLoop();
 }
