@@ -13,6 +13,10 @@ public:
 	void idlefunction() {
 
 	}
+	/**
+	키보드 상하좌우 키를 받음.
+	**/
+	void specialKeyboard(int key, int x, int y);
 private:
 	GameManager gameManager;
 };

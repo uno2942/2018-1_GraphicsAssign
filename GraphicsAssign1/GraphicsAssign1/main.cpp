@@ -11,5 +11,6 @@ int main(int argc, char** argv) {
 	glutReshapeFunc(draw.myReshape);
 	glutDisplayFunc(draw.display);
 	glutIdleFunc(draw.idlefunction);
+	glutSpecialFunc(specialKeyboard);
 	glutMainLoop();
 }

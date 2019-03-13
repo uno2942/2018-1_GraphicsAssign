@@ -11,7 +11,16 @@ public:
 	}
 
 	Vector2() {
-
+		x = 0;
+		y = 0;
+	}
+	Vector2 operator+(const Vector2& rhs) {
+		return Vector2(x + rhs.x, y + rhs.y);
+	}
+	Vector2& operator+=(const Vector2& rhs) {
+		(*this).x += rhs.x;
+		(*this).y += rhs.y;
+		return *this;
 	}
 };
 
@@ -22,11 +31,12 @@ public:
 	Object() {
 
 	}
-	Vector2 CurrentPosition();
+	Vector2& CurrentPosition();
 	Vector2 SetPosition(Vector2 position);
-	Vector2 SetPosition();
+	Vector2 SetPosition(GLdouble x, GLdouble y);
 	Vector2 CurrentVelocity();
 	Vector2 SetVelocity(Vector2 velocity);
+	Vector2 SetVelocity(GLdouble x, GLdouble y);
 protected:
 	int width;
 	int height;
