@@ -30,6 +30,6 @@ const Vector2& Object::SetVelocity(GLdouble x, GLdouble y) {
 	return velocity;
 }
 
-const Vector2& Object::GetSize() const {
+const Vector2 Object::GetSize() const {
 	return Vector2(width, height);
 }

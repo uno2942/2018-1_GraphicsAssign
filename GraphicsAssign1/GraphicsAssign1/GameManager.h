@@ -2,6 +2,9 @@
 #include"Objects.h"
 #include<list>
 #include<utility>
+#define THRESHOLDSCORE 13
+#define WORLDCOORDWINDOWWIDTH 1600
+#define WORLDCOORDWINDOWHEIGHT 900
 using namespace std;
 class GameManager {
 public:
@@ -10,13 +13,14 @@ public:
 	};
 
 	class CollisionManager {
+	public:
 		list<pair<pair<Object, Object>, Vector2>>* CollisionCheck();
 		void CollisionHandler(list<pair<pair<Object, Object>, Vector2>>* collisionPairList);
-		Vector2 CheckCollisionAtUpSide(const Object& o1, const Object& o2);
-		Vector2 CheckCollisionAtDownSide(const Object& o1, const Object& o2);
-		Vector2 CheckCollisionAtLeftSide(const Object& o1, const Object& o2);
-		Vector2 CheckCollisionAtRightSide(const Object& o1, const Object& o2);
-		Vector2* CheckCollision4side(const Object& o1, const Object& o2);
+		void CheckCollisionAtUpSide(const Object& o1, const Object& o2, list<pair<pair<Object, Object>, Vector2>>* collisionPairList);
+		void CheckCollisionAtDownSide(const Object& o1, const Object& o2, list<pair<pair<Object, Object>, Vector2>>* collisionPairList);
+		void CheckCollisionAtLeftSide(const Object& o1, const Object& o2, list<pair<pair<Object, Object>, Vector2>>* collisionPairList);
+		void CheckCollisionAtRightSide(const Object& o1, const Object& o2, list<pair<pair<Object, Object>, Vector2>>* collisionPairList);
+		void CheckCollision4side(const Object& o1, const Object& o2, list<pair<pair<Object, Object>, Vector2>>* collisionPairList);
 	};
 	static GameManager& getInstance()
 	{
@@ -27,14 +31,16 @@ public:
 	/**
 	Velocity¸¦ ¹Ù²ÜÁö positionÀ» ¹Ù²ÜÁö »ý°¢
 	**/
+	void OneFramePipeline();
+
 	void SpecialKeyboardInputHandler(int key);
 
 	GameManager(GameManager const&) = delete;
 	void operator=(GameManager const&) = delete;
 private:
 	GameManager();
-	GameManager(GameManager const&);   // Don't Implement
-	void operator=(GameManager const&); // Don't implement
+//	GameManager(GameManager const&);   // Don't Implement
+//	void operator=(GameManager const&); // Don't implement
 	//Manager
 	SceneManager sceneManager;
 	CollisionManager collisionManager;
@@ -48,16 +54,19 @@ private:
 
 	int myScore = 0;
 	int enemyScore = 0;
-	bool gameEnd = false;
+	bool oneGameEnd = false;
+	bool wholeGameEnd = false;
+	int WhoFinallyWin = 0;
+
 	const Vector2 BOXVELOCITYTORIGHT = Vector2(1, 0);
 	const Vector2 BOXVELOCITYTOLEFT = Vector2(-1, 0);
 	const Vector2 BOXVELOCITYZERO = Vector2(0, 0);
 
 	/* need to set(dummy data)*/
-	const Vector2 INITIALPLAYERBOXPOSITION = Vector2(1, 0);
-	const Vector2 INITIALENEMYBOXPOSITION = Vector2(-1, 0);
+	const Vector2 INITIALPLAYERBOXPOSITION = Vector2(100, 0);
+	const Vector2 INITIALENEMYBOXPOSITION = Vector2(1400, 0);
 	const Vector2 INITIALBALLPOSITION = Vector2(0, 0);
-	const Vector2 INITIALNETPOSITION = Vector2(100, 0);
+	const Vector2 INITIALNETPOSITION = Vector2(750, 0);
 
 	bool playerBoxMoveRightFlag = false;
 	bool playerBoxMoveLeftFlag = false;
@@ -67,6 +76,6 @@ private:
 	void InitObjectsPosition();
 	void SetplayerBoxVelocity();
 	void SetObjectPosition();
-	void GameEnd(bool whoWin);
+	void OneGameEnd(bool whoWin);
 
 };

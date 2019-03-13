@@ -37,7 +37,7 @@ public:
 	const Vector2& GetCurrentVelocity() const ;
 	const Vector2& SetVelocity(Vector2 velocity);
 	const Vector2& SetVelocity(GLdouble x, GLdouble y);
-	const Vector2& GetSize() const;
+	const Vector2 GetSize() const;
 
 	int width;
 	int height;
