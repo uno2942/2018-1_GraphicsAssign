@@ -17,6 +17,9 @@ void specialKeyboard(int key, int x, int y) {
 	glutPostRedisplay();
 }
 
+void myTimer(int value) {
+
+}
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
@@ -25,5 +28,6 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(display);
 	glutIdleFunc(idlefunction);
 	glutSpecialFunc(specialKeyboard);
+	glutTimerFunc(2, myTimer, 0);
 	glutMainLoop();
 }

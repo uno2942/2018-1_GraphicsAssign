@@ -59,9 +59,11 @@ void GameManager::InitBallVelocity() {
 
 	while (0 == y)
 		y = rand() % 101 - 50;
+	y = -1;
+	x = -10;
 
 	double veclen = sqrt(x*x + y * y);
-	ball.SetVelocity( x / veclen, y / veclen);
+	ball.SetVelocity( 10*(x / veclen), 10*(y / veclen));
 }
 
 
@@ -80,10 +82,12 @@ void GameManager::SetplayerBoxVelocity() {
 현재는 Frame time을 고려하지 않고 짰습니다. 수정이 필요할 수 있습니다.
 **/
 void GameManager::SetObjectPosition() {
-	playerBox.position += playerBox.GetCurrentVelocity();
-	enemyBox.position += enemyBox.GetCurrentVelocity();
-	ball.position += ball.GetCurrentVelocity();
-	cout << "Player: " << playerBox.position << '\t' << "Ball: " << ball.position << endl;
+	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
+	cout << timeSinceStart << endl;
+	playerBox.position += playerBox.velocity*(timeSinceStart/1000.);
+	enemyBox.position += enemyBox.velocity*(timeSinceStart / 1000.);
+	ball.position += ball.velocity*(timeSinceStart / 1000.);
+	//cout << "Player: " << playerBox.position << '\t' << "Ball: " << ball.position << endl;
 }
 
 void GameManager::OneGameEnd(bool whoWin) {
@@ -154,11 +158,21 @@ void GameManager::CollisionManager::CheckCollisionAtRightSide(Object* o1, Object
 
 	if (Object::Shape::BOX == o1->shape && Object::Shape::BOX == o2->shape)
 	{
-		if (o1->name == "player" && o2->name == "screen")
+		if (o2->name == "screen")
 		{
+			if (o1->name == "enemy")
+			{
+				if (o1->position.x + o1->width > o2->position.x + o2->width)
+					collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
+			}
+			else if (o1->name == "ball")
+			{
+				if (o1->position.x + o1->width > o2->position.x+ o2->width)
+					collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-2*(o1->velocity.x), 0)));
+			}
 		}
-		else if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x)
-			collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
+		//else if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x)
+		//	collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
 	}
 
 }
@@ -168,13 +182,21 @@ void GameManager::CollisionManager::CheckCollisionAtRightSide(Object* o1, Object
 void GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
 	if (Object::Shape::BOX == o1->shape && Object::Shape::BOX == o2->shape)
 	{
-		if (o1->name == "player" && o2->name == "screen")
+		if (o2->name == "screen")
 		{
-			if (o1->position.x < o2->position.x)
-				collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(1, 0)));
+			if (o1->name == "player")
+			{
+				if (o1->position.x < o2->position.x)
+					collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
+			}
+			else if (o1->name == "ball")
+			{
+				if (o1->position.x < o2->position.x)
+					collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-2*(o1->velocity.x), 0)));
+			}
 		}
-		else if (o1->position.x + o1->width > o2->position.x + o2->width && o1->position.x <= o2->position.x + o2->width)
-			collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(1, 0)));
+		//else if (o1->position.x + o1->width > o2->position.x + o2->width && o1->position.x <= o2->position.x + o2->width)
+		//	collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(1, 0)));
 	}
 }
 /**

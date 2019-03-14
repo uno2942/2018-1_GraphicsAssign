@@ -25,6 +25,11 @@ public:
 		(*this).y += rhs.y;
 		return *this;
 	}
+
+	Vector2 operator*(const double d) {
+		return Vector2((*this).x * d, (*this).y * d);
+	}
+
 	friend ostream& operator<<(ostream& os, const Vector2& dt){
 		os << '('<<dt.x<<',' << dt.y<<')';
 		return os;
@@ -60,11 +65,10 @@ class Circle : public Object {
 public: 
 	Circle() {
 		shape = CIRCLE;
-		name = "circle";
 	}
-	Circle(int _width, int _height) : Object(_width, _height) {
+	Circle(int _width, int _height, string name) : Object(_width, _height) {
 		shape = BOX;
-		name = "circle";
+		this->name = name;
 	}
 };
 

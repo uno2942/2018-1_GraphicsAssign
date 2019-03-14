@@ -45,7 +45,7 @@ public:
 	Box enemyBox = Box(WORLDCOORDWINDOWWIDTH / 16, WORLDCOORDWINDOWHEIGHT / 18, "enemy");
 	Box net = Box(WORLDCOORDWINDOWWIDTH / 32, WORLDCOORDWINDOWHEIGHT/2, "net");
 	Box screen = Box(WORLDCOORDWINDOWWIDTH, WORLDCOORDWINDOWHEIGHT, "screen");
-	Circle ball = Circle(100, 100);
+	Circle ball = Circle(100, 100, "ball");
 private:
 	GameManager();
 //	GameManager(GameManager const&);   // Don't Implement
