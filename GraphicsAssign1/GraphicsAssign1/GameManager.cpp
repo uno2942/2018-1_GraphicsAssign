@@ -67,7 +67,7 @@ void GameManager::InitBallVelocity() {
 	while (0 == y)
 		y = rand() % 101 - 50;
 
-	x = 1;
+	x = 0;
 	y = -10;
 	double veclen = sqrt(x*x + y * y);
 	ball.SetVelocity( 300*(x / veclen), 300*(y / veclen));
@@ -200,10 +200,23 @@ void GameManager::CollisionManager::CheckCollisionAtRightSide(Object* o1, Object
 			collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-2 * (o1->velocity.x), 0)));
 			GameManager::getInstance().ballRightCollisionFlag = true;
 		}
-		else
-			GameManager::getInstance().ballRightCollisionFlag = false;
+		else {
+			Vector2 center = Vector2(o1->position.x + o1->width / 2, o1->position.y + o1->height / 2);
+			Vector2 leftcorner = Vector2(o2->position.x, o2->position.y + o2->height);
+			GLdouble r = o1->width / 2;
+			Vector2 centertocorner = Vector2(center - leftcorner);
+			GLdouble distance = Vector2::abs(centertocorner);
+			if (r >= distance)
+			{
+				collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(2 * centertocorner.x, 2 * centertocorner.y)));
+				GameManager::getInstance().ballRightCollisionFlag = true;
+			}
+			else
+				GameManager::getInstance().ballRightCollisionFlag = false;
+		}
 	}
 }
+
 /**
 게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 o1이 o2를 왼쪽에서 충돌
@@ -221,8 +234,20 @@ void GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object*
 			collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-2 * (o1->velocity.x), 0)));
 			GameManager::getInstance().ballLeftCollisionFlag = true;
 		}
-		else
-			GameManager::getInstance().ballLeftCollisionFlag = false;
+		else {
+			Vector2 center = Vector2(o1->position.x + o1->width / 2, o1->position.y + o1->height / 2);
+			Vector2 rightcorner = Vector2(o2->position.x+o2->width, o2->position.y + o2->height);
+			GLdouble r = o1->width / 2;
+			Vector2 centertocorner = Vector2(center - rightcorner);
+			GLdouble distance = Vector2::abs(centertocorner);
+			if (r >= distance)
+			{
+				collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(2*centertocorner.x, 2*centertocorner.y)));
+				GameManager::getInstance().ballLeftCollisionFlag = true;
+			}
+			else
+				GameManager::getInstance().ballLeftCollisionFlag = false;
+		}
 	}
 }
 

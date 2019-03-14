@@ -33,3 +33,8 @@ const Vector2& Object::SetVelocity(GLdouble x, GLdouble y) {
 const Vector2 Object::GetSize() const {
 	return Vector2(width, height);
 }
+
+GLdouble Vector2::abs(const Vector2 & a)
+{
+	return sqrt(a.x*a.x+a.y*a.y);
+}

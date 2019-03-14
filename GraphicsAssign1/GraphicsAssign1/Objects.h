@@ -2,6 +2,7 @@
 #include<glew.h>
 #include<freeglut.h>
 #include<iostream>
+#include<cmath>
 using namespace std;
 
 struct Vector2 {
@@ -20,6 +21,9 @@ public:
 	Vector2 operator+(const Vector2& rhs) {
 		return Vector2(x + rhs.x, y + rhs.y);
 	}
+	Vector2 operator-(const Vector2& rhs) {
+		return Vector2(x - rhs.x, y - rhs.y);
+	}
 	Vector2& operator+=(const Vector2& rhs) {
 		(*this).x += rhs.x;
 		(*this).y += rhs.y;
@@ -29,7 +33,7 @@ public:
 	Vector2 operator*(const double d) {
 		return Vector2((*this).x * d, (*this).y * d);
 	}
-
+	static GLdouble abs(const Vector2& a);
 	friend ostream& operator<<(ostream& os, const Vector2& dt){
 		os << '('<<dt.x<<',' << dt.y<<')';
 		return os;
