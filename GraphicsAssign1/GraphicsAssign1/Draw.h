@@ -13,4 +13,4 @@ void representBox(const Box& box, int colorR, int colorG, int colorB);
 
 void representCircle(const Circle& circle);
 
-void lookAtByCamMode(CamMode _camMode);
+void lookAtBall(void);

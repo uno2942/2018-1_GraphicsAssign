@@ -9,18 +9,34 @@ void myReshape(int width, int height)
 {
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluOrtho2D(-100, 1700, -100, 1000);
-
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	//나머지 부분을 아래쪽으로: 공을 추적하기 위해 공이 움직일 때마다 카메라 움직여야 함
+	
 	//lookAtByCamMode(camMode);
 }
 
 void display()
 {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	//
+	
+	if(camMode == WHOLE)
+		gluOrtho2D(-100, 1700, -100, 1000);
+	else
+		gluOrtho2D(-400, 400, -225, 225);
+
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	if (camMode == WHOLE)
+		gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -100.0f, 0.0f, 1.0f, 0.0f);
+	else
+		lookAtBall();
+
+
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	representBox(GameManager::getInstance().screen, 255, 255, 255);
 	representBox(GameManager::getInstance().enemyBox, 255, 255, 0); //yellow
@@ -71,20 +87,14 @@ void representCircle(const Circle& circle)
 	glEnd();
 }
 
-void lookAtByCamMode(CamMode _camMode)
+
+void lookAtBall(void) // to be modified
 {
-	Vector2 screenSize = GameManager::getInstance().screen.GetSize();
-
-	switch (_camMode)
-	{
-	case FOLLOWBALL:
-
-		break;
-
-	default:
-
-		gluLookAt(screenSize.x, screenSize.y, 100.0f, 0.0f, 0.0f, -100.0f, 0.0f, 1.0f, 0.0f);
-		break;
-	}
-
+	gluLookAt(GameManager::getInstance().ball.GetCurrentPosition().x,
+		GameManager::getInstance().ball.GetCurrentPosition().y,
+		0.0f,
+		GameManager::getInstance().ball.GetCurrentPosition().x,
+		GameManager::getInstance().ball.GetCurrentPosition().y,
+		-100.0f,
+		0.0f, 1.0f, 0.0f);
 }
