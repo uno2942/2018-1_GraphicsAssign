@@ -59,7 +59,7 @@ void representCircle(const Circle& circle)
 	GLfloat y = circle.GetCurrentPosition().y;
 	GLfloat r = circle.GetSize().x / 2;
 
-	glClear(GL_COLOR_BUFFER_BIT);
+	
 	glColor3f(1.0, 153.0 / 255, 153.0 / 255);
 	glBegin(GL_LINE_LOOP);
 
