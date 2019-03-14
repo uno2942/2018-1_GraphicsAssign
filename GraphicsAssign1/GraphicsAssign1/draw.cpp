@@ -1,3 +1,6 @@
+#define BVIEW_HALF_W 400
+#define BVIEW_HALF_H 225
+
 #include "Draw.h"
 #include<glew.h>
 #include<freeglut.h>
@@ -24,7 +27,8 @@ void display()
 	if(camMode == WHOLE)
 		gluOrtho2D(-100, 1700, -100, 1000);
 	else
-		gluOrtho2D(-400, 400, -225, 225);
+		gluOrtho2D(-BVIEW_HALF_W - 100, BVIEW_HALF_W + 100, -BVIEW_HALF_H - 100, BVIEW_HALF_H + 100);
+		
 
 	
 	glMatrixMode(GL_MODELVIEW);
@@ -88,13 +92,26 @@ void representCircle(const Circle& circle)
 }
 
 
-void lookAtBall(void) // to be modified
+void lookAtBall(const Circle& circle) // to be modified
 {
-	gluLookAt(GameManager::getInstance().ball.GetCurrentPosition().x,
-		GameManager::getInstance().ball.GetCurrentPosition().y,
-		0.0f,
-		GameManager::getInstance().ball.GetCurrentPosition().x,
-		GameManager::getInstance().ball.GetCurrentPosition().y,
-		-100.0f,
+
+	GLfloat lookAtX = circle.GetCurrentPosition().x + circle.GetSize().x / 2;
+	GLfloat lookAtY = circle.GetCurrentPosition().y + circle.GetSize().y / 2;
+	GLfloat screenX = GameManager::getInstance().screen.GetSize().x;
+	GLfloat screenY = GameManager::getInstance().screen.GetSize().y;
+
+	if (lookAtX > screenX - BVIEW_HALF_W)
+		lookAtX = screenX - BVIEW_HALF_W;
+	else if (lookAtX < BVIEW_HALF_W)
+		lookAtX = BVIEW_HALF_W;
+
+	if (lookAtY > screenY - BVIEW_HALF_H)
+		lookAtY = screenY - BVIEW_HALF_H;
+	else if (lookAtY < BVIEW_HALF_H)
+		lookAtY = BVIEW_HALF_H;
+
+
+	gluLookAt(lookAtX, lookAtY, 0.0f,
+		lookAtX, lookAtY, -100.0f,
 		0.0f, 1.0f, 0.0f);
 }
