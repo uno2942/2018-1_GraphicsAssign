@@ -1,6 +1,8 @@
 #pragma once
 #include<glew.h>
 #include<freeglut.h>
+#include<iostream>
+using namespace std;
 
 struct Vector2 {
 public:
@@ -23,6 +25,10 @@ public:
 		(*this).y += rhs.y;
 		return *this;
 	}
+	friend ostream& operator<<(ostream& os, const Vector2& dt){
+		os << '('<<dt.x<<',' << dt.y<<')';
+		return os;
+	}
 };
 
 class Object {
@@ -30,6 +36,9 @@ public:
 	enum Shape { BOX, CIRCLE };
 	Shape shape;
 	Object() {
+
+	}
+	Object(int _width, int _height) : width(_width), height(_height){
 
 	}
 	const Vector2& GetCurrentPosition() const;
@@ -42,6 +51,7 @@ public:
 
 	int width;
 	int height;
+	string name;
 	Vector2 position;
 	Vector2 velocity;
 };
@@ -50,6 +60,11 @@ class Circle : public Object {
 public: 
 	Circle() {
 		shape = CIRCLE;
+		name = "circle";
+	}
+	Circle(int _width, int _height) : Object(_width, _height) {
+		shape = BOX;
+		name = "circle";
 	}
 };
 
@@ -57,5 +72,9 @@ class Box : public Object { //플레이어와 적의 Object
 public:
 	Box() {
 		shape = BOX;
+	}
+	Box(int _width, int _height, string name): Object(_width, _height) {
+		shape = BOX;
+		this->name = name;
 	}
 };
