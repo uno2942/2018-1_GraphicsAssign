@@ -37,7 +37,7 @@ void display()
 	if (camMode == WHOLE)
 		gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -100.0f, 0.0f, 1.0f, 0.0f);
 	else
-		lookAtBall();
+		lookAtBall(GameManager::getInstance().ball);
 
 
 

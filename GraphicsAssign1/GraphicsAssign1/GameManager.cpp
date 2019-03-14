@@ -26,14 +26,18 @@ void GameManager::SpecialKeyboardInputHandler(int key) {
 	}
 }
 
+void GameManager::InitializeGame() {
+	oneGameEnd = false;
+	InitObjectsPosition();
+	InitBallVelocity();
+	timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
+	prevTime = glutGet(GLUT_ELAPSED_TIME);
+}
 void GameManager::StartGame() {
 	myScore = 0;
 	enemyScore = 0;
-	oneGameEnd = false;
-	wholeGameEnd = false;
 	WhoFinallyWin = 0;
-	InitObjectsPosition();
-	InitBallVelocity();
+	InitializeGame();
 	/*...*/
 }
 /**
@@ -82,7 +86,7 @@ void GameManager::SetplayerBoxVelocity() {
 }
 
 void GameManager::SetObjectPosition() {
-	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
+	timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 	playerBox.position += playerBox.velocity;
 
 	enemyBox.position += enemyBox.velocity*((timeSinceStart - prevTime) / 1000.);
@@ -121,8 +125,8 @@ void GameManager::CollisionManager::CollisionHandler(list<pair<pair<Object*, Obj
 			if (
 				(collisionPairList->back().second.x == 0 && collisionPairList->back().second.y > 0 && GameManager::getInstance().ballUpCollisionFlag) ||
 				(collisionPairList->back().second.x == 0 && collisionPairList->back().second.y < 0 && GameManager::getInstance().ballDownCollisionFlag) ||
-				(collisionPairList->back().second.x > 0 && collisionPairList->back().second.y == 0 && GameManager::getInstance().ballRightCollisionFlag) ||
-				(collisionPairList->back().second.x < 0 && collisionPairList->back().second.y == 0 && GameManager::getInstance().ballLeftCollisionFlag)
+				(collisionPairList->back().second.x > 0 && GameManager::getInstance().ballRightCollisionFlag) ||
+				(collisionPairList->back().second.x < 0 && GameManager::getInstance().ballLeftCollisionFlag)
 				)
 			{
 				collisionPairList->pop_back();

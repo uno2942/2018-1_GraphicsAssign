@@ -64,6 +64,7 @@ private:
 	bool oneGameEnd = false;
 	bool wholeGameEnd = false;
 	int WhoFinallyWin = 0;
+	int timeSinceStart = 0;
 	int prevTime = 0;
 	const Vector2 BOXVELOCITYTORIGHT = Vector2(1, 0);
 	const Vector2 BOXVELOCITYTOLEFT = Vector2(-1, 0);
@@ -86,6 +87,7 @@ private:
 	bool ballDownCollisionFlag = false;
 
 	void StartGame();
+	void InitializeGame();
 	void InitBallVelocity();
 	void InitObjectsPosition();
 	void SetplayerBoxVelocity();
