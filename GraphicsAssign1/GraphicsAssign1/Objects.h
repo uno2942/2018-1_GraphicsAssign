@@ -30,10 +30,15 @@ public:
 		return *this;
 	}
 
-	Vector2 operator*(const double d) {
+	Vector2 operator*(const GLdouble d) {
 		return Vector2((*this).x * d, (*this).y * d);
 	}
 	static GLdouble abs(const Vector2& a);
+	
+	static Vector2 normalize(const Vector2& a) {
+		GLdouble veclen = sqrt(a.x*a.x + a.y*a.y);
+		return Vector2(a.x / veclen, a.y / veclen);
+	}
 	friend ostream& operator<<(ostream& os, const Vector2& dt){
 		os << '('<<dt.x<<',' << dt.y<<')';
 		return os;

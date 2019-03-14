@@ -5,6 +5,7 @@
 #define THRESHOLDSCORE 13
 #define WORLDCOORDWINDOWWIDTH 1600
 #define WORLDCOORDWINDOWHEIGHT 900
+#define BALL_VELOCITY 300
 using namespace std;
 class GameManager {
 public:
@@ -17,10 +18,10 @@ public:
 		CollisionManager();
 		list<pair<pair<Object*, Object*>, Vector2>>* CollisionCheck();
 		void CollisionHandler(list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
-		void CheckCollisionAtUpSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
-		void CheckCollisionAtDownSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
-		void CheckCollisionAtLeftSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
-		void CheckCollisionAtRightSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
+		bool CheckCollisionAtUpSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
+		bool CheckCollisionAtDownSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
+		bool CheckCollisionAtLeftSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
+		bool CheckCollisionAtRightSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
 		void CheckCollision4side(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
 	private:
 		list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList;

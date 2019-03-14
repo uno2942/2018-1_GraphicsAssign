@@ -69,8 +69,7 @@ void GameManager::InitBallVelocity() {
 
 	x = 0;
 	y = -10;
-	double veclen = sqrt(x*x + y * y);
-	ball.SetVelocity( 300*(x / veclen), 300*(y / veclen));
+	ball.SetVelocity((Vector2::normalize(Vector2(x, y)))*BALL_VELOCITY);
 }
 
 
@@ -104,6 +103,7 @@ void GameManager::OneGameEnd(bool whoWin) {
 		WhoFinallyWin = 1;
 	else if (enemyScore == THRESHOLDSCORE)
 		WhoFinallyWin = 2;
+	InitializeGame();
 }
 
 
@@ -134,6 +134,8 @@ void GameManager::CollisionManager::CollisionHandler(list<pair<pair<Object*, Obj
 			}
 		}
 		collisionPairList->back().first.first->velocity += collisionPairList->back().second;
+		if (collisionPairList->back().first.first->shape == Object::Shape::CIRCLE)
+			cout << "Ball Velocity: " << Vector2::abs(collisionPairList->back().first.first->velocity) << endl;
 		collisionPairList->pop_back();
 	}
 }
@@ -176,22 +178,35 @@ list<pair<pair<Object*, Object*>, Vector2>>* GameManager::CollisionManager::Coll
 
 
 void GameManager::CollisionManager::CheckCollision4side(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
-	CheckCollisionAtRightSide(o1, o2, collisionPairList);
-	CheckCollisionAtLeftSide(o1, o2, collisionPairList);
-	CheckCollisionAtDownSide(o1, o2, collisionPairList);
-	CheckCollisionAtUpSide(o1, o2, collisionPairList);
+	if (!CheckCollisionAtRightSide(o1, o2, collisionPairList))
+	{
+		if (!CheckCollisionAtLeftSide(o1, o2, collisionPairList))
+		{
+			if (!CheckCollisionAtDownSide(o1, o2, collisionPairList))
+			{
+				if (!CheckCollisionAtUpSide(o1, o2, collisionPairList))
+				{
+
+				}
+			}
+		}
+	}
 }
 
 /**
 게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 o1이 o2를 오른쪽에서 충돌
 **/
-void GameManager::CollisionManager::CheckCollisionAtRightSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
+bool GameManager::CollisionManager::CheckCollisionAtRightSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
 
 	if (Object::Shape::BOX == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x)
+		{
 			collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
+			return true;
+		}
+		return false;
 	}
 	else if (Object::Shape::CIRCLE == o1->shape && Object::Shape::BOX == o2->shape) {
 		if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x &&
@@ -208,24 +223,39 @@ void GameManager::CollisionManager::CheckCollisionAtRightSide(Object* o1, Object
 			GLdouble distance = Vector2::abs(centertocorner);
 			if (r >= distance)
 			{
-				collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(2 * centertocorner.x, 2 * centertocorner.y)));
+				collisionPairList->push_back(make_pair(make_pair(o1, o2), 
+					Vector2::normalize(centertocorner)*
+					(2*BALL_VELOCITY*abs(o1->velocity.x*centertocorner.x+ o1->velocity.y*centertocorner.y)/
+					(Vector2::abs(o1->velocity)*Vector2::abs(centertocorner)) )));
+				cout << "Right" << Vector2::normalize(centertocorner)*
+					(2 * BALL_VELOCITY*abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
+					(Vector2::abs(o1->velocity)*distance)) << "cos len: " << abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
+						(Vector2::abs(o1->velocity)*distance)<<endl;
 				GameManager::getInstance().ballRightCollisionFlag = true;
 			}
 			else
 				GameManager::getInstance().ballRightCollisionFlag = false;
 		}
 	}
+	else {
+
+	}
+	return GameManager::getInstance().ballRightCollisionFlag;
 }
 
 /**
 게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 o1이 o2를 왼쪽에서 충돌
 **/
-void GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
+bool GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
 	if (Object::Shape::BOX == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.x + o1->width > o2->position.x + o2->width && o1->position.x <= o2->position.x + o2->width)
+		{
 			collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(1, 0)));
+			return true;
+		}
+		return false;
 	}
 	else if (Object::Shape::CIRCLE == o1->shape && Object::Shape::BOX == o2->shape) {
 		if (o1->position.x + o1->width > o2->position.x + o2->width && o1->position.x <= o2->position.x + o2->width &&
@@ -242,13 +272,25 @@ void GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object*
 			GLdouble distance = Vector2::abs(centertocorner);
 			if (r >= distance)
 			{
-				collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(2*centertocorner.x, 2*centertocorner.y)));
+				collisionPairList->push_back(make_pair(make_pair(o1, o2),
+					Vector2::normalize(centertocorner)*
+					(2 * BALL_VELOCITY*abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
+					(Vector2::abs(o1->velocity)*distance))));
+				cout << "Left" << Vector2::normalize(centertocorner)*
+					(2 * BALL_VELOCITY*abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
+					(Vector2::abs(o1->velocity)*distance)) << "cos len: " << abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
+						(Vector2::abs(o1->velocity)*distance) << endl;
 				GameManager::getInstance().ballLeftCollisionFlag = true;
 			}
 			else
 				GameManager::getInstance().ballLeftCollisionFlag = false;
 		}
 	}
+	else
+	{
+
+	}
+	return GameManager::getInstance().ballLeftCollisionFlag;
 }
 
 
@@ -256,7 +298,7 @@ void GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object*
 /**
 게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 **/
-void GameManager::CollisionManager::CheckCollisionAtUpSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
+bool GameManager::CollisionManager::CheckCollisionAtUpSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
 	if (Object::Shape::CIRCLE == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.y < o2->position.y && o1->position.y + o1->height >= o2->position.y)
@@ -267,6 +309,11 @@ void GameManager::CollisionManager::CheckCollisionAtUpSide(Object* o1, Object* o
 		else
 			GameManager::getInstance().ballUpCollisionFlag = false;
 	}
+	else
+	{
+		return true;
+	}
+	return GameManager::getInstance().ballUpCollisionFlag;
 }
 
 
@@ -274,7 +321,7 @@ void GameManager::CollisionManager::CheckCollisionAtUpSide(Object* o1, Object* o
 /**
 게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 **/
-void GameManager::CollisionManager::CheckCollisionAtDownSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
+bool GameManager::CollisionManager::CheckCollisionAtDownSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
 	if (Object::Shape::CIRCLE == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.y < o2->position.y + o2->height && o1->position.y + o1->height >= o2->position.y + o2->height &&
@@ -286,4 +333,8 @@ void GameManager::CollisionManager::CheckCollisionAtDownSide(Object* o1, Object*
 		else
 			GameManager::getInstance().ballDownCollisionFlag = false;
 	}
+	else {
+		return true;
+	}
+	return GameManager::getInstance().ballDownCollisionFlag;
 }
