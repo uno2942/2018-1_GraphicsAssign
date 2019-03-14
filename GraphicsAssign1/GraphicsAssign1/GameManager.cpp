@@ -33,7 +33,7 @@ void GameManager::StartGame() {
 	wholeGameEnd = false;
 	WhoFinallyWin = 0;
 	InitObjectsPosition();
-//	InitBallVelocity();
+	InitBallVelocity();
 	/*...*/
 }
 /**
