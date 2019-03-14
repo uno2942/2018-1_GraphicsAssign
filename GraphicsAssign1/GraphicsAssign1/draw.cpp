@@ -81,7 +81,7 @@ void representCircle(const Circle& circle)
 
 	for (int i = 0; i <= lineNum; i++)
 	{
-		glVertex2f(x + r * sinf(i * PI * 2 / lineNum), y + r * cosf(i * PI * 2 / lineNum));
+		glVertex2f(x + r + r * sinf(i * PI * 2 / lineNum), y + r + r * cosf(i * PI * 2 / lineNum));
 	}
 
 	glEnd();
