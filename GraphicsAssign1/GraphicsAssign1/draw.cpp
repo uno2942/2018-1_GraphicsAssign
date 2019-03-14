@@ -11,16 +11,17 @@ void myReshape(int width, int height)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluOrtho2D(0, 1, 0, 1);
+	gluOrtho2D(-100, 1700, -100, 1000);
 
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	lookAtByCamMode(camMode);
+	//lookAtByCamMode(camMode);
 }
 
 void display()
 {
+	glClear(GL_COLOR_BUFFER_BIT);
 	representBox(GameManager::getInstance().screen, 255, 255, 255);
 	representBox(GameManager::getInstance().enemyBox, 255, 255, 0); //yellow
 	representBox(GameManager::getInstance().playerBox, 255, 255, 0); //yellow
@@ -39,7 +40,7 @@ void representBox(const Box& box, int colorR, int colorG, int colorB)
 	GLfloat w = box.GetSize().x;
 	GLfloat h = box.GetSize().y;
 
-	glClear(GL_COLOR_BUFFER_BIT);
+	
 	glColor3f(colorR / 255.0, colorG / 255.0, colorB / 255.0);
 	glBegin(GL_LINE_LOOP);
 
@@ -58,7 +59,7 @@ void representCircle(const Circle& circle)
 	GLfloat y = circle.GetCurrentPosition().y;
 	GLfloat r = circle.GetSize().x / 2;
 
-	glClear(GL_COLOR_BUFFER_BIT);
+	
 	glColor3f(1.0, 153.0 / 255, 153.0 / 255);
 	glBegin(GL_LINE_LOOP);
 
