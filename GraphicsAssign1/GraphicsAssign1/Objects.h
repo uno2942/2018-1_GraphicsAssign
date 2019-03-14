@@ -67,7 +67,7 @@ public:
 		shape = CIRCLE;
 	}
 	Circle(int _width, int _height, string name) : Object(_width, _height) {
-		shape = BOX;
+		shape = CIRCLE;
 		this->name = name;
 	}
 };

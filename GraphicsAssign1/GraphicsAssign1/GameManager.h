@@ -41,9 +41,12 @@ public:
 	GameManager(GameManager const&) = delete;
 	void operator=(GameManager const&) = delete;
 
-	Box playerBox = Box(WORLDCOORDWINDOWWIDTH/16, WORLDCOORDWINDOWHEIGHT/18, "player"); //(100, 50)
+	Box playerBox = Box(WORLDCOORDWINDOWWIDTH/8, WORLDCOORDWINDOWHEIGHT/18, "player"); //WORLDCOORDWINDOWWIDTH/16 (100, 50)
 	Box enemyBox = Box(WORLDCOORDWINDOWWIDTH / 16, WORLDCOORDWINDOWHEIGHT / 18, "enemy");
-	Box net = Box(WORLDCOORDWINDOWWIDTH / 32, WORLDCOORDWINDOWHEIGHT/2, "net");
+	Box net = Box((WORLDCOORDWINDOWWIDTH) / 32, WORLDCOORDWINDOWHEIGHT/2, "net");
+	Box leftwall = Box(10, WORLDCOORDWINDOWHEIGHT, "leftwall");
+	Box rightwall = Box(10, WORLDCOORDWINDOWHEIGHT, "rightwall");
+	Box topwall = Box(WORLDCOORDWINDOWWIDTH, 10, "topwall");
 	Box screen = Box(WORLDCOORDWINDOWWIDTH, WORLDCOORDWINDOWHEIGHT, "screen");
 	Circle ball = Circle(100, 100, "ball");
 private:
@@ -67,13 +70,20 @@ private:
 	const Vector2 BOXVELOCITYZERO = Vector2(0, 0);
 
 	/* need to set(dummy data)*/
-	const Vector2 INITIALPLAYERBOXPOSITION = Vector2(WORLDCOORDWINDOWWIDTH/16, 0); //(100, 0)
-	const Vector2 INITIALENEMYBOXPOSITION = Vector2((7* WORLDCOORDWINDOWWIDTH)/8, 0);
-	const Vector2 INITIALBALLPOSITION = Vector2(WORLDCOORDWINDOWWIDTH/2-50, (WORLDCOORDWINDOWHEIGHT*9)/10);
-	const Vector2 INITIALNETPOSITION = Vector2(201, 0); //(31*WORLDCOORDWINDOWWIDTH)/64(775, 0)
+	const Vector2 INITIAL_PLAYER_BOX_POSITION = Vector2(0, 0); //WORLDCOORDWINDOWWIDTH/16(100, 0)
+	const Vector2 INITIAL_ENEMY_BOX_POSITION = Vector2((7* WORLDCOORDWINDOWWIDTH)/8, 0);
+	const Vector2 INITIAL_BALL_POSITION = Vector2(50, (WORLDCOORDWINDOWHEIGHT*7)/10);
+	const Vector2 INITIAL_NET_POSITION = Vector2((31 * WORLDCOORDWINDOWWIDTH) / 64, 0); //(31*WORLDCOORDWINDOWWIDTH)/64(775, 0)
+	const Vector2 INITIAL_LEFT_WALL_POSITION = Vector2(-10, 0);
+	const Vector2 INITIAL_RIGHT_WALL_POSITION = Vector2(WORLDCOORDWINDOWWIDTH, 0);
+	const Vector2 INITIAL_TOP_WALL_POSITION = Vector2(0, WORLDCOORDWINDOWHEIGHT);
 
 	bool playerBoxMoveRightFlag = false;
 	bool playerBoxMoveLeftFlag = false;
+	bool ballLeftCollisionFlag = false;
+	bool ballRightCollisionFlag = false;
+	bool ballUpCollisionFlag = false;
+	bool ballDownCollisionFlag = false;
 
 	void StartGame();
 	void InitBallVelocity();

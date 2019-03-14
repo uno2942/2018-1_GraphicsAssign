@@ -40,10 +40,13 @@ void GameManager::StartGame() {
 World coord. 기준
 **/
 void GameManager::InitObjectsPosition() {
-	playerBox.SetPosition(INITIALPLAYERBOXPOSITION);
-	enemyBox.SetPosition(INITIALENEMYBOXPOSITION);
-	ball.SetPosition(INITIALBALLPOSITION);
-	net.SetPosition(INITIALNETPOSITION);
+	playerBox.SetPosition(INITIAL_PLAYER_BOX_POSITION);
+	enemyBox.SetPosition(INITIAL_ENEMY_BOX_POSITION);
+	ball.SetPosition(INITIAL_BALL_POSITION);
+	net.SetPosition(INITIAL_NET_POSITION);
+	leftwall.SetPosition(INITIAL_LEFT_WALL_POSITION);
+	rightwall.SetPosition(INITIAL_RIGHT_WALL_POSITION);
+	topwall.SetPosition(INITIAL_TOP_WALL_POSITION);
 }
 
 /**
@@ -59,11 +62,11 @@ void GameManager::InitBallVelocity() {
 
 	while (0 == y)
 		y = rand() % 101 - 50;
-	y = -1;
-	x = -10;
 
+	x = 1;
+	y = -10;
 	double veclen = sqrt(x*x + y * y);
-	ball.SetVelocity( 10*(x / veclen), 10*(y / veclen));
+	ball.SetVelocity( 300*(x / veclen), 300*(y / veclen));
 }
 
 
@@ -82,8 +85,8 @@ void GameManager::SetObjectPosition() {
 	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 	playerBox.position += playerBox.velocity;
 
-	enemyBox.position += enemyBox.velocity*((timeSinceStart - prevTime) / 100.);
-	ball.position += ball.velocity*((timeSinceStart - prevTime) / 100.);
+	enemyBox.position += enemyBox.velocity*((timeSinceStart - prevTime) / 1000.);
+	ball.position += ball.velocity*((timeSinceStart - prevTime) / 1000.);
 	prevTime = timeSinceStart;
 }
 
@@ -100,9 +103,32 @@ void GameManager::OneGameEnd(bool whoWin) {
 }
 
 
+//공의 경우 vector normalization 체크
 void GameManager::CollisionManager::CollisionHandler(list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList)
 {
+	bool doubleCollision = (!GameManager::getInstance().ballUpCollisionFlag || GameManager::getInstance().ballDownCollisionFlag || GameManager::getInstance().ballRightCollisionFlag || GameManager::getInstance().ballLeftCollisionFlag) &&
+
+		(GameManager::getInstance().ballUpCollisionFlag || !GameManager::getInstance().ballDownCollisionFlag || GameManager::getInstance().ballRightCollisionFlag || GameManager::getInstance().ballLeftCollisionFlag) &&
+
+		(GameManager::getInstance().ballUpCollisionFlag || GameManager::getInstance().ballDownCollisionFlag || !GameManager::getInstance().ballRightCollisionFlag && GameManager::getInstance().ballLeftCollisionFlag) &&
+
+		(GameManager::getInstance().ballUpCollisionFlag || GameManager::getInstance().ballDownCollisionFlag || GameManager::getInstance().ballRightCollisionFlag || !GameManager::getInstance().ballLeftCollisionFlag);
+
+
 	while (collisionPairList != NULL && !(collisionPairList->empty())) {
+		if (!doubleCollision && collisionPairList->back().first.first->shape == Object::Shape::CIRCLE)
+		{
+			if (
+				(collisionPairList->back().second.x == 0 && collisionPairList->back().second.y > 0 && GameManager::getInstance().ballUpCollisionFlag) ||
+				(collisionPairList->back().second.x == 0 && collisionPairList->back().second.y < 0 && GameManager::getInstance().ballDownCollisionFlag) ||
+				(collisionPairList->back().second.x > 0 && collisionPairList->back().second.y == 0 && GameManager::getInstance().ballRightCollisionFlag) ||
+				(collisionPairList->back().second.x < 0 && collisionPairList->back().second.y == 0 && GameManager::getInstance().ballLeftCollisionFlag)
+				)
+			{
+				collisionPairList->pop_back();
+				continue;
+			}
+		}
 		collisionPairList->back().first.first->velocity += collisionPairList->back().second;
 		collisionPairList->pop_back();
 	}
@@ -128,13 +154,18 @@ list<pair<pair<Object*, Object*>, Vector2>>* GameManager::CollisionManager::Coll
 	}
 	else
 	{
-		CheckCollision4side(&(GameManager::getInstance().playerBox), &GameManager::getInstance().net, collisionPairList);
-		CheckCollision4side(&GameManager::getInstance().playerBox, &GameManager::getInstance().screen, collisionPairList);
+		CheckCollisionAtRightSide(&(GameManager::getInstance().playerBox), &GameManager::getInstance().net, collisionPairList);
+		CheckCollisionAtLeftSide(&GameManager::getInstance().playerBox, &GameManager::getInstance().leftwall, collisionPairList);
+		
+		CheckCollisionAtLeftSide(&GameManager::getInstance().enemyBox, &GameManager::getInstance().net, collisionPairList);
+		CheckCollisionAtRightSide(&GameManager::getInstance().enemyBox, &GameManager::getInstance().rightwall, collisionPairList);
+
 		CheckCollision4side(&GameManager::getInstance().ball, &GameManager::getInstance().playerBox, collisionPairList);
-		CheckCollision4side(&GameManager::getInstance().enemyBox, &GameManager::getInstance().net, collisionPairList);
-		CheckCollision4side(&GameManager::getInstance().enemyBox, &GameManager::getInstance().screen, collisionPairList);
 		CheckCollision4side(&GameManager::getInstance().ball, &GameManager::getInstance().enemyBox, collisionPairList);
-		CheckCollision4side(&GameManager::getInstance().ball, &GameManager::getInstance().screen, collisionPairList);
+		CheckCollision4side(&GameManager::getInstance().ball, &GameManager::getInstance().net, collisionPairList);
+		CheckCollisionAtLeftSide(&GameManager::getInstance().ball, &GameManager::getInstance().leftwall, collisionPairList);
+		CheckCollisionAtRightSide(&GameManager::getInstance().ball, &GameManager::getInstance().rightwall, collisionPairList);
+		CheckCollisionAtUpSide(&GameManager::getInstance().ball, &GameManager::getInstance().topwall, collisionPairList);
 		return collisionPairList;
 	}
 }
@@ -149,67 +180,81 @@ void GameManager::CollisionManager::CheckCollision4side(Object* o1, Object* o2, 
 
 /**
 게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
--를 return하면 충돌하지 않았다는 것을 의미합니다.
+o1이 o2를 오른쪽에서 충돌
 **/
 void GameManager::CollisionManager::CheckCollisionAtRightSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
 
 	if (Object::Shape::BOX == o1->shape && Object::Shape::BOX == o2->shape)
 	{
-		if (o2->name == "screen")
-		{
-			if (o1->name == "enemy")
-			{
-				if (o1->position.x + o1->width > o2->position.x + o2->width)
-					collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
-			}
-			else if (o1->name == "ball")
-			{
-				if (o1->position.x + o1->width > o2->position.x+ o2->width)
-					collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-2*(o1->velocity.x), 0)));
-			}
-		}
-		//else if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x)
-		//	collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
+		if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x)
+			collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
 	}
-
+	else if (Object::Shape::CIRCLE == o1->shape && Object::Shape::BOX == o2->shape) {
+		if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x &&
+			(o1->position.y + (o1->height / 2) >= o2->position.y && o1->position.y + (o1->height / 2) <= o2->position.y + o2->height))
+		{
+			collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-2 * (o1->velocity.x), 0)));
+			GameManager::getInstance().ballRightCollisionFlag = true;
+		}
+		else
+			GameManager::getInstance().ballRightCollisionFlag = false;
+	}
 }
 /**
 게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
+o1이 o2를 왼쪽에서 충돌
 **/
 void GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
 	if (Object::Shape::BOX == o1->shape && Object::Shape::BOX == o2->shape)
 	{
-		if (o2->name == "screen")
+		if (o1->position.x + o1->width > o2->position.x + o2->width && o1->position.x <= o2->position.x + o2->width)
+			collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(1, 0)));
+	}
+	else if (Object::Shape::CIRCLE == o1->shape && Object::Shape::BOX == o2->shape) {
+		if (o1->position.x + o1->width > o2->position.x + o2->width && o1->position.x <= o2->position.x + o2->width &&
+			(o1->position.y + (o1->height / 2) >= o2->position.y && o1->position.y + (o1->height / 2) <= o2->position.y + o2->height))
 		{
-			if (o1->name == "player")
-			{
-				if (o1->position.x < o2->position.x)
-					collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(1, 0)));
-			}
-			else if (o1->name == "ball")
-			{
-				if (o1->position.x < o2->position.x)
-					collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-2*(o1->velocity.x), 0)));
-			}
+			collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-2 * (o1->velocity.x), 0)));
+			GameManager::getInstance().ballLeftCollisionFlag = true;
 		}
-		//else if (o1->position.x + o1->width > o2->position.x + o2->width && o1->position.x <= o2->position.x + o2->width)
-		//	collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(1, 0)));
+		else
+			GameManager::getInstance().ballLeftCollisionFlag = false;
 	}
 }
+
+
+
 /**
 게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 **/
 void GameManager::CollisionManager::CheckCollisionAtUpSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
 	if (Object::Shape::CIRCLE == o1->shape && Object::Shape::BOX == o2->shape)
 	{
-		//collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(0, 0)));
+		if (o1->position.y < o2->position.y && o1->position.y + o1->height >= o2->position.y)
+		{
+			collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(0, -2 * (o1->velocity.y))));
+			GameManager::getInstance().ballUpCollisionFlag = true;
+		}
+		else
+			GameManager::getInstance().ballUpCollisionFlag = false;
 	}
 }
+
+
+
 /**
 게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 **/
 void GameManager::CollisionManager::CheckCollisionAtDownSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList) {
-	if (Object::Shape::BOX == o1->shape && Object::Shape::BOX == o2->shape)
+	if (Object::Shape::CIRCLE == o1->shape && Object::Shape::BOX == o2->shape)
 	{
+		if (o1->position.y < o2->position.y + o2->height && o1->position.y + o1->height >= o2->position.y + o2->height &&
+			(o1->position.x + (o1->width / 2) >= o2->position.x && o1->position.x + (o1->width / 2) <= o2->position.x + o2->width))
+		{
+			collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(0, -2 * (o1->velocity.y))));
+			GameManager::getInstance().ballDownCollisionFlag = true;
+		}
+		else
+			GameManager::getInstance().ballDownCollisionFlag = false;
 	}
 }

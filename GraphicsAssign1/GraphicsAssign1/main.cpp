@@ -17,7 +17,7 @@ void idle2(int value) {
 
 void idlefunction(int value) {
 	head();
-	glutTimerFunc(3, idlefunction, 0);
+	glutTimerFunc(1, idlefunction, 0);
 }
 
 void myKeyboard(unsigned char c, int x, int y) {
