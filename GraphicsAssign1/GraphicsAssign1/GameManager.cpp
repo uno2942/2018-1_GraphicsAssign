@@ -78,16 +78,13 @@ void GameManager::SetplayerBoxVelocity() {
 	playerBoxMoveLeftFlag = false;
 }
 
-/**
-현재는 Frame time을 고려하지 않고 짰습니다. 수정이 필요할 수 있습니다.
-**/
 void GameManager::SetObjectPosition() {
 	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
-	cout << timeSinceStart << endl;
-	playerBox.position += playerBox.velocity*(timeSinceStart/1000.);
-	enemyBox.position += enemyBox.velocity*(timeSinceStart / 1000.);
-	ball.position += ball.velocity*(timeSinceStart / 1000.);
-	//cout << "Player: " << playerBox.position << '\t' << "Ball: " << ball.position << endl;
+	playerBox.position += playerBox.velocity;
+
+	enemyBox.position += enemyBox.velocity*((timeSinceStart - prevTime) / 100.);
+	ball.position += ball.velocity*((timeSinceStart - prevTime) / 100.);
+	prevTime = timeSinceStart;
 }
 
 void GameManager::OneGameEnd(bool whoWin) {
@@ -187,7 +184,7 @@ void GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object*
 			if (o1->name == "player")
 			{
 				if (o1->position.x < o2->position.x)
-					collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
+					collisionPairList->push_back(make_pair(make_pair(o1, o2), Vector2(1, 0)));
 			}
 			else if (o1->name == "ball")
 			{

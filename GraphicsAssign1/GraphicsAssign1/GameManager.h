@@ -61,7 +61,7 @@ private:
 	bool oneGameEnd = false;
 	bool wholeGameEnd = false;
 	int WhoFinallyWin = 0;
-
+	int prevTime = 0;
 	const Vector2 BOXVELOCITYTORIGHT = Vector2(1, 0);
 	const Vector2 BOXVELOCITYTOLEFT = Vector2(-1, 0);
 	const Vector2 BOXVELOCITYZERO = Vector2(0, 0);

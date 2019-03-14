@@ -3,31 +3,35 @@
 #include<freeglut.h>
 #include "Draw.h"
 
-/**
-이거 키 인풋 받으면 작동 안 하나요?
-**/
-void idlefunction() {
+void head() {
+	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 	GameManager::getInstance().OneFramePipeline();
+}
+void idle2(int value) {
+	int timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
+	cout << "Player: " << GameManager::getInstance().playerBox.position << '\t' << "Ball: " << GameManager::getInstance().ball.position << endl;
 	glutPostRedisplay();
+	glutTimerFunc(17, idle2, 0);
+}
+
+void idlefunction(int value) {
+	head();
+	glutTimerFunc(3, idlefunction, 0);
 }
 
 void specialKeyboard(int key, int x, int y) {
-	GameManager::getInstance().SpecialKeyboardInputHandler(key);
-	GameManager::getInstance().OneFramePipeline();
-	glutPostRedisplay();
+	GameManager::getInstance().SpecialKeyboardInputHandler(key); 
+	head();
 }
 
-void myTimer(int value) {
-
-}
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutCreateWindow("Pukimun Bullyball");
 	glutReshapeFunc(myReshape);
 	glutDisplayFunc(display);
-	glutIdleFunc(idlefunction);
 	glutSpecialFunc(specialKeyboard);
-	glutTimerFunc(2, myTimer, 0);
+	glutTimerFunc(3, idlefunction, 0);
+	glutTimerFunc(17, idle2, 0);
 	glutMainLoop();
 }
