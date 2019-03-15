@@ -169,19 +169,9 @@ void representResult(void)
 	char winMessage[8] = "YOU WIN";
 	char loseMessage[9] = "YOU LOSE";
 
-	if (GameManager::getInstance().WhoFinallyWin == 1) {
-		for (int i = 0; i < 8; i++)
-		{
-			glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&winMessage[i]);
-		}
-		return;
-	}
-	else if (GameManager::getInstance().WhoFinallyWin == 2) {
-		for (int i = 0; i < 9; i++)
-		{
-			glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&loseMessage[i]);
-		}
-		return;
-	}
-
+	if (GameManager::getInstance().WhoFinallyWin == 1) 
+		glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&winMessage);
+	else if (GameManager::getInstance().WhoFinallyWin == 2) 
+		glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&loseMessage);
+		
 }
