@@ -30,7 +30,7 @@ void display()
 
 	//
 	
-	if(camMode == WHOLE)
+	if(camMode == WHOLE || GameManager::getInstance().WhoFinallyWin != 0)
 		gluOrtho2D(-100, 1700, -100, 1000);
 	else
 		gluOrtho2D(-BVIEW_HALF_W - 100, BVIEW_HALF_W + 100, -BVIEW_HALF_H - 100, BVIEW_HALF_H + 100);
@@ -39,12 +39,23 @@ void display()
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	
+	if (GameManager::getInstance().WhoFinallyWin != 0) {
+
+		glClear(GL_COLOR_BUFFER_BIT);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		representResult();
+		glLoadIdentity();
+		glutSwapBuffers();
+		return;
+	}
 
 	if (camMode == WHOLE)
 		gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -100.0f, 0.0f, 1.0f, 0.0f);
 	else
 		lookAtBall(GameManager::getInstance().ball);
-
+	
+	
 
 
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -147,5 +158,31 @@ void representScore(int score, GLfloat x, GLfloat y)
 	glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&s[i]);
 	}*/
 
+
+}
+
+void representResult(void)
+{
+	glLoadIdentity();
+
+	glTranslatef(100.0f, 600.0f, 0.0f);
+	glScalef(1.5f, 1.5f, 1.0f);
+	char winMessage[8] = "YOU WIN";
+	char loseMessage[9] = "YOU LOSE";
+
+	if (GameManager::getInstance().WhoFinallyWin == 1) {
+		for (int i = 0; i < 8; i++)
+		{
+			glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&winMessage[i]);
+		}
+		return;
+	}
+	else if (GameManager::getInstance().WhoFinallyWin == 2) {
+		for (int i = 0; i < 9; i++)
+		{
+			glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&loseMessage[i]);
+		}
+		return;
+	}
 
 }

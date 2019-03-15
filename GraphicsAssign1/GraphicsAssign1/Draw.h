@@ -16,3 +16,5 @@ void representCircle(const Circle& circle);
 void lookAtBall(const Circle& circle);
 
 void representScore(int score, GLfloat x, GLfloat y);
+
+void representResult(void);
