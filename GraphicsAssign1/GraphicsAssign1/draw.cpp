@@ -30,7 +30,7 @@ void display()
 
 	//
 	
-	if(camMode == WHOLE)
+	if(camMode == WHOLE || GameManager::getInstance().WhoFinallyWin != 0)
 		gluOrtho2D(-100, 1700, -100, 1000);
 	else
 		gluOrtho2D(-BVIEW_HALF_W - 100, BVIEW_HALF_W + 100, -BVIEW_HALF_H - 100, BVIEW_HALF_H + 100);
@@ -39,12 +39,23 @@ void display()
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	
+	if (GameManager::getInstance().WhoFinallyWin != 0) {
+
+		glClear(GL_COLOR_BUFFER_BIT);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		representResult();
+		glLoadIdentity();
+		glutSwapBuffers();
+		return;
+	}
 
 	if (camMode == WHOLE)
 		gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -100.0f, 0.0f, 1.0f, 0.0f);
 	else
 		lookAtBall(GameManager::getInstance().ball);
-
+	
+	
 
 
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -53,6 +64,11 @@ void display()
 	representBox(GameManager::getInstance().playerBox, 255, 255, 0); //yellow
 	representBox(GameManager::getInstance().net, 204, 204, 204); //grey
 	representCircle(GameManager::getInstance().ball);
+
+	glLoadIdentity();
+	representScore(GameManager::getInstance().myScore, 100.0, 800.0);
+	glLoadIdentity();
+	representScore(GameManager::getInstance().enemyScore, 1400.0, 800.0);
 
 
 	glutSwapBuffers();
@@ -68,7 +84,7 @@ void representBox(const Box& box, int colorR, int colorG, int colorB)
 
 	
 	glColor3f(colorR / 255.0, colorG / 255.0, colorB / 255.0);
-	glBegin(GL_LINE_LOOP);
+	glBegin(GL_QUADS);
 
 	glVertex2f(x, y);
 	glVertex2f(x, y + h);
@@ -87,7 +103,7 @@ void representCircle(const Circle& circle)
 
 	
 	glColor3f(1.0, 153.0 / 255, 153.0 / 255);
-	glBegin(GL_LINE_LOOP);
+	glBegin(GL_POLYGON);
 
 	for (int i = 0; i <= lineNum; i++)
 	{
@@ -120,4 +136,53 @@ void lookAtBall(const Circle& circle) // to be modified
 	gluLookAt(lookAtX, lookAtY, 0.0f,
 		lookAtX, lookAtY, -100.0f,
 		0.0f, 1.0f, 0.0f);
+}
+
+void representScore(int score, GLfloat x, GLfloat y)
+{
+	glTranslatef(x, y, 0.0f);
+	glScalef(0.5f, 0.5f, 1.0f);
+	char s[5];
+	_itoa_s(score, s, 10);
+
+	if (score / 10 > 0) {
+		_itoa_s(score / 10, s, 10);
+		glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&s[0]);
+	}
+
+	_itoa_s(score % 10, s, 10);
+	glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&s[0]);
+	/*
+	for (int i = 0; i < strlen(s); i++)
+	{
+	glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&s[i]);
+	}*/
+
+
+}
+
+void representResult(void)
+{
+	glLoadIdentity();
+
+	glTranslatef(100.0f, 600.0f, 0.0f);
+	glScalef(1.5f, 1.5f, 1.0f);
+	char winMessage[8] = "YOU WIN";
+	char loseMessage[9] = "YOU LOSE";
+
+	if (GameManager::getInstance().WhoFinallyWin == 1) {
+		for (int i = 0; i < 8; i++)
+		{
+			glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&winMessage[i]);
+		}
+		return;
+	}
+	else if (GameManager::getInstance().WhoFinallyWin == 2) {
+		for (int i = 0; i < 9; i++)
+		{
+			glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&loseMessage[i]);
+		}
+		return;
+	}
+
 }

@@ -63,6 +63,10 @@ public:
 	Box topwall = Box(WORLDCOORDWINDOWWIDTH, 10, "topwall");
 	Box screen = Box(WORLDCOORDWINDOWWIDTH, WORLDCOORDWINDOWHEIGHT, "screen");
 	Circle ball = Circle(100, 100, "ball");
+	int myScore = 0;
+	int enemyScore = 0;
+	int WhoFinallyWin = 0;
+
 private:
 	GameManager();
 //	GameManager(GameManager const&);   // Don't Implement
@@ -73,11 +77,10 @@ private:
 
 	//ObjectData
 
-	int myScore = 0;
-	int enemyScore = 0;
+	
 	bool oneGameEnd = false;
 	bool wholeGameEnd = false;
-	int WhoFinallyWin = 0;
+	
 	int timeSinceStart = 0;
 	int prevTime = 0;
 	const Vector2 BOXVELOCITYTORIGHT = Vector2(1, 0);
