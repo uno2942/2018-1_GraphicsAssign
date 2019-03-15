@@ -5,6 +5,7 @@ enum CamMode { WHOLE, FOLLOWBALL };
 
 extern CamMode camMode;
 
+extern bool ReshapeFlag;
 void myReshape(int width, int height);
 
 void display();

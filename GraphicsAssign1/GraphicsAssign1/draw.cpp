@@ -22,7 +22,7 @@ void myReshape(int width, int height)
 void display()
 {
 	if (ReshapeFlag) {
-		GameManager::getInstance().LoadPlayerPositionBeforeReshape();
+		GameManager::getInstance().FreshTime();
 		ReshapeFlag = !ReshapeFlag;
 	}
 	glMatrixMode(GL_PROJECTION);

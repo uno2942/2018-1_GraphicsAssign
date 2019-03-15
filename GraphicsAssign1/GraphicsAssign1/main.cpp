@@ -4,7 +4,8 @@
 #include "Draw.h"
 
 void head() {
-	GameManager::getInstance().OneFramePipeline();
+	if(!ReshapeFlag)
+		GameManager::getInstance().OneFramePipeline();
 }
 
 void idle2(int value) {
@@ -20,7 +21,7 @@ void idlefunction(int value) {
 
 void myKeyboard(unsigned char c, int x, int y) {
 	switch (c) {
-	case '1': camMode = WHOLE;
+	case '1': camMode = WHOLE; break;
 	case '2': camMode = FOLLOWBALL;
 	}
 }
@@ -33,6 +34,8 @@ void specialKeyboard(int key, int x, int y) {
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
+	glutInitWindowSize(1600, 900);
+	glutInitWindowPosition(0, 0);
 	glutCreateWindow("Pukimun Bullyball");
 	glutReshapeFunc(myReshape);
 	glutDisplayFunc(display);
