@@ -31,7 +31,7 @@ public:
 		GLdouble ballDeltaTime = 0;
 	private:       
 		vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector;
-		map<string, int> collisionwithballmap;
+		map<string, GLint> collisionwithballmap;
 		GLdouble ballCollideWithCorner = -1;
 		
 	};

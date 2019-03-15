@@ -9,7 +9,7 @@ struct Vector2 {
 public:
 	GLdouble x;
 	GLdouble y;
-	Vector2(double _x, double _y) {
+	Vector2(GLdouble _x, GLdouble _y) {
 		x = _x;
 		y = _y;
 	}

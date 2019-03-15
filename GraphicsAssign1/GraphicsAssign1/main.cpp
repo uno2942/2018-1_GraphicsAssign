@@ -4,8 +4,12 @@
 #include "Draw.h"
 
 void head() {
+	static int prevTime = glutGet(GLUT_ELAPSED_TIME);
+	if(glutGet(GLUT_ELAPSED_TIME)-prevTime>5)
+		GameManager::getInstance().FreshTime();
 	if(!ReshapeFlag && (GameManager::getInstance().WhoFinallyWin==0))
 		GameManager::getInstance().OneFramePipeline();
+	prevTime = glutGet(GLUT_ELAPSED_TIME);
 }
 
 void idle2(int value) {
@@ -16,7 +20,7 @@ void idle2(int value) {
 void idlefunction(int value) {
 	if (GameManager::getInstance().WhoFinallyWin == 0) {
 		head();
-		cout << "Player: " << GameManager::getInstance().playerBox.position << '\t' << "Ball: " << GameManager::getInstance().ball.position << endl;
+//		cout << "Player: " << GameManager::getInstance().playerBox.position << '\t' << "Ball: " << GameManager::getInstance().ball.position << endl;
 		glutTimerFunc(1, idlefunction, 0);
 	}
 }

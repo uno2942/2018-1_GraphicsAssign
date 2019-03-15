@@ -11,7 +11,7 @@ CamMode camMode = WHOLE;
 bool ReshapeFlag = false;
 void myReshape(int width, int height)
 {	
-	GameManager::getInstance().SavePlayerPositionBeforeReshape();
+	cout << "Reshape Start";
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 	ReshapeFlag = !ReshapeFlag;
 	//나머지 부분을 아래쪽으로: 공을 추적하기 위해 공이 움직일 때마다 카메라 움직여야 함
@@ -22,6 +22,7 @@ void myReshape(int width, int height)
 void display()
 {
 	if (ReshapeFlag) {
+		cout << "Reshape End";
 		GameManager::getInstance().FreshTime();
 		ReshapeFlag = !ReshapeFlag;
 	}
