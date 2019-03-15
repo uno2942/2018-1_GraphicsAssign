@@ -54,6 +54,11 @@ void display()
 	representBox(GameManager::getInstance().net, 204, 204, 204); //grey
 	representCircle(GameManager::getInstance().ball);
 
+	glLoadIdentity();
+	representScore(GameManager::getInstance().myScore, 100.0, 800.0);
+	glLoadIdentity();
+	representScore(GameManager::getInstance().enemyScore, 1400.0, 800.0);
+
 
 	glutSwapBuffers();
 
@@ -120,4 +125,27 @@ void lookAtBall(const Circle& circle) // to be modified
 	gluLookAt(lookAtX, lookAtY, 0.0f,
 		lookAtX, lookAtY, -100.0f,
 		0.0f, 1.0f, 0.0f);
+}
+
+void representScore(int score, GLfloat x, GLfloat y)
+{
+	glTranslatef(x, y, 0.0f);
+	glScalef(0.5f, 0.5f, 1.0f);
+	char s[5];
+	_itoa_s(score, s, 10);
+
+	if (score / 10 > 0) {
+		_itoa_s(score / 10, s, 10);
+		glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&s[0]);
+	}
+
+	_itoa_s(score % 10, s, 10);
+	glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&s[0]);
+	/*
+	for (int i = 0; i < strlen(s); i++)
+	{
+	glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&s[i]);
+	}*/
+
+
 }

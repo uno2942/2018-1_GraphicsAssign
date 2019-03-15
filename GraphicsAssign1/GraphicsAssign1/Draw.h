@@ -14,3 +14,5 @@ void representBox(const Box& box, int colorR, int colorG, int colorB);
 void representCircle(const Circle& circle);
 
 void lookAtBall(const Circle& circle);
+
+void representScore(int score, GLfloat x, GLfloat y);
