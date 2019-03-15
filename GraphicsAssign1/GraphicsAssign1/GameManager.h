@@ -47,8 +47,6 @@ public:
 	void OneFramePipeline();
 
 	void SpecialKeyboardInputHandler(int key);
-	void SavePlayerPositionBeforeReshape();
-	void LoadPlayerPositionBeforeReshape();
 	void FreshTime() {
 		timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 		prevTime = glutGet(GLUT_ELAPSED_TIME);;

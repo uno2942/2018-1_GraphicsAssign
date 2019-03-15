@@ -11,12 +11,6 @@ GameManager::GameManager() {
 	StartGame();
 }
 
-void GameManager::SavePlayerPositionBeforeReshape() {
-	playerBoxBeforeReshape = playerBox.position;
-}
-void GameManager::LoadPlayerPositionBeforeReshape() {
-	playerBox.position = playerBoxBeforeReshape;
-}
 void GameManager::OneFramePipeline() {
 	timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 	SetplayerBoxVelocity();
