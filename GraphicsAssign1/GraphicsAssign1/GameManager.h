@@ -1,13 +1,15 @@
 #pragma once
 #include"Objects.h"
-#include<list>
+#include<vector>
+#include<map>
 #include<utility>
 #define THRESHOLDSCORE 13
 #define WORLDCOORDWINDOWWIDTH 1600
 #define WORLDCOORDWINDOWHEIGHT 900
-#define BALL_VELOCITY 300
 #define PLAYER_BOX_VELOCITY 10;
 using namespace std;
+
+extern GLdouble BALL_VELOCITY;
 class GameManager {
 public:
 	class SceneManager {
@@ -17,15 +19,20 @@ public:
 	class CollisionManager {
 	public:
 		CollisionManager();
-		list<pair<pair<Object*, Object*>, Vector2>>* CollisionCheck();
-		void CollisionHandler(list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
-		bool CheckCollisionAtUpSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
-		bool CheckCollisionAtDownSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
-		bool CheckCollisionAtLeftSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
-		bool CheckCollisionAtRightSide(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
-		void CheckCollision4side(Object* o1, Object* o2, list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList);
-	private:
-		list<pair<pair<Object*, Object*>, Vector2>>* collisionPairList;
+		vector<pair<pair<Object*, Object*>, Vector2>>* CollisionCheck();
+		void CollisionHandler(vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		vector<pair<pair<Object*, Object*>, Vector2>>* RestoreBallPosition(vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		bool CheckCollisionAtUpSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		bool CheckCollisionAtDownSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		bool CheckCollisionAtLeftSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		bool CheckCollisionAtRightSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		void CheckCollision4side(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		GLdouble ballDeltaTime = 0;
+	private:       
+		vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector;
+		map<string, int> collisionwithballmap;
+		GLdouble ballCollideWithCorner = -1;
+		
 	};
 	static GameManager& getInstance()
 	{
@@ -42,6 +49,9 @@ public:
 	void SavePlayerPositionBeforeReshape();
 	void LoadPlayerPositionBeforeReshape();
 	Vector2 playerBoxBeforeReshape;
+	GLdouble DeltaTime() {
+		return timeSinceStart - prevTime;
+	}
 	GameManager(GameManager const&) = delete;
 	void operator=(GameManager const&) = delete;
 
@@ -77,7 +87,7 @@ private:
 	/* need to set(dummy data)*/
 	const Vector2 INITIAL_PLAYER_BOX_POSITION = Vector2(0, 0); //WORLDCOORDWINDOWWIDTH/16(100, 0)
 	const Vector2 INITIAL_ENEMY_BOX_POSITION = Vector2((7* WORLDCOORDWINDOWWIDTH)/8, 0);
-	const Vector2 INITIAL_BALL_POSITION = Vector2(180, (WORLDCOORDWINDOWHEIGHT*7)/10);
+	const Vector2 INITIAL_BALL_POSITION = Vector2(100, (WORLDCOORDWINDOWHEIGHT*7)/10);
 	const Vector2 INITIAL_NET_POSITION = Vector2((31 * WORLDCOORDWINDOWWIDTH) / 64, 0); //(31*WORLDCOORDWINDOWWIDTH)/64(775, 0)
 	const Vector2 INITIAL_LEFT_WALL_POSITION = Vector2(-10, 0);
 	const Vector2 INITIAL_RIGHT_WALL_POSITION = Vector2(WORLDCOORDWINDOWWIDTH, 0);
