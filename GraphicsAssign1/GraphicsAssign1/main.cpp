@@ -20,7 +20,6 @@ void idle2(int value) {
 void idlefunction(int value) {
 	if (GameManager::getInstance().WhoFinallyWin == 0) {
 		head();
-//		cout << "Player: " << GameManager::getInstance().playerBox.position << '\t' << "Ball: " << GameManager::getInstance().ball.position << endl;
 		glutTimerFunc(1, idlefunction, 0);
 	}
 }

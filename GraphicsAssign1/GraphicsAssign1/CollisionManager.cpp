@@ -51,8 +51,6 @@ void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<Object*, O
 		}
 		collisionPairvector->back().first.first->velocity += collisionPairvector->back().second;
 
-		if (collisionPairvector->back().first.first->shape == Object::Shape::CIRCLE)
-			cout << "Ball Velocity: " << Vector2::abs(collisionPairvector->back().first.first->velocity) << endl;
 		collisionPairvector->pop_back();
 	}
 }
@@ -126,9 +124,7 @@ vector<pair<pair<Object*, Object*>, Vector2>>*  GameManager::CollisionManager::R
 							GLdouble prevBallDeltaTime = ballDeltaTime;
 							ballDeltaTime += t;
 							if (ballDeltaTime > deltaTime) ballDeltaTime = deltaTime;
-							cout << "dist Prev: " << o1->position.x + o1->width - o2->position.x;
 							o1->position += (o1->velocity) * ((-(ballDeltaTime - prevBallDeltaTime)));
-							cout << "dist Now: " << o1->position.x + o1->width - o2->position.x<<endl;
 							o1->position.x = o2->position.x - o1->width;
 
 						}
@@ -150,12 +146,7 @@ vector<pair<pair<Object*, Object*>, Vector2>>*  GameManager::CollisionManager::R
 									ballDeltaTime = deltaTime;
 								}
 								//						GLdouble ballCollideWithCorner = ballDeltaTime;
-								cout << "dist Prev: " << distance;
 								o1->position += (o1->velocity) * ((-(ballDeltaTime - prevBallDeltaTime)));
-								Vector2 center2 = Vector2(o1->position.x + o1->width / 2, o1->position.y + o1->height / 2);
-								Vector2 centertocorner2 = Vector2(center2 - leftcorner);
-								GLdouble distance2 = Vector2::abs(centertocorner2);
-								cout << "dist Now: " << distance2<<endl;
 							}
 						}
 					}
@@ -174,9 +165,7 @@ vector<pair<pair<Object*, Object*>, Vector2>>*  GameManager::CollisionManager::R
 						ballDeltaTime += t;
 						if (ballDeltaTime > deltaTime) ballDeltaTime = deltaTime;
 
-						cout << "dist Prev: " << o2->position.x + o2->width - o1->position.x;
 						o1->position += (o1->velocity) * ((-(ballDeltaTime - prevBallDeltaTime)));
-						cout << "dist Now: " << o2->position.x + o2->width - o1->position.x<<endl;
 						o1->position.x = o2->position.x + o2->width;
 
 					}
@@ -198,12 +187,8 @@ vector<pair<pair<Object*, Object*>, Vector2>>*  GameManager::CollisionManager::R
 								ballDeltaTime = deltaTime;
 							}
 							//						GLdouble ballCollideWithCorner = ballDeltaTime;
-							cout << "dist Prev: " << distance;
 							o1->position += (o1->velocity) * ((-(ballDeltaTime - prevBallDeltaTime)));
-							Vector2 center2 = Vector2(o1->position.x + o1->width / 2, o1->position.y + o1->height / 2);
-							Vector2 centertocorner2 = Vector2(center2 - rightcorner);
-							GLdouble distance2 = Vector2::abs(centertocorner2);
-							cout << "dist Now: " << distance2<<endl;
+
 						}
 					}
 
@@ -219,9 +204,7 @@ vector<pair<pair<Object*, Object*>, Vector2>>*  GameManager::CollisionManager::R
 						GLdouble prevBallDeltaTime = ballDeltaTime;
 						ballDeltaTime += t;
 						if (ballDeltaTime > deltaTime) ballDeltaTime = deltaTime;
-						cout << "dist Prev: " << o1->position.y + o1->height - o2->position.y;
 						o1->position += (o1->velocity) * ((-(ballDeltaTime - prevBallDeltaTime)));
-						cout << "dist Now: " << o1->position.y + o1->height - o2->position.y<<endl;
 						o1->position.y = o2->position.y - o1->height;
 
 					}
@@ -237,9 +220,7 @@ vector<pair<pair<Object*, Object*>, Vector2>>*  GameManager::CollisionManager::R
 						GLdouble prevBallDeltaTime = ballDeltaTime;
 						ballDeltaTime += t;
 						if (ballDeltaTime > deltaTime) ballDeltaTime = deltaTime;
-						cout << "dist Prev: " << o2->position.y + o2->height - o1->position.y;
 						o1->position += (o1->velocity) * ((-(ballDeltaTime - prevBallDeltaTime)));
-						cout << "dist Now: " << o2->position.y + o2->height - o1->position.y <<endl;
 						o1->position.y = o2->position.y + o2->height;
 
 					}
@@ -302,11 +283,7 @@ bool GameManager::CollisionManager::CheckCollisionAtRightSide(Object* o1, Object
 					Vector2::normalize(centertocorner)*
 					(2 * BALL_VELOCITY*abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
 					(Vector2::abs(o1->velocity)*Vector2::abs(centertocorner)))));
-				cout << "Right" << Vector2::normalize(centertocorner)*
-					(2 * BALL_VELOCITY*abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
-					(Vector2::abs(o1->velocity)*distance)) << "cos len: " << abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
-						(Vector2::abs(o1->velocity)*distance) << endl;
-				collisionwithballmap[o2->name] = 1;
+								collisionwithballmap[o2->name] = 1;
 			}
 			else {
 
@@ -352,10 +329,6 @@ bool GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object*
 					Vector2::normalize(centertocorner)*
 					(2 * BALL_VELOCITY*abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
 					(Vector2::abs(o1->velocity)*distance))));
-				cout << "Left" << Vector2::normalize(centertocorner)*
-					(2 * BALL_VELOCITY*abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
-					(Vector2::abs(o1->velocity)*distance)) << "cos len: " << abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
-						(Vector2::abs(o1->velocity)*distance) << endl;
 				collisionwithballmap[o2->name] = 2;
 			}
 			else

@@ -114,8 +114,6 @@ void GameManager::SetObjectPosition() {
 	playerBox.position += playerBox.velocity*PLAYER_BOX_VELOCITY;
 	enemyBox.position += enemyBox.velocity*ENEMY_BOX_VELOCITY;
 	ball.position += ball.velocity*(((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
-	if (+collisionManager.ballDeltaTime > 0)
-		cout << "delta>0: " << collisionManager.ballDeltaTime << endl;
 }
 
 void GameManager::OneGameEnd(bool whoWin) {
