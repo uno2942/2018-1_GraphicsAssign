@@ -4,25 +4,29 @@
 #include "Draw.h"
 
 void head() {
-	if(!ReshapeFlag)
+	if(!ReshapeFlag && (GameManager::getInstance().WhoFinallyWin==0))
 		GameManager::getInstance().OneFramePipeline();
 }
 
 void idle2(int value) {
 	glutPostRedisplay();
-	cout << "Player: " << GameManager::getInstance().playerBox.position << '\t' << "Ball: " << GameManager::getInstance().ball.position << endl;
 	glutTimerFunc(17, idle2, 0);
 }
 
 void idlefunction(int value) {
-	head();
-	glutTimerFunc(1, idlefunction, 0);
+	if (GameManager::getInstance().WhoFinallyWin == 0) {
+		head();
+		cout << "Player: " << GameManager::getInstance().playerBox.position << '\t' << "Ball: " << GameManager::getInstance().ball.position << endl;
+		glutTimerFunc(1, idlefunction, 0);
+	}
 }
 
 void myKeyboard(unsigned char c, int x, int y) {
-	switch (c) {
-	case '1': camMode = WHOLE; break;
-	case '2': camMode = FOLLOWBALL;
+	if (GameManager::getInstance().WhoFinallyWin == 0) {
+		switch (c) {
+		case '1': camMode = WHOLE; break;
+		case '2': camMode = FOLLOWBALL;
+		}
 	}
 }
 
