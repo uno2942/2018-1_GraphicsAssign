@@ -20,6 +20,7 @@ void GameManager::LoadPlayerPositionBeforeReshape() {
 void GameManager::OneFramePipeline() {
 	timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 	SetplayerBoxVelocity();
+	SetenemyBoxVelocity();
 	collisionManager.CollisionHandler(collisionManager.RestoreBallPosition(collisionManager.CollisionCheck()));
 	SetObjectPosition();
 	prevTime = timeSinceStart;
@@ -34,6 +35,7 @@ void GameManager::SpecialKeyboardInputHandler(int key) {
 
 void GameManager::InitializeGame() {
 	oneGameEnd = false;
+	enemyMoveTime = 0;
 	InitObjectsPosition();
 	InitBallVelocity();
 	timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
@@ -64,17 +66,16 @@ void GameManager::InitObjectsPosition() {
 **/
 
 void GameManager::InitBallVelocity() {
+	BALL_VELOCITY = 300;
 	int x = 0;
 	int y = 0;
 	
 	while(0==x)
 		x = rand()%101-50;
 
-	while (0 == y)
+	while (-20 < y && y < 20)
 		y = rand() % 101 - 50;
 
-	x = 0;
-	y = -10;
 	ball.SetVelocity((Vector2::normalize(Vector2(x, y)))*BALL_VELOCITY);
 }
 
@@ -89,12 +90,38 @@ void GameManager::SetplayerBoxVelocity() {
 	playerBoxMoveRightFlag = false;
 	playerBoxMoveLeftFlag = false;
 }
-
+void GameManager::SetenemyBoxVelocity() {
+	if (enemyMoveTime > 3000)
+		enemyMoveTime = -5000;
+	enemyMoveTime += DeltaTime();
+	if (enemyMoveTime > 0)
+	{
+		if (ball.position.x + ball.width / 2 > enemyBox.position.x + enemyBox.width / 2)
+			enemyBoxMoveRightFlag = true;
+		else if (ball.position.x + ball.width / 2 < enemyBox.position.x + enemyBox.width / 2)
+			enemyBoxMoveLeftFlag = true;
+		if (enemyBoxMoveRightFlag)
+			enemyBox.SetVelocity(BOXVELOCITYTORIGHT);
+		else if (enemyBoxMoveLeftFlag)
+			enemyBox.SetVelocity(BOXVELOCITYTOLEFT);
+		else
+			enemyBox.SetVelocity(BOXVELOCITYZERO);
+		enemyBoxMoveRightFlag = false;
+		enemyBoxMoveLeftFlag = false;
+	}
+	else
+	{
+		enemyBox.SetVelocity(BOXVELOCITYZERO);
+		enemyBoxMoveRightFlag = false;
+		enemyBoxMoveLeftFlag = false;
+	}
+}
 void GameManager::SetObjectPosition() {
 	playerBox.position += playerBox.velocity*PLAYER_BOX_VELOCITY;
-
-	enemyBox.position += enemyBox.velocity*(((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
-	ball.position += ball.velocity*((timeSinceStart - prevTime) / 1000.);
+	enemyBox.position += enemyBox.velocity*ENEMY_BOX_VELOCITY;
+	ball.position += ball.velocity*(((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
+	if (+collisionManager.ballDeltaTime > 0)
+		cout << "delta>0: " << collisionManager.ballDeltaTime << endl;
 }
 
 void GameManager::OneGameEnd(bool whoWin) {

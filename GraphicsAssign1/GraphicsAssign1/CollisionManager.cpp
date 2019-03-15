@@ -103,8 +103,8 @@ vector<pair<pair<Object*, Object*>, Vector2>>* GameManager::CollisionManager::Co
 return t...
 **/
 vector<pair<pair<Object*, Object*>, Vector2>>*  GameManager::CollisionManager::RestoreBallPosition(vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
+	ballDeltaTime = 0;
 	if (!collisionPairvector->empty()) {
-		ballDeltaTime = 0;
 		GLdouble ballCollideWithCorner = -1;
 		GLdouble deltaTime = GameManager::getInstance().DeltaTime();
 		vector<pair<pair<Object*, Object*>, Vector2>>::reverse_iterator iter = collisionPairvector->rbegin();
