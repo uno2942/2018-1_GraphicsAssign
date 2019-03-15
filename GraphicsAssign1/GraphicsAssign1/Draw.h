@@ -1,18 +1,21 @@
 #pragma once
 #include"GameManager.h"
-class Draw {
-public:
-	void myReshape(int width, int height) {
 
-	}
+enum CamMode { WHOLE, FOLLOWBALL };
 
-	void display() {
+extern CamMode camMode;
 
-	}
+extern bool ReshapeFlag;
+void myReshape(int width, int height);
 
-	void idlefunction() {
+void display();
 
-	}
-private:
-	GameManager gameManager;
-};
+void representBox(const Box& box, int colorR, int colorG, int colorB);
+
+void representCircle(const Circle& circle);
+
+void lookAtBall(const Circle& circle);
+
+void representScore(int score, GLfloat x, GLfloat y);
+
+void representResult(void);
