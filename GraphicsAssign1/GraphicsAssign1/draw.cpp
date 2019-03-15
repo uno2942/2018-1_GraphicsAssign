@@ -68,7 +68,7 @@ void representBox(const Box& box, int colorR, int colorG, int colorB)
 
 	
 	glColor3f(colorR / 255.0, colorG / 255.0, colorB / 255.0);
-	glBegin(GL_LINE_LOOP);
+	glBegin(GL_QUADS);
 
 	glVertex2f(x, y);
 	glVertex2f(x, y + h);
@@ -87,7 +87,7 @@ void representCircle(const Circle& circle)
 
 	
 	glColor3f(1.0, 153.0 / 255, 153.0 / 255);
-	glBegin(GL_LINE_LOOP);
+	glBegin(GL_POLYGON);
 
 	for (int i = 0; i <= lineNum; i++)
 	{
