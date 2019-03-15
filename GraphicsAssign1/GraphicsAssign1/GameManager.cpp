@@ -11,6 +11,12 @@ GameManager::GameManager() {
 	StartGame();
 }
 
+void GameManager::SavePlayerPositionBeforeReshape() {
+	playerBoxBeforeReshape = playerBox.position;
+}
+void GameManager::LoadPlayerPositionBeforeReshape() {
+	playerBox.position = playerBoxBeforeReshape;
+}
 void GameManager::OneFramePipeline() {
 	SetplayerBoxVelocity();
 	collisionManager.CollisionHandler(collisionManager.CollisionCheck());
@@ -67,8 +73,6 @@ void GameManager::InitBallVelocity() {
 	while (0 == y)
 		y = rand() % 101 - 50;
 
-	x = 0;
-	y = -10;
 	ball.SetVelocity((Vector2::normalize(Vector2(x, y)))*BALL_VELOCITY);
 }
 
@@ -86,7 +90,7 @@ void GameManager::SetplayerBoxVelocity() {
 
 void GameManager::SetObjectPosition() {
 	timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
-	playerBox.position += playerBox.velocity;
+	playerBox.position += playerBox.velocity*PLAYER_BOX_VELOCITY;
 
 	enemyBox.position += enemyBox.velocity*((timeSinceStart - prevTime) / 1000.);
 	ball.position += ball.velocity*((timeSinceStart - prevTime) / 1000.);
@@ -134,6 +138,7 @@ void GameManager::CollisionManager::CollisionHandler(list<pair<pair<Object*, Obj
 			}
 		}
 		collisionPairList->back().first.first->velocity += collisionPairList->back().second;
+
 		if (collisionPairList->back().first.first->shape == Object::Shape::CIRCLE)
 			cout << "Ball Velocity: " << Vector2::abs(collisionPairList->back().first.first->velocity) << endl;
 		collisionPairList->pop_back();

@@ -9,6 +9,7 @@ void head() {
 
 void idle2(int value) {
 	glutPostRedisplay();
+	cout << "Player: " << GameManager::getInstance().playerBox.position << '\t' << "Ball: " << GameManager::getInstance().ball.position << endl;
 	glutTimerFunc(17, idle2, 0);
 }
 

@@ -6,6 +6,7 @@
 #define WORLDCOORDWINDOWWIDTH 1600
 #define WORLDCOORDWINDOWHEIGHT 900
 #define BALL_VELOCITY 300
+#define PLAYER_BOX_VELOCITY 10;
 using namespace std;
 class GameManager {
 public:
@@ -38,7 +39,9 @@ public:
 	void OneFramePipeline();
 
 	void SpecialKeyboardInputHandler(int key);
-
+	void SavePlayerPositionBeforeReshape();
+	void LoadPlayerPositionBeforeReshape();
+	Vector2 playerBoxBeforeReshape;
 	GameManager(GameManager const&) = delete;
 	void operator=(GameManager const&) = delete;
 
