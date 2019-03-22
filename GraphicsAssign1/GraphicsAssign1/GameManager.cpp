@@ -1,11 +1,11 @@
-#include "GameManager.h"
 #include<ctime>
-#include<cmath>
+#include "GameManager.h"
 using namespace std;
-GLdouble BALL_VELOCITY = 300;
 /**
 여기서 srand 함수를 실행시킨다.
 **/
+
+GLdouble GameManager::BALL_VELOCITY = 300;
 GameManager::GameManager() {
 	srand((unsigned int)time(0));
 	StartGame();

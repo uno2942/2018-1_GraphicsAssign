@@ -1,6 +1,7 @@
 #include<iostream>
 #include<glew.h>
 #include<freeglut.h>
+#include"GameManager.h"
 #include "Draw.h"
 
 void head() {

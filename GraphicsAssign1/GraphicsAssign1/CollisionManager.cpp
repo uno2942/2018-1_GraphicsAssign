@@ -1,6 +1,4 @@
 #include "GameManager.h"
-#include<ctime>
-#include<cmath>
 using namespace std;
 GameManager::CollisionManager::CollisionManager() {
 	collisionPairvector = new vector<pair<pair<Object*, Object*>, Vector2>>();
@@ -42,8 +40,8 @@ void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<Object*, O
 		}
 		if (collisionPairvector->back().first.first->shape == Object::Shape::CIRCLE)
 		{
-			if (!(Vector2::abs(collisionPairvector->back().first.first->velocity + collisionPairvector->back().second) > BALL_VELOCITY - 1 &&
-				Vector2::abs(collisionPairvector->back().first.first->velocity + collisionPairvector->back().second) < BALL_VELOCITY + 1))
+			if (!(Vector2::abs(collisionPairvector->back().first.first->velocity + collisionPairvector->back().second) > GameManager::BALL_VELOCITY - 1 &&
+				Vector2::abs(collisionPairvector->back().first.first->velocity + collisionPairvector->back().second) < GameManager::BALL_VELOCITY + 1))
 			{
 				collisionPairvector->pop_back();
 				continue;

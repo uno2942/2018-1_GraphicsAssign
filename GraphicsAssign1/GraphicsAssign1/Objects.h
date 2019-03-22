@@ -1,49 +1,12 @@
 #pragma once
+
 #include<glew.h>
 #include<freeglut.h>
 #include<iostream>
 #include<cmath>
+
+#include "MyDataType.h"
 using namespace std;
-
-struct Vector2 {
-public:
-	GLdouble x;
-	GLdouble y;
-	Vector2(GLdouble _x, GLdouble _y) {
-		x = _x;
-		y = _y;
-	}
-
-	Vector2() {
-		x = 0;
-		y = 0;
-	}
-	Vector2 operator+(const Vector2& rhs) {
-		return Vector2(x + rhs.x, y + rhs.y);
-	}
-	Vector2 operator-(const Vector2& rhs) {
-		return Vector2(x - rhs.x, y - rhs.y);
-	}
-	Vector2& operator+=(const Vector2& rhs) {
-		(*this).x += rhs.x;
-		(*this).y += rhs.y;
-		return *this;
-	}
-
-	Vector2 operator*(const GLdouble d) {
-		return Vector2((*this).x * d, (*this).y * d);
-	}
-	static GLdouble abs(const Vector2& a);
-	
-	static Vector2 normalize(const Vector2& a) {
-		GLdouble veclen = sqrt(a.x*a.x + a.y*a.y);
-		return Vector2(a.x / veclen, a.y / veclen);
-	}
-	friend ostream& operator<<(ostream& os, const Vector2& dt){
-		os << '('<<dt.x<<',' << dt.y<<')';
-		return os;
-	}
-};
 
 class Object {
 public:
@@ -55,19 +18,46 @@ public:
 	Object(int _width, int _height) : width(_width), height(_height){
 
 	}
-	const Vector2& GetCurrentPosition() const;
-	const Vector2& SetPosition(Vector2 position);
-	const Vector2& SetPosition(GLdouble x, GLdouble y);
-	const Vector2& GetCurrentVelocity() const ;
-	const Vector2& SetVelocity(Vector2 velocity);
-	const Vector2& SetVelocity(GLdouble x, GLdouble y);
-	const Vector2 GetSize() const;
 
 	int width;
 	int height;
+
 	string name;
+
 	Vector2 position;
 	Vector2 velocity;
+	GLdouble rotation;
+
+	inline const Vector2& GetCurrentPosition() const { return position; }
+	inline const GLdouble& GetCurrentRotation() const { return rotation; }
+	inline const Vector2& GetCurrentVelocity() const {
+		return velocity;
+	}
+	inline const Vector2& SetPosition(Vector2 _position) {
+		position = _position;
+		return position;
+	}
+	inline const Vector2& SetPosition(GLdouble x, GLdouble y) {
+		position.x = x;
+		position.y = y;
+		return position;
+	}
+	inline const GLdouble& SetRotation(GLdouble _rotation) {
+		rotation = _rotation;
+		return rotation;
+	}
+	inline const Vector2& SetVelocity(Vector2 _velocity) {
+		velocity = _velocity;
+		return velocity;
+	}
+	inline const Vector2& SetVelocity(GLdouble x, GLdouble y) {
+		velocity.x = x;
+		velocity.y = y;
+		return velocity;
+	}
+	inline const Vector2 GetSize() const {
+		return Vector2(width, height);
+	}
 };
 
 class Circle : public Object {

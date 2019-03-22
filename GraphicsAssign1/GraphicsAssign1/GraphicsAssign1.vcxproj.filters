@@ -24,9 +24,6 @@
     <ClCompile Include="draw.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Objects.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="CollisionManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -39,6 +36,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Draw.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MyDataType.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

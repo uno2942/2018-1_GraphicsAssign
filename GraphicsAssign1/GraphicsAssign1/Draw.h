@@ -1,11 +1,13 @@
 #pragma once
-#include"GameManager.h"
+#include<vector>
+#include "Objects.h"
 
 enum CamMode { WHOLE, FOLLOWBALL };
 
 extern CamMode camMode;
 
 extern bool ReshapeFlag;
+static vector<BinaryTree<Object, string>> objectsTreeVector;
 void myReshape(int width, int height);
 
 void display();

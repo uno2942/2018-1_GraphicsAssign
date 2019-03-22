@@ -1,16 +1,17 @@
 #pragma once
-#include"Objects.h"
 #include<vector>
 #include<map>
 #include<utility>
+#include"Objects.h"
+
 #define THRESHOLDSCORE 13
 #define WORLDCOORDWINDOWWIDTH 1600
 #define WORLDCOORDWINDOWHEIGHT 900
 #define PLAYER_BOX_VELOCITY 10
 #define ENEMY_BOX_VELOCITY 0.5
+
 using namespace std;
 
-extern GLdouble BALL_VELOCITY;
 class GameManager {
 public:
 	class SceneManager {
@@ -66,6 +67,7 @@ public:
 	Box topwall = Box(WORLDCOORDWINDOWWIDTH, 10, "topwall");
 	Box screen = Box(WORLDCOORDWINDOWWIDTH, WORLDCOORDWINDOWHEIGHT, "screen");
 	Circle ball = Circle(100, 100, "ball");
+	static GLdouble BALL_VELOCITY;
 	int myScore = 0;
 	int enemyScore = 0;
 	int WhoFinallyWin = 0;
