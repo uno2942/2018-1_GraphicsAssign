@@ -141,6 +141,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CommonBetweenGameAndDraw.h" />
     <ClInclude Include="Draw.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="MyDataType.h" />

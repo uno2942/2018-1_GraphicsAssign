@@ -45,15 +45,19 @@ public:
 
 template<typename T, typename Key>
 class Node {
-	T& data;
+public:
+	T data;
+private:
 	Node* precessor = NULL;
 	Node* successor = NULL;
 	Node* sibling = NULL;
 	Key key;
-	Node(T& _data, Key _key) {
+	Node(T _data, Key _key) {
+		data = _data;
 		key = _key;
 	}
-	Node(T& _data, Key _key, Node* parent) {
+	Node(T _data, Key _key, Node* parent) {
+		data = _data;
 		precessor = parent;
 		key = _key;
 	}
@@ -63,10 +67,10 @@ template<typename T, typename Key>
 class BinaryTree {
 public:
 	Node<T, Key>* root = NULL;
-	BinaryTree() {
-
+	BinaryTree(string _name) {
+		name = _name;
 	}
-	BinaryTree(T& data, Key key) {
+	BinaryTree(T data, Key key) {
 		
 		root = new Node<T, Key>(data, key);
 	}
@@ -76,7 +80,7 @@ public:
 	/**
 	루트가 비어있으면 루트에 넣습니다. 루트가 차 있으면 가장 트리의 가장 왼쪽 아래에 넣습니다.
 	**/
-	void insert_back(T& data, Key key) {
+	void insert_back(T data, Key key) {
 		if (root == NULL)
 			root = new Node<T, Key>(data, key);
 		else
@@ -101,7 +105,7 @@ public:
 			countOfNodes += tree2->count();
 		}
 	}
-	void insertAsChildren(T& data, Key dataKey, Key parentKey) {
+	void insertAsChildren(T data, Key dataKey, Key parentKey) {
 		Node<T, Key>* temp = Find(parentKey);
 		if (temp != NULL)
 		{
@@ -119,7 +123,7 @@ public:
 			countOfNodes += tree2->count();
 		}
 	}
-	void insertAsSibling(T& data, Key dataKey, Key siblingKey) {
+	void insertAsSibling(T data, Key dataKey, Key siblingKey) {
 		Node<T, Key>* temp = Find(siblingKey);
 		if (temp == NULL)
 			return;
@@ -147,6 +151,15 @@ public:
 	Node<T, Key>* Find(Key key) {
 		return Find_aux(key, root);
 	}
+
+	void clear() {
+		clear_aux(root);
+		countOfNodes = 0;
+	}
+	
+	string name;
+private:
+	int countOfNodes = 0;
 	Node<T, Key>* Find_aux(Key key, Node<T, Key>* root) {
 		if (root == NULL)
 			return NULL;
@@ -154,16 +167,12 @@ public:
 			return root;
 		else
 		{
-			Node<T, Key>* temp= Find_aux(key, root->successor);
+			Node<T, Key>* temp = Find_aux(key, root->successor);
 			if (temp != NULL)
 				return temp;
 			else
 				return Find_aux(name, root->successor);
 		}
-	}
-	void clear() {
-		clear_aux(root);
-		countOfNodes = 0;
 	}
 	void clear_aux(Node<T, Key>* root) {
 		if (root == NULL)
@@ -172,7 +181,4 @@ public:
 		clear_aux(root->successor);
 		delete root;
 	}
-	string name;
-private:
-	int countOfNodes = 0;
 };

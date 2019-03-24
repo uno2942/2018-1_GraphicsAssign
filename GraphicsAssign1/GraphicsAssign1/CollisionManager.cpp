@@ -23,7 +23,7 @@ void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<Object*, O
 
 
 	while (collisionPairvector != NULL && !(collisionPairvector->empty())) {
-		if (!doubleCollision && collisionPairvector->back().first.first->shape == Object::Shape::CIRCLE)
+		if (!doubleCollision && collisionPairvector->back().first.first->shape == Object::Shape::OVAL)
 		{
 			Object* o1 = collisionPairvector->back().first.first;
 			Object* o2 = collisionPairvector->back().first.second;
@@ -38,7 +38,7 @@ void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<Object*, O
 				continue;
 			}
 		}
-		if (collisionPairvector->back().first.first->shape == Object::Shape::CIRCLE)
+		if (collisionPairvector->back().first.first->shape == Object::Shape::OVAL)
 		{
 			if (!(Vector2::abs(collisionPairvector->back().first.first->velocity + collisionPairvector->back().second) > GameManager::BALL_VELOCITY - 1 &&
 				Vector2::abs(collisionPairvector->back().first.first->velocity + collisionPairvector->back().second) < GameManager::BALL_VELOCITY + 1))
@@ -62,14 +62,14 @@ vector<pair<pair<Object*, Object*>, Vector2>>* GameManager::CollisionManager::Co
 	collisionwithballmap["leftwall"] = 0;
 	collisionwithballmap["rightwall"] = 0;
 	collisionwithballmap["topwall"] = 0;
-	if (GameManager::getInstance().ball.position.y <= GameManager::getInstance().screen.position.y)
+	if (GameManager::getInstance().ball->position.y <= YBORDER)
 	{
-		if (GameManager::getInstance().ball.position.x + (GameManager::getInstance().ball.width / 2) <= GameManager::getInstance().net.position.x)
+		if (GameManager::getInstance().ball->position.x + (GameManager::getInstance().ball->width / 2) <= GameManager::getInstance().net->position.x)
 		{
 			GameManager::getInstance().OneGameEnd(false);
 			return collisionPairvector;
 		}
-		else if (GameManager::getInstance().ball.position.x + (GameManager::getInstance().ball.GetSize().x / 2) >= GameManager::getInstance().net.position.x + GameManager::getInstance().net.width)
+		else if (GameManager::getInstance().ball->position.x + (GameManager::getInstance().ball->GetSize().x / 2) >= GameManager::getInstance().net->position.x + GameManager::getInstance().net->width)
 		{
 			GameManager::getInstance().OneGameEnd(true);
 			return collisionPairvector;
@@ -109,7 +109,7 @@ vector<pair<pair<Object*, Object*>, Vector2>>*  GameManager::CollisionManager::R
 		{
 			Object* o1 = iter[i].first.first;
 			Object* o2 = iter[i].first.second;
-			if (iter[i].first.first->shape == Object::Shape::CIRCLE) {
+			if (iter[i].first.first->shape == Object::Shape::OVAL) {
 				//right part
 				if (collisionwithballmap[o2->name] == 1) {
 					{
@@ -262,7 +262,7 @@ bool GameManager::CollisionManager::CheckCollisionAtRightSide(Object* o1, Object
 		}
 		return false;
 	}
-	else if (Object::Shape::CIRCLE == o1->shape && Object::Shape::BOX == o2->shape) {
+	else if (Object::Shape::OVAL == o1->shape && Object::Shape::BOX == o2->shape) {
 		if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x &&
 			(o1->position.y + (o1->height / 2) >= o2->position.y && o1->position.y + (o1->height / 2) <= o2->position.y + o2->height))
 		{
@@ -308,7 +308,7 @@ bool GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object*
 		}
 		return false;
 	}
-	else if (Object::Shape::CIRCLE == o1->shape && Object::Shape::BOX == o2->shape) {
+	else if (Object::Shape::OVAL == o1->shape && Object::Shape::BOX == o2->shape) {
 		if (o1->position.x + o1->width > o2->position.x + o2->width && o1->position.x <= o2->position.x + o2->width &&
 			(o1->position.y + (o1->height / 2) >= o2->position.y && o1->position.y + (o1->height / 2) <= o2->position.y + o2->height))
 		{
@@ -347,7 +347,7 @@ bool GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object*
 게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 **/
 bool GameManager::CollisionManager::CheckCollisionAtUpSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
-	if (Object::Shape::CIRCLE == o1->shape && Object::Shape::BOX == o2->shape)
+	if (Object::Shape::OVAL == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.y < o2->position.y && o1->position.y + o1->height >= o2->position.y)
 		{
@@ -371,7 +371,7 @@ bool GameManager::CollisionManager::CheckCollisionAtUpSide(Object* o1, Object* o
 게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 **/
 bool GameManager::CollisionManager::CheckCollisionAtDownSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
-	if (Object::Shape::CIRCLE == o1->shape && Object::Shape::BOX == o2->shape)
+	if (Object::Shape::OVAL == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.y < o2->position.y + o2->height && o1->position.y + o1->height >= o2->position.y + o2->height &&
 			(o1->position.x + (o1->width / 2) >= o2->position.x && o1->position.x + (o1->width / 2) <= o2->position.x + o2->width))

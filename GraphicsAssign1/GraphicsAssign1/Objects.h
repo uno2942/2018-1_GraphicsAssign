@@ -10,12 +10,12 @@ using namespace std;
 
 class Object {
 public:
-	enum Shape { BOX, CIRCLE };
+	enum Shape { OVAL, BOX, TRIANGLE};
 	Shape shape;
 	Object() {
 
 	}
-	Object(int _width, int _height) : width(_width), height(_height){
+	Object(int _width, int _height, GLdouble _rotation) : width(_width), height(_height), rotation(_rotation) {
 
 	}
 
@@ -60,13 +60,13 @@ public:
 	}
 };
 
-class Circle : public Object {
+class Oval : public Object {
 public: 
-	Circle() {
-		shape = CIRCLE;
+	Oval() {
+		shape = OVAL;
 	}
-	Circle(int _width, int _height, string name) : Object(_width, _height) {
-		shape = CIRCLE;
+	Oval(string name, int _width, int _height, GLdouble _rotation = 0) : Object(_width, _height, _rotation) {
+		shape = OVAL;
 		this->name = name;
 	}
 };
@@ -76,8 +76,19 @@ public:
 	Box() {
 		shape = BOX;
 	}
-	Box(int _width, int _height, string name): Object(_width, _height) {
+	Box(string name, int _width, int _height, GLdouble _rotation = 0): Object(_width, _height, _rotation) {
 		shape = BOX;
 		this->name = name;
+	}
+};
+
+class Triangle : public Object{
+public:
+	Triangle() {
+		shape = TRIANGLE;
+	}
+	Triangle(string _name, int _width, int _height, GLdouble _rotation = 0) : Object(_width, _height, _rotation) {
+		shape = TRIANGLE;
+		name = _name;
 	}
 };

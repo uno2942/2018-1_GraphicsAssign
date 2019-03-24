@@ -3,15 +3,17 @@
 #include<map>
 #include<utility>
 #include"Objects.h"
+#include"CommonBetweenGameAndDraw.h"
 
 #define THRESHOLDSCORE 13
 #define WORLDCOORDWINDOWWIDTH 1600
 #define WORLDCOORDWINDOWHEIGHT 900
 #define PLAYER_BOX_VELOCITY 10
 #define ENEMY_BOX_VELOCITY 0.5
-
+#define YBORDER 0
 using namespace std;
-
+typedef BinaryTree<Object*, string> ObjectTree;
+typedef Node<Object*, string> ObjectNode;
 class GameManager {
 public:
 	class SceneManager {
@@ -30,7 +32,32 @@ public:
 		bool CheckCollisionAtRightSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
 		void CheckCollision4side(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
 		GLdouble ballDeltaTime = 0;
-	private:       
+		void PutCollisionObject(ObjectTree* tree, Object object) {
+			collisionList.push_back(CollisionObject(tree->root, object.shape, object.width, object.height, object.rotation));
+		}
+		void PutCollisionObject(ObjectNode* node, Object object) {
+			collisionList.push_back(CollisionObject(node, object.shape, object.width, object.height, object.rotation));
+		}
+		void RemoveCollisionObject(ObjectTree* tree) {
+			for (int i = 0; i < collisionList.size; i++)
+				if (collisionList[i].objectNode == tree->root)
+					collisionList.erase(collisionList.begin()+i);
+		}
+		void RemoveCollisionObject(ObjectNode* node) {
+			for (int i = 0; i < collisionList.size; i++)
+				if (collisionList[i].objectNode == node)
+					collisionList.erase(collisionList.begin() + i);
+		}
+	private:
+		class CollisionObject : public Object {
+		public:
+			ObjectNode* objectNode;
+			CollisionObject(ObjectNode* _objectNode, Shape _shape, int _width, int _height, GLdouble _rotation = 0) : Object(_width, _height, _rotation) {
+				objectNode = _objectNode;
+				shape = _shape;
+			}
+		};
+		vector<CollisionObject> collisionList;
 		vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector;
 		map<string, GLint> collisionwithballmap;
 		GLdouble ballCollideWithCorner = -1;
@@ -59,14 +86,21 @@ public:
 	GameManager(GameManager const&) = delete;
 	void operator=(GameManager const&) = delete;
 
-	Box playerBox = Box(WORLDCOORDWINDOWWIDTH/8, WORLDCOORDWINDOWHEIGHT/18, "player"); //WORLDCOORDWINDOWWIDTH/16 (100, 50)
-	Box enemyBox = Box(WORLDCOORDWINDOWWIDTH / 8, WORLDCOORDWINDOWHEIGHT / 18, "enemy");
-	Box net = Box((WORLDCOORDWINDOWWIDTH) / 32, WORLDCOORDWINDOWHEIGHT/2, "net");
-	Box leftwall = Box(10, WORLDCOORDWINDOWHEIGHT, "leftwall");
-	Box rightwall = Box(10, WORLDCOORDWINDOWHEIGHT, "rightwall");
-	Box topwall = Box(WORLDCOORDWINDOWWIDTH, 10, "topwall");
-	Box screen = Box(WORLDCOORDWINDOWWIDTH, WORLDCOORDWINDOWHEIGHT, "screen");
-	Circle ball = Circle(100, 100, "ball");
+	ObjectTree playerTree = ObjectTree("player");
+	Object* player;
+	ObjectTree tailTree = ObjectTree("tail");
+	ObjectTree earTree = ObjectTree("ear");
+
+	ObjectTree enemyTree = ObjectTree("enemyBox");
+	Object* enemy;
+	ObjectTree netTree = ObjectTree("net");
+	Object* net;
+	ObjectTree wallTree = ObjectTree("wall");
+	
+	ObjectTree ballTree = ObjectTree("ball");
+	Object* ball;
+	ObjectTree electricity = ObjectTree("electricity");
+
 	static GLdouble BALL_VELOCITY;
 	int myScore = 0;
 	int enemyScore = 0;

@@ -8,6 +8,51 @@ using namespace std;
 GLdouble GameManager::BALL_VELOCITY = 300;
 GameManager::GameManager() {
 	srand((unsigned int)time(0));
+	//Player 부분
+	{
+		player = new Box("playerBox", WORLDCOORDWINDOWWIDTH / 8, WORLDCOORDWINDOWHEIGHT / 18);
+		playerTree.insert_back(player, "playerBox");
+		tailTree.insert_back(new Triangle("tail1", 10, 10, 180), "tail1");
+		tailTree.insert_back(new Triangle("tail2", 10, 10, -30), "tail2");
+		playerTree.insert_back(&tailTree);
+
+		//ear를 그려야 하는데 보면서 그려야 할 듯...
+		collisionManager.PutCollisionObject(playerTree.root, *playerTree.root->data);
+	}
+	//enemy 부분
+	{
+		enemy = new Box("enemyBox", WORLDCOORDWINDOWWIDTH / 8, WORLDCOORDWINDOWHEIGHT / 18);
+		enemyTree.insert_back(enemy, "enemyBox");
+		collisionManager.PutCollisionObject(enemyTree.root, *enemyTree.root->data);
+	}
+	//net 부분
+	{
+		net = new Box("net", WORLDCOORDWINDOWWIDTH / 32, WORLDCOORDWINDOWHEIGHT / 2);
+		netTree.insert_back(ball, "net");
+		collisionManager.PutCollisionObject(netTree.root, *netTree.root->data);
+	}
+	//wall(스크린 밖에 안 보이는 벽) 부분
+	{wallTree.insert_back(new Box("leftwall", 10, WORLDCOORDWINDOWHEIGHT), "leftwall");
+
+	collisionManager.PutCollisionObject(wallTree.root, *wallTree.root->data);
+	wallTree.insertAsSibling(new Box("rightwall", 10, WORLDCOORDWINDOWHEIGHT), "rightwall", "leftwall");
+	collisionManager.PutCollisionObject(wallTree.Find("rightwall"), *wallTree.Find("rightwall")->data);
+	wallTree.insertAsSibling(new Box("topwall", WORLDCOORDWINDOWWIDTH, 10), "topwall", "leftwall");
+	collisionManager.PutCollisionObject(wallTree.Find("topwall"), *wallTree.Find("topwall")->data);
+	}
+	//ball 부분
+	{
+		ball = new Oval("ball", 100, 100);
+		ballTree.insert_back(ball, "ball");
+		//electricity 그려야 함.
+		collisionManager.PutCollisionObject(ballTree.root, *ballTree.root->data);
+	}
+	objectsTreeVectorForDraw.push_back(playerTree);
+	objectsTreeVectorForDraw.push_back(enemyTree);
+	objectsTreeVectorForDraw.push_back(netTree);
+	objectsTreeVectorForDraw.push_back(wallTree);
+	objectsTreeVectorForDraw.push_back(ballTree);
+	
 	StartGame();
 }
 
@@ -46,13 +91,13 @@ void GameManager::StartGame() {
 World coord. 기준
 **/
 void GameManager::InitObjectsPosition() {
-	playerBox.SetPosition(INITIAL_PLAYER_BOX_POSITION);
-	enemyBox.SetPosition(INITIAL_ENEMY_BOX_POSITION);
-	ball.SetPosition(INITIAL_BALL_POSITION);
-	net.SetPosition(INITIAL_NET_POSITION);
-	leftwall.SetPosition(INITIAL_LEFT_WALL_POSITION);
-	rightwall.SetPosition(INITIAL_RIGHT_WALL_POSITION);
-	topwall.SetPosition(INITIAL_TOP_WALL_POSITION);
+	(*player).SetPosition(INITIAL_PLAYER_BOX_POSITION);
+	(*enemy).SetPosition(INITIAL_ENEMY_BOX_POSITION);
+	(*ball).SetPosition(INITIAL_BALL_POSITION);
+	netTree.root->data->SetPosition(INITIAL_NET_POSITION);
+	wallTree.root->data->SetPosition(INITIAL_LEFT_WALL_POSITION);
+	wallTree.Find("rightwall")->data->SetPosition(INITIAL_RIGHT_WALL_POSITION);
+	wallTree.Find("topwall")->data->SetPosition(INITIAL_TOP_WALL_POSITION);
 }
 
 /**
@@ -70,17 +115,17 @@ void GameManager::InitBallVelocity() {
 	while (-20 < y && y < 20)
 		y = rand() % 101 - 50;
 
-	ball.SetVelocity((Vector2::normalize(Vector2(x, y)))*BALL_VELOCITY);
+	ball->SetVelocity((Vector2::normalize(Vector2(x, y)))*BALL_VELOCITY);
 }
 
 
 void GameManager::SetplayerBoxVelocity() {
 	if (playerBoxMoveRightFlag)
-		playerBox.SetVelocity(BOXVELOCITYTORIGHT);
+		player->SetVelocity(BOXVELOCITYTORIGHT);
 	else if (playerBoxMoveLeftFlag)
-		playerBox.SetVelocity(BOXVELOCITYTOLEFT);
+		player->SetVelocity(BOXVELOCITYTOLEFT);
 	else
-		playerBox.SetVelocity(BOXVELOCITYZERO);
+		player->SetVelocity(BOXVELOCITYZERO);
 	playerBoxMoveRightFlag = false;
 	playerBoxMoveLeftFlag = false;
 }
@@ -90,30 +135,30 @@ void GameManager::SetenemyBoxVelocity() {
 	enemyMoveTime += DeltaTime();
 	if (enemyMoveTime > 0)
 	{
-		if (ball.position.x + ball.width / 2 > enemyBox.position.x + enemyBox.width / 2)
+		if (ball->position.x + ball->width / 2 > enemy->position.x + enemy->width / 2)
 			enemyBoxMoveRightFlag = true;
-		else if (ball.position.x + ball.width / 2 < enemyBox.position.x + enemyBox.width / 2)
+		else if (ball->position.x + ball->width / 2 < enemy->position.x + enemy->width / 2)
 			enemyBoxMoveLeftFlag = true;
 		if (enemyBoxMoveRightFlag)
-			enemyBox.SetVelocity(BOXVELOCITYTORIGHT);
+			enemy->SetVelocity(BOXVELOCITYTORIGHT);
 		else if (enemyBoxMoveLeftFlag)
-			enemyBox.SetVelocity(BOXVELOCITYTOLEFT);
+			enemy->SetVelocity(BOXVELOCITYTOLEFT);
 		else
-			enemyBox.SetVelocity(BOXVELOCITYZERO);
+			enemy->SetVelocity(BOXVELOCITYZERO);
 		enemyBoxMoveRightFlag = false;
 		enemyBoxMoveLeftFlag = false;
 	}
 	else
 	{
-		enemyBox.SetVelocity(BOXVELOCITYZERO);
+		enemy->SetVelocity(BOXVELOCITYZERO);
 		enemyBoxMoveRightFlag = false;
 		enemyBoxMoveLeftFlag = false;
 	}
 }
 void GameManager::SetObjectPosition() {
-	playerBox.position += playerBox.velocity*PLAYER_BOX_VELOCITY;
-	enemyBox.position += enemyBox.velocity*ENEMY_BOX_VELOCITY;
-	ball.position += ball.velocity*(((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
+	player->position += player->velocity*PLAYER_BOX_VELOCITY;
+	enemy->position += enemy->velocity*ENEMY_BOX_VELOCITY;
+	ball->position += ball->velocity*(((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
 }
 
 void GameManager::OneGameEnd(bool whoWin) {

@@ -7,8 +7,6 @@
 #define PI 3.1415926535
 #include <cmath>
 
-CamMode camMode = WHOLE;
-bool ReshapeFlag = false;
 void myReshape(int width, int height)
 {	
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
@@ -92,7 +90,7 @@ void representBox(const Box& box, int colorR, int colorG, int colorB)
 	glEnd();
 }
 
-void representCircle(const Circle& circle)
+void representCircle(const Oval& circle)
 {
 	int lineNum = 100; // lineNum각형 으로 근사
 
@@ -113,7 +111,7 @@ void representCircle(const Circle& circle)
 }
 
 
-void lookAtBall(const Circle& circle) // to be modified
+void lookAtBall(const Oval& circle) // to be modified
 {
 
 	GLfloat lookAtX = circle.GetCurrentPosition().x + circle.GetSize().x / 2;
