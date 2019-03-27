@@ -56,10 +56,10 @@ template<typename T, typename Key>
 class Node {
 public:
 	T data;
-private:
 	Node* precessor = NULL;
 	Node* successor = NULL;
 	Node* sibling = NULL;
+private:
 	Key key;
 	Node(T _data, Key _key) {
 		data = _data;

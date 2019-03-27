@@ -7,6 +7,17 @@
 
 #include "MyDataType.h"
 using namespace std;
+class Object;
+class Oval;
+class Box;
+class Triangle;
+class CollisionComponent;
+class ObjectWithComponent;
+
+typedef Object Transform;
+typedef ObjectWithComponent GameObject;
+typedef Node<GameObject, string> GameObjectNode;
+typedef BinaryTree<GameObject, string> GameObjectTree;
 
 class Object {
 public:
@@ -95,18 +106,32 @@ public:
 	}
 };
 
-
-typedef Object Transform;
-
 class CollisionComponent {
 public:
 	Transform* collisionObject;
-	Object* parentObject;
+	GameObjectNode* gameObjectNode;
 	CollisionComponent(Transform* collisionObject, Object* parentObject) {
 		this->collisionObject = collisionObject;
 		this->collisionObject = collisionObject;
 	}
+	const Vector2 GetWorldPos() const {
+		GameObjectNode* temp = gameObjectNode;
+		Vector2 worldpos = collisionObject->position;
+		while (temp != NULL)
+		{
+			worldpos += temp->data.object->position;
+			temp = temp->precessor;
+		}
+		return worldpos;
+	}
+	const int GetWidth() const {
+		return collisionObject->width;
+	}
+	const int GetHeight() const {
+		return collisionObject->height;
+	}
 };
+
 class ObjectWithComponent {
 public:
 	Transform* object;

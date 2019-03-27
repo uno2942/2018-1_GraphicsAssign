@@ -11,7 +11,7 @@ GameManager::CollisionManager::CollisionManager() {
 }
 
 //공의 경우 vector normalization 체크
-void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector)
+void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector)
 {
 	while (collisionPairvector != NULL && !(collisionPairvector->empty())) {
 		if (collisionPairvector->back().first.first->shape == Object::Shape::OVAL)
@@ -46,7 +46,7 @@ void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<Object*, O
 
 
 //모든 게임 오브젝트 사이에 Collision을 체크함
-vector<pair<pair<Object*, Object*>, Vector2>>* GameManager::CollisionManager::CollisionCheck() {
+vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* GameManager::CollisionManager::CollisionCheck() {
 	collisionwithballmap["player"] = 0;
 	collisionwithballmap["enemy"] = 0;
 	collisionwithballmap["net"] = 0;
@@ -83,7 +83,7 @@ vector<pair<pair<Object*, Object*>, Vector2>>* GameManager::CollisionManager::Co
 /**
 return t...
 **/
-vector<pair<pair<Object*, Object*>, Vector2>>*  GameManager::CollisionManager::RestoreBallPosition(vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
+vector<pair<pair<Object*, Object*>, Vector2>>*  GameManager::CollisionManager::RestoreBallPosition(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector) {
 	ballDeltaTime = 0;
 	if (!collisionPairvector->empty()) {
 		GLdouble ballCollideWithCorner = -1;
@@ -216,7 +216,7 @@ vector<pair<pair<Object*, Object*>, Vector2>>*  GameManager::CollisionManager::R
 
 
 //두 오브젝트 사이에 Collision을 체크함
-void GameManager::CollisionManager::CheckCollision4side(CollisionObject* o1, CollisionObject* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
+void GameManager::CollisionManager::CheckCollision4side(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector) {
 	if (!CheckCollisionAtRightSide(o1, o2, collisionPairvector))
 	{
 		if (!CheckCollisionAtLeftSide(o1, o2, collisionPairvector))
@@ -235,24 +235,24 @@ void GameManager::CollisionManager::CheckCollision4side(CollisionObject* o1, Col
 /**
 o1이 o2를 오른쪽에서 충돌
 **/
-bool GameManager::CollisionManager::CheckCollisionAtRightSide(CollisionObject* o1, CollisionObject* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
+bool GameManager::CollisionManager::CheckCollisionAtRightSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector) {
 
-	if (Object::Shape::BOX == o1->shape && Object::Shape::BOX == o2->shape)
+	if (Object::Shape::BOX == o1.collisionObject->shape && Object::Shape::BOX == o2.collisionObject->shape)
 	{
-		if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x)
+		if (o1.GetWorldPos().x < o2.GetWorldPos().x && o1.GetWorldPos().x + o1.GetWidth() >= o2.GetWorldPos().x)
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
-			collisionPairvector->push_back(make_pair(make_pair(o2, o1), Vector2(1, 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o1.gameObjectNode), Vector2(-1, 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o2.gameObjectNode, o1.gameObjectNode), Vector2(1, 0)));
 			return true;
 		}
 		return false;
 	}
-	else if (Object::Shape::OVAL == o1->shape && Object::Shape::BOX == o2->shape) {
-		if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x &&
-			(o1->position.y + (o1->height / 2) >= o2->position.y && o1->position.y + (o1->height / 2) <= o2->position.y + o2->height))
+	else if (Object::Shape::OVAL == o1.collisionObject->shape && Object::Shape::BOX == o2.collisionObject->shape) {
+		if (o1.GetWorldPos().x < o2.GetWorldPos().x &&  o1.GetWorldPos().x + o1.GetWidth() >= o2.GetWorldPos().x &&
+			(o1.GetWorldPos().y + (o1.GetHeight() / 2) >= o2.GetWorldPos().y && o1.GetWorldPos().y + (o1.GetHeight() / 2) <= o2.GetWorldPos().y + o2.GetHeight()))
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
-			collisionPairvector->push_back(make_pair(make_pair(o2, o1), Vector2(1, 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o1.gameObjectNode), Vector2(-1, 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o1.gameObjectNode), Vector2(1, 0)));
 			return true;
 		}
 		else {
@@ -277,7 +277,7 @@ bool GameManager::CollisionManager::CheckCollisionAtRightSide(CollisionObject* o
 /**
 o1이 o2를 왼쪽에서 충돌
 **/
-bool GameManager::CollisionManager::CheckCollisionAtLeftSide(CollisionObject* o1, CollisionObject* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
+bool GameManager::CollisionManager::CheckCollisionAtLeftSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
 	if (Object::Shape::BOX == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.x + o1->width > o2->position.x + o2->width && o1->position.x <= o2->position.x + o2->width)
@@ -319,7 +319,7 @@ bool GameManager::CollisionManager::CheckCollisionAtLeftSide(CollisionObject* o1
 
 /**
 **/
-bool GameManager::CollisionManager::CheckCollisionAtUpSide(CollisionObject* o1, CollisionObject* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
+bool GameManager::CollisionManager::CheckCollisionAtUpSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
 	if (Object::Shape::OVAL == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.y < o2->position.y && o1->position.y + o1->height >= o2->position.y)
@@ -336,7 +336,7 @@ bool GameManager::CollisionManager::CheckCollisionAtUpSide(CollisionObject* o1, 
 
 /**
 **/
-bool GameManager::CollisionManager::CheckCollisionAtDownSide(CollisionObject* o1, CollisionObject* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
+bool GameManager::CollisionManager::CheckCollisionAtDownSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
 	if (Object::Shape::OVAL == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.y < o2->position.y + o2->height && o1->position.y + o1->height >= o2->position.y + o2->height &&

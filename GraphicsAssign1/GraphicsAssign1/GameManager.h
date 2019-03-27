@@ -13,9 +13,6 @@
 #define YBORDER 0
 using namespace std;
 
-typedef ObjectWithComponent ObjectNode;
-typedef BinaryTree<ObjectNode, string> ObjectTree;
-
 class GameManager {
 public:
 	class SceneManager {
@@ -25,27 +22,29 @@ public:
 	class CollisionManager {
 	public:
 		CollisionManager();
-		vector<pair<pair<Object*, Object*>, Vector2>>* CollisionCheck();
-		void CollisionHandler(vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
-		vector<pair<pair<Object*, Object*>, Vector2>>* RestoreBallPosition(vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
-		bool CheckCollisionAtUpSide(CollisionComponent* o1, CollisionComponent* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
-		bool CheckCollisionAtDownSide(CollisionComponent* o1, CollisionComponent* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
-		bool CheckCollisionAtLeftSide(CollisionComponent* o1, CollisionComponent* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
-		bool CheckCollisionAtRightSide(CollisionComponent* o1, CollisionComponent* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
-		void CheckCollision4side(CollisionComponent* o1, CollisionComponent* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* CollisionCheck();
+		void CollisionHandler(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector);
+		vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* RestoreBallPosition(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector);
+		bool CheckCollisionAtUpSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector);
+		bool CheckCollisionAtDownSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector);
+		bool CheckCollisionAtLeftSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector);
+		bool CheckCollisionAtRightSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector);
+		void CheckCollision4side(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector);
 		GLdouble ballDeltaTime = 0;
 
 		void PutCollisionObject(CollisionComponent collisionComponent) {
 			collisionList.push_back(collisionComponent);
 		}
-		void RemoveCollisionObjectInObjectNode(ObjectNode objectNode) {
-			for (int i = 0; i < collisionList.size; i++)
-				if(collisionList[i].parentObject == objectNode.object)
+		
+		void RemoveCollisionObjectInObjectNode(GameObject gameObject) {
+			for (int i = 0; i < collisionList.size; i++) //error will occur
+				if(collisionList[i].gameObjectNode->data.object == gameObject.object)
 					collisionList.erase(collisionList.begin()+i);
 		}
+
 	private:
 		vector<CollisionComponent> collisionList;
-		vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector;
+		vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector;
 		map<string, GLint> collisionwithballmap;
 		GLdouble ballCollideWithCorner = -1;
 		
@@ -73,20 +72,20 @@ public:
 	GameManager(GameManager const&) = delete;
 	void operator=(GameManager const&) = delete;
 
-	ObjectTree playerTree = ObjectTree("player");
-	Object* player;
-	ObjectTree tailTree = ObjectTree("tail");
-	ObjectTree earTree = ObjectTree("ear");
+	GameObjectTree playerTree = GameObjectTree("player");
+	GameObject* player;
+	GameObjectTree tailTree = GameObjectTree("tail");
+	GameObjectTree earTree = GameObjectTree("ear");
 
-	ObjectTree enemyTree = ObjectTree("enemyBox");
-	Object* enemy;
-	ObjectTree netTree = ObjectTree("net");
-	Object* net;
-	ObjectTree wallTree = ObjectTree("wall");
+	GameObjectTree enemyTree = GameObjectTree("enemyBox");
+	GameObject* enemy;
+	GameObjectTree netTree = GameObjectTree("net");
+	GameObject* net;
+	GameObjectTree wallTree = GameObjectTree("wall");
 	
-	ObjectTree ballTree = ObjectTree("ball");
-	Object* ball;
-	ObjectTree electricity = ObjectTree("electricity");
+	GameObjectTree ballTree = GameObjectTree("ball");
+	GameObject* ball;
+	GameObjectTree electricity = GameObjectTree("electricity");
 
 	static GLdouble BALL_VELOCITY;
 	int myScore = 0;

@@ -12,7 +12,7 @@ GameManager::GameManager() {
 	//Player 부분
 	{
 		player = new Box("playerBox", WORLDCOORDWINDOWWIDTH / 8, WORLDCOORDWINDOWHEIGHT / 18);
-		ObjectNode playerNode(player);
+		GameObject playerNode(player);
 		playerNode.AddCollisionComponentAsItself();
 		playerTree.insert_back(playerNode, "playerBox");
 		tailTree.insert_back(new Triangle("tail1", 10, 10, 180), "tail1");
@@ -25,7 +25,7 @@ GameManager::GameManager() {
 	//enemy 부분
 	{
 		enemy = new Box("enemyBox", WORLDCOORDWINDOWWIDTH / 8, WORLDCOORDWINDOWHEIGHT / 18);
-		ObjectNode enemyNode(enemy);
+		GameObject enemyNode(enemy);
 		enemyNode.AddCollisionComponentAsItself();
 		enemyTree.insert_back(enemyNode, "enemyBox");
 
@@ -33,21 +33,21 @@ GameManager::GameManager() {
 	//net 부분
 	{
 		net = new Box("net", WORLDCOORDWINDOWWIDTH / 32, WORLDCOORDWINDOWHEIGHT / 2);
-		ObjectNode netNode(net);
+		GameObject netNode(net);
 		netNode.AddCollisionComponentAsItself();
 		netTree.insert_back(netNode, "net");
 	}
 	//wall(스크린 밖에 안 보이는 벽) 부분
 	{
-	ObjectNode temp(new Box("leftwall", 10, WORLDCOORDWINDOWHEIGHT));
+		GameObject temp(new Box("leftwall", 10, WORLDCOORDWINDOWHEIGHT));
 	temp.AddCollisionComponentAsItself();
 	wallTree.insert_back(temp, "leftwall");
 
-	ObjectNode temp(new Box("rightwall", 10, WORLDCOORDWINDOWHEIGHT));
+	GameObject temp(new Box("rightwall", 10, WORLDCOORDWINDOWHEIGHT));
 	temp.AddCollisionComponentAsItself();
 	wallTree.insert_back(temp, "rightwall");
 
-	ObjectNode temp(new Box("topwall", 10, WORLDCOORDWINDOWHEIGHT));
+	GameObject temp(new Box("topwall", 10, WORLDCOORDWINDOWHEIGHT));
 	temp.AddCollisionComponentAsItself();
 	wallTree.insert_back(temp, "topwall");
 	//위치;;
@@ -55,7 +55,7 @@ GameManager::GameManager() {
 	//ball 부분
 	{
 		ball = new Oval("ball", 100, 100);
-		ObjectNode ballNode(ball);
+		GameObject ballNode(ball);
 		ballNode.AddCollisionComponentAsItself();
 		ballTree.insert_back(ballNode, "ball");
 		//electricity 그려야 함.
