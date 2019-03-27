@@ -15,7 +15,9 @@ public:
 	Object() {
 
 	}
-	Object(int _width, int _height, GLdouble _rotation) : width(_width), height(_height), rotation(_rotation) {
+	Object(int _width, int _height, GLdouble _rotation, Shape shape, GLdouble x=0, GLdouble y = 0, GLdouble vecx=0, GLdouble vecy=0) : width(_width), height(_height), rotation(_rotation) {
+		position = Vector2(x, y);
+		velocity = Vector2(vecx, vecy);
 
 	}
 
@@ -27,7 +29,7 @@ public:
 	Vector2 position;
 	Vector2 velocity;
 	GLdouble rotation;
-
+	bool isFixed = false;
 	inline const Vector2& GetCurrentPosition() const { return position; }
 	inline const GLdouble& GetCurrentRotation() const { return rotation; }
 	inline const Vector2& GetCurrentVelocity() const {
@@ -65,7 +67,7 @@ public:
 	Oval() {
 		shape = OVAL;
 	}
-	Oval(string name, int _width, int _height, GLdouble _rotation = 0) : Object(_width, _height, _rotation) {
+	Oval(string name, int _width, int _height, GLdouble _rotation = 0) : Object(_width, _height, _rotation, OVAL) {
 		shape = OVAL;
 		this->name = name;
 	}
@@ -76,7 +78,7 @@ public:
 	Box() {
 		shape = BOX;
 	}
-	Box(string name, int _width, int _height, GLdouble _rotation = 0): Object(_width, _height, _rotation) {
+	Box(string name, int _width, int _height, GLdouble _rotation = 0): Object(_width, _height, _rotation, BOX) {
 		shape = BOX;
 		this->name = name;
 	}
@@ -87,8 +89,36 @@ public:
 	Triangle() {
 		shape = TRIANGLE;
 	}
-	Triangle(string _name, int _width, int _height, GLdouble _rotation = 0) : Object(_width, _height, _rotation) {
+	Triangle(string _name, int _width, int _height, GLdouble _rotation = 0) : Object(_width, _height, _rotation, TRIANGLE) {
 		shape = TRIANGLE;
 		name = _name;
+	}
+};
+
+
+typedef Object Transform;
+
+class CollisionComponent {
+public:
+	Transform* collisionObject;
+	Object* parentObject;
+	CollisionComponent(Transform* collisionObject, Object* parentObject) {
+		this->collisionObject = collisionObject;
+		this->collisionObject = collisionObject;
+	}
+};
+class ObjectWithComponent {
+public:
+	Transform* object;
+	CollisionComponent* collisionComponent;
+	ObjectWithComponent(Transform* object, CollisionComponent* collisionComponent = NULL) {
+		this->object = object;
+		this->collisionComponent = collisionComponent;
+	}
+	void AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation) {
+		collisionComponent = new CollisionComponent(new Transform(width, height, rotation, shape, x, y), object);
+	}
+	void AddCollisionComponentAsItself() {
+		collisionComponent = new CollisionComponent(new Transform(object->width, object->height, object->rotation, object->shape, 0, 0), object);
 	}
 };

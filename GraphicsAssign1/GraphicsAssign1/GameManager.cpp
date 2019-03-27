@@ -8,44 +8,57 @@ using namespace std;
 GLdouble GameManager::BALL_VELOCITY = 300;
 GameManager::GameManager() {
 	srand((unsigned int)time(0));
+
 	//Player 부분
 	{
 		player = new Box("playerBox", WORLDCOORDWINDOWWIDTH / 8, WORLDCOORDWINDOWHEIGHT / 18);
-		playerTree.insert_back(player, "playerBox");
+		ObjectNode playerNode(player);
+		playerNode.AddCollisionComponentAsItself();
+		playerTree.insert_back(playerNode, "playerBox");
 		tailTree.insert_back(new Triangle("tail1", 10, 10, 180), "tail1");
 		tailTree.insert_back(new Triangle("tail2", 10, 10, -30), "tail2");
 		playerTree.insert_back(&tailTree);
 
 		//ear를 그려야 하는데 보면서 그려야 할 듯...
-		collisionManager.PutCollisionObject(playerTree.root, *playerTree.root->data);
+
 	}
 	//enemy 부분
 	{
 		enemy = new Box("enemyBox", WORLDCOORDWINDOWWIDTH / 8, WORLDCOORDWINDOWHEIGHT / 18);
-		enemyTree.insert_back(enemy, "enemyBox");
-		collisionManager.PutCollisionObject(enemyTree.root, *enemyTree.root->data);
+		ObjectNode enemyNode(enemy);
+		enemyNode.AddCollisionComponentAsItself();
+		enemyTree.insert_back(enemyNode, "enemyBox");
+
 	}
 	//net 부분
 	{
 		net = new Box("net", WORLDCOORDWINDOWWIDTH / 32, WORLDCOORDWINDOWHEIGHT / 2);
-		netTree.insert_back(ball, "net");
-		collisionManager.PutCollisionObject(netTree.root, *netTree.root->data);
+		ObjectNode netNode(net);
+		netNode.AddCollisionComponentAsItself();
+		netTree.insert_back(netNode, "net");
 	}
 	//wall(스크린 밖에 안 보이는 벽) 부분
-	{wallTree.insert_back(new Box("leftwall", 10, WORLDCOORDWINDOWHEIGHT), "leftwall");
+	{
+	ObjectNode temp(new Box("leftwall", 10, WORLDCOORDWINDOWHEIGHT));
+	temp.AddCollisionComponentAsItself();
+	wallTree.insert_back(temp, "leftwall");
 
-	collisionManager.PutCollisionObject(wallTree.root, *wallTree.root->data);
-	wallTree.insertAsSibling(new Box("rightwall", 10, WORLDCOORDWINDOWHEIGHT), "rightwall", "leftwall");
-	collisionManager.PutCollisionObject(wallTree.Find("rightwall"), *wallTree.Find("rightwall")->data);
-	wallTree.insertAsSibling(new Box("topwall", WORLDCOORDWINDOWWIDTH, 10), "topwall", "leftwall");
-	collisionManager.PutCollisionObject(wallTree.Find("topwall"), *wallTree.Find("topwall")->data);
+	ObjectNode temp(new Box("rightwall", 10, WORLDCOORDWINDOWHEIGHT));
+	temp.AddCollisionComponentAsItself();
+	wallTree.insert_back(temp, "rightwall");
+
+	ObjectNode temp(new Box("topwall", 10, WORLDCOORDWINDOWHEIGHT));
+	temp.AddCollisionComponentAsItself();
+	wallTree.insert_back(temp, "topwall");
+	//위치;;
 	}
 	//ball 부분
 	{
 		ball = new Oval("ball", 100, 100);
-		ballTree.insert_back(ball, "ball");
+		ObjectNode ballNode(ball);
+		ballNode.AddCollisionComponentAsItself();
+		ballTree.insert_back(ballNode, "ball");
 		//electricity 그려야 함.
-		collisionManager.PutCollisionObject(ballTree.root, *ballTree.root->data);
 	}
 	objectsTreeVectorForDraw.push_back(playerTree);
 	objectsTreeVectorForDraw.push_back(enemyTree);
@@ -72,6 +85,14 @@ void GameManager::SpecialKeyboardInputHandler(int key) {
 	}
 }
 
+void GameManager::StartGame() {
+	myScore = 0;
+	enemyScore = 0;
+	WhoFinallyWin = 0;
+	InitializeGame();
+	/*...*/
+}
+
 void GameManager::InitializeGame() {
 	oneGameEnd = false;
 	enemyMoveTime = 0;
@@ -80,13 +101,7 @@ void GameManager::InitializeGame() {
 	timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 	prevTime = glutGet(GLUT_ELAPSED_TIME);
 }
-void GameManager::StartGame() {
-	myScore = 0;
-	enemyScore = 0;
-	WhoFinallyWin = 0;
-	InitializeGame();
-	/*...*/
-}
+
 /**
 World coord. 기준
 **/
@@ -94,10 +109,10 @@ void GameManager::InitObjectsPosition() {
 	(*player).SetPosition(INITIAL_PLAYER_BOX_POSITION);
 	(*enemy).SetPosition(INITIAL_ENEMY_BOX_POSITION);
 	(*ball).SetPosition(INITIAL_BALL_POSITION);
-	netTree.root->data->SetPosition(INITIAL_NET_POSITION);
-	wallTree.root->data->SetPosition(INITIAL_LEFT_WALL_POSITION);
-	wallTree.Find("rightwall")->data->SetPosition(INITIAL_RIGHT_WALL_POSITION);
-	wallTree.Find("topwall")->data->SetPosition(INITIAL_TOP_WALL_POSITION);
+	netTree.root->data.object->SetPosition(INITIAL_NET_POSITION);
+	wallTree.root->data.object->SetPosition(INITIAL_LEFT_WALL_POSITION);
+	wallTree.Find("rightwall")->data.object->SetPosition(INITIAL_RIGHT_WALL_POSITION);
+	wallTree.Find("topwall")->data.object->SetPosition(INITIAL_TOP_WALL_POSITION);
 }
 
 /**
@@ -129,6 +144,7 @@ void GameManager::SetplayerBoxVelocity() {
 	playerBoxMoveRightFlag = false;
 	playerBoxMoveLeftFlag = false;
 }
+
 void GameManager::SetenemyBoxVelocity() {
 	if (enemyMoveTime > 3000)
 		enemyMoveTime = -5000;
@@ -155,6 +171,7 @@ void GameManager::SetenemyBoxVelocity() {
 		enemyBoxMoveLeftFlag = false;
 	}
 }
+
 void GameManager::SetObjectPosition() {
 	player->position += player->velocity*PLAYER_BOX_VELOCITY;
 	enemy->position += enemy->velocity*ENEMY_BOX_VELOCITY;

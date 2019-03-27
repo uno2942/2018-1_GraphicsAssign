@@ -13,17 +13,8 @@ GameManager::CollisionManager::CollisionManager() {
 //공의 경우 vector normalization 체크
 void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector)
 {
-	bool doubleCollision = (!GameManager::getInstance().ballUpCollisionFlag || GameManager::getInstance().ballDownCollisionFlag || GameManager::getInstance().ballRightCollisionFlag || GameManager::getInstance().ballLeftCollisionFlag) &&
-
-		(GameManager::getInstance().ballUpCollisionFlag || !GameManager::getInstance().ballDownCollisionFlag || GameManager::getInstance().ballRightCollisionFlag || GameManager::getInstance().ballLeftCollisionFlag) &&
-
-		(GameManager::getInstance().ballUpCollisionFlag || GameManager::getInstance().ballDownCollisionFlag || !GameManager::getInstance().ballRightCollisionFlag && GameManager::getInstance().ballLeftCollisionFlag) &&
-
-		(GameManager::getInstance().ballUpCollisionFlag || GameManager::getInstance().ballDownCollisionFlag || GameManager::getInstance().ballRightCollisionFlag || !GameManager::getInstance().ballLeftCollisionFlag);
-
-
 	while (collisionPairvector != NULL && !(collisionPairvector->empty())) {
-		if (!doubleCollision && collisionPairvector->back().first.first->shape == Object::Shape::OVAL)
+		if (collisionPairvector->back().first.first->shape == Object::Shape::OVAL)
 		{
 			Object* o1 = collisionPairvector->back().first.first;
 			Object* o2 = collisionPairvector->back().first.second;
@@ -62,6 +53,8 @@ vector<pair<pair<Object*, Object*>, Vector2>>* GameManager::CollisionManager::Co
 	collisionwithballmap["leftwall"] = 0;
 	collisionwithballmap["rightwall"] = 0;
 	collisionwithballmap["topwall"] = 0;
+
+
 	if (GameManager::getInstance().ball->position.y <= YBORDER)
 	{
 		if (GameManager::getInstance().ball->position.x + (GameManager::getInstance().ball->width / 2) <= GameManager::getInstance().net->position.x)
@@ -79,18 +72,10 @@ vector<pair<pair<Object*, Object*>, Vector2>>* GameManager::CollisionManager::Co
 	}
 	else
 	{
-		CheckCollisionAtRightSide(&(GameManager::getInstance().playerBox), &GameManager::getInstance().net, collisionPairvector);
-		CheckCollisionAtLeftSide(&GameManager::getInstance().playerBox, &GameManager::getInstance().leftwall, collisionPairvector);
-
-		CheckCollisionAtLeftSide(&GameManager::getInstance().enemyBox, &GameManager::getInstance().net, collisionPairvector);
-		CheckCollisionAtRightSide(&GameManager::getInstance().enemyBox, &GameManager::getInstance().rightwall, collisionPairvector);
-
-		CheckCollision4side(&GameManager::getInstance().ball, &GameManager::getInstance().playerBox, collisionPairvector);
-		CheckCollision4side(&GameManager::getInstance().ball, &GameManager::getInstance().enemyBox, collisionPairvector);
-		CheckCollision4side(&GameManager::getInstance().ball, &GameManager::getInstance().net, collisionPairvector);
-		CheckCollisionAtLeftSide(&GameManager::getInstance().ball, &GameManager::getInstance().leftwall, collisionPairvector);
-		CheckCollisionAtRightSide(&GameManager::getInstance().ball, &GameManager::getInstance().rightwall, collisionPairvector);
-		CheckCollisionAtUpSide(&GameManager::getInstance().ball, &GameManager::getInstance().topwall, collisionPairvector);
+		for (int i = 0; i < collisionList.size(); i++) {
+			for (int j = i + 1; j < collisionList.size(); j++)
+				CheckCollision4side(&collisionList[i], &collisionList[j], collisionPairvector);
+		}
 		return collisionPairvector;
 	}
 }
@@ -231,7 +216,7 @@ vector<pair<pair<Object*, Object*>, Vector2>>*  GameManager::CollisionManager::R
 
 
 //두 오브젝트 사이에 Collision을 체크함
-void GameManager::CollisionManager::CheckCollision4side(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
+void GameManager::CollisionManager::CheckCollision4side(CollisionObject* o1, CollisionObject* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
 	if (!CheckCollisionAtRightSide(o1, o2, collisionPairvector))
 	{
 		if (!CheckCollisionAtLeftSide(o1, o2, collisionPairvector))
@@ -248,16 +233,16 @@ void GameManager::CollisionManager::CheckCollision4side(Object* o1, Object* o2, 
 }
 
 /**
-게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 o1이 o2를 오른쪽에서 충돌
 **/
-bool GameManager::CollisionManager::CheckCollisionAtRightSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
+bool GameManager::CollisionManager::CheckCollisionAtRightSide(CollisionObject* o1, CollisionObject* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
 
 	if (Object::Shape::BOX == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x)
 		{
 			collisionPairvector->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o2, o1), Vector2(1, 0)));
 			return true;
 		}
 		return false;
@@ -266,8 +251,9 @@ bool GameManager::CollisionManager::CheckCollisionAtRightSide(Object* o1, Object
 		if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x &&
 			(o1->position.y + (o1->height / 2) >= o2->position.y && o1->position.y + (o1->height / 2) <= o2->position.y + o2->height))
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1, o2), Vector2(-2 * (o1->velocity.x), 0)));
-			collisionwithballmap[o2->name] = 1;
+			collisionPairvector->push_back(make_pair(make_pair(o1, o2), Vector2(-1, 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o2, o1), Vector2(1, 0)));
+			return true;
 		}
 		else {
 			Vector2 center = Vector2(o1->position.x + o1->width / 2, o1->position.y + o1->height / 2);
@@ -278,32 +264,26 @@ bool GameManager::CollisionManager::CheckCollisionAtRightSide(Object* o1, Object
 			if (r >= distance)
 			{
 				collisionPairvector->push_back(make_pair(make_pair(o1, o2),
-					Vector2::normalize(centertocorner)*
-					(2 * BALL_VELOCITY*abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
-					(Vector2::abs(o1->velocity)*Vector2::abs(centertocorner)))));
-								collisionwithballmap[o2->name] = 1;
-			}
-			else {
-
+					Vector2::normalize(centertocorner)));
+				collisionPairvector->push_back(make_pair(make_pair(o2, o1),
+					-Vector2::normalize(centertocorner)));
+				return true;
 			}
 		}
 	}
-	else {
-
-	}
-	return (collisionwithballmap[o2->name] == 1);
+	return false;
 }
 
 /**
-게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 o1이 o2를 왼쪽에서 충돌
 **/
-bool GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
+bool GameManager::CollisionManager::CheckCollisionAtLeftSide(CollisionObject* o1, CollisionObject* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
 	if (Object::Shape::BOX == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.x + o1->width > o2->position.x + o2->width && o1->position.x <= o2->position.x + o2->width)
 		{
 			collisionPairvector->push_back(make_pair(make_pair(o1, o2), Vector2(1, 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o2, o1), Vector2(-1, 0)));
 			return true;
 		}
 		return false;
@@ -312,8 +292,9 @@ bool GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object*
 		if (o1->position.x + o1->width > o2->position.x + o2->width && o1->position.x <= o2->position.x + o2->width &&
 			(o1->position.y + (o1->height / 2) >= o2->position.y && o1->position.y + (o1->height / 2) <= o2->position.y + o2->height))
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1, o2), Vector2(-2 * (o1->velocity.x), 0)));
-			collisionwithballmap[o2->name] = 2;
+			collisionPairvector->push_back(make_pair(make_pair(o1, o2), Vector2(1, 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o2, o1), Vector2(-1, 0)));
+			return true;
 		}
 		else {
 			Vector2 center = Vector2(o1->position.x + o1->width / 2, o1->position.y + o1->height / 2);
@@ -324,65 +305,47 @@ bool GameManager::CollisionManager::CheckCollisionAtLeftSide(Object* o1, Object*
 			if (r >= distance)
 			{
 				collisionPairvector->push_back(make_pair(make_pair(o1, o2),
-					Vector2::normalize(centertocorner)*
-					(2 * BALL_VELOCITY*abs(o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y) /
-					(Vector2::abs(o1->velocity)*distance))));
-				collisionwithballmap[o2->name] = 2;
-			}
-			else
-			{
+					Vector2::normalize(centertocorner)));
+				collisionPairvector->push_back(make_pair(make_pair(o2, o1),
+					-Vector2::normalize(centertocorner)));
+				return true;
 			}
 		}
 	}
-	else
-	{
-
-	}
-	return (collisionwithballmap[o2->name] == 2);
+	return false;
 }
 
 
 
 /**
-게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 **/
-bool GameManager::CollisionManager::CheckCollisionAtUpSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
+bool GameManager::CollisionManager::CheckCollisionAtUpSide(CollisionObject* o1, CollisionObject* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
 	if (Object::Shape::OVAL == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.y < o2->position.y && o1->position.y + o1->height >= o2->position.y)
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1, o2), Vector2(0, -2 * (o1->velocity.y))));
-			collisionwithballmap[o2->name] = 3;
-		}
-		else
-		{
+			collisionPairvector->push_back(make_pair(make_pair(o1, o2), Vector2(0, -1)));
+			collisionPairvector->push_back(make_pair(make_pair(o2, o1), Vector2(0, 1)));
+			return true;
 		}
 	}
-	else
-	{
-		return true;
-	}
-	return (collisionwithballmap[o2->name] == 3);
+	return false;
 }
 
 
 
 /**
-게임잼처럼 막 짠 코드라 후에 고칠 필요가 있습니다.
 **/
-bool GameManager::CollisionManager::CheckCollisionAtDownSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
+bool GameManager::CollisionManager::CheckCollisionAtDownSide(CollisionObject* o1, CollisionObject* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector) {
 	if (Object::Shape::OVAL == o1->shape && Object::Shape::BOX == o2->shape)
 	{
 		if (o1->position.y < o2->position.y + o2->height && o1->position.y + o1->height >= o2->position.y + o2->height &&
 			(o1->position.x + (o1->width / 2) >= o2->position.x && o1->position.x + (o1->width / 2) <= o2->position.x + o2->width))
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1, o2), Vector2(0, -2 * (o1->velocity.y))));
-			collisionwithballmap[o2->name] = 4;
+			collisionPairvector->push_back(make_pair(make_pair(o1, o2), Vector2(0, 1)));
+			collisionPairvector->push_back(make_pair(make_pair(o2, o1), Vector2(0, -1)));
+			return true;
 		}
-		else {}
 	}
-	else {
-		return true;
-	}
-	return (collisionwithballmap[o2->name] == 4);
+	return false;
 }

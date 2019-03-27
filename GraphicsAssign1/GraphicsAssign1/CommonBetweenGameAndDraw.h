@@ -7,4 +7,4 @@ enum CamMode { WHOLE, FOLLOWBALL };
 CamMode camMode = WHOLE;
 bool ReshapeFlag = false;
 
-static vector<BinaryTree<Object*, string>> objectsTreeVectorForDraw;
+static vector<BinaryTree<ObjectWithComponent, string>> objectsTreeVectorForDraw;

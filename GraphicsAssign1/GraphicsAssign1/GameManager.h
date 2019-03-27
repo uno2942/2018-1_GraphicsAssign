@@ -12,8 +12,10 @@
 #define ENEMY_BOX_VELOCITY 0.5
 #define YBORDER 0
 using namespace std;
-typedef BinaryTree<Object*, string> ObjectTree;
-typedef Node<Object*, string> ObjectNode;
+
+typedef ObjectWithComponent ObjectNode;
+typedef BinaryTree<ObjectNode, string> ObjectTree;
+
 class GameManager {
 public:
 	class SceneManager {
@@ -26,38 +28,23 @@ public:
 		vector<pair<pair<Object*, Object*>, Vector2>>* CollisionCheck();
 		void CollisionHandler(vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
 		vector<pair<pair<Object*, Object*>, Vector2>>* RestoreBallPosition(vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
-		bool CheckCollisionAtUpSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
-		bool CheckCollisionAtDownSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
-		bool CheckCollisionAtLeftSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
-		bool CheckCollisionAtRightSide(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
-		void CheckCollision4side(Object* o1, Object* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		bool CheckCollisionAtUpSide(CollisionComponent* o1, CollisionComponent* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		bool CheckCollisionAtDownSide(CollisionComponent* o1, CollisionComponent* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		bool CheckCollisionAtLeftSide(CollisionComponent* o1, CollisionComponent* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		bool CheckCollisionAtRightSide(CollisionComponent* o1, CollisionComponent* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
+		void CheckCollision4side(CollisionComponent* o1, CollisionComponent* o2, vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector);
 		GLdouble ballDeltaTime = 0;
-		void PutCollisionObject(ObjectTree* tree, Object object) {
-			collisionList.push_back(CollisionObject(tree->root, object.shape, object.width, object.height, object.rotation));
+
+		void PutCollisionObject(CollisionComponent collisionComponent) {
+			collisionList.push_back(collisionComponent);
 		}
-		void PutCollisionObject(ObjectNode* node, Object object) {
-			collisionList.push_back(CollisionObject(node, object.shape, object.width, object.height, object.rotation));
-		}
-		void RemoveCollisionObject(ObjectTree* tree) {
+		void RemoveCollisionObjectInObjectNode(ObjectNode objectNode) {
 			for (int i = 0; i < collisionList.size; i++)
-				if (collisionList[i].objectNode == tree->root)
+				if(collisionList[i].parentObject == objectNode.object)
 					collisionList.erase(collisionList.begin()+i);
 		}
-		void RemoveCollisionObject(ObjectNode* node) {
-			for (int i = 0; i < collisionList.size; i++)
-				if (collisionList[i].objectNode == node)
-					collisionList.erase(collisionList.begin() + i);
-		}
 	private:
-		class CollisionObject : public Object {
-		public:
-			ObjectNode* objectNode;
-			CollisionObject(ObjectNode* _objectNode, Shape _shape, int _width, int _height, GLdouble _rotation = 0) : Object(_width, _height, _rotation) {
-				objectNode = _objectNode;
-				shape = _shape;
-			}
-		};
-		vector<CollisionObject> collisionList;
+		vector<CollisionComponent> collisionList;
 		vector<pair<pair<Object*, Object*>, Vector2>>* collisionPairvector;
 		map<string, GLint> collisionwithballmap;
 		GLdouble ballCollideWithCorner = -1;

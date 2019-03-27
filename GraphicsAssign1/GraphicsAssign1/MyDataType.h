@@ -19,15 +19,24 @@ public:
 	Vector2 operator-(const Vector2& rhs) {
 		return Vector2(x - rhs.x, y - rhs.y);
 	}
+	Vector2 operator*(const GLdouble d) {
+		return Vector2((*this).x * d, (*this).y * d);
+	}
+	Vector2 operator/(const GLdouble d) {
+		return Vector2((*this).x / d, (*this).y / d);
+	}
+	Vector2 operator-() const {
+		Vector2 v;
+		v.x = -x;
+		v.y = -y;
+		return v;
+	}
 	Vector2& operator+=(const Vector2& rhs) {
 		(*this).x += rhs.x;
 		(*this).y += rhs.y;
 		return *this;
 	}
 
-	Vector2 operator*(const GLdouble d) {
-		return Vector2((*this).x * d, (*this).y * d);
-	}
 	inline static GLdouble abs(const Vector2 & a)
 	{
 		return sqrt(a.x*a.x + a.y*a.y);
