@@ -43,11 +43,11 @@ GameManager::GameManager() {
 	temp.AddCollisionComponentAsItself();
 	wallTree.insert_back(temp, "leftwall");
 
-	GameObject temp(new Box("rightwall", 10, WORLDCOORDWINDOWHEIGHT));
+	temp = GameObject(new Box("rightwall", 10, WORLDCOORDWINDOWHEIGHT));
 	temp.AddCollisionComponentAsItself();
 	wallTree.insert_back(temp, "rightwall");
 
-	GameObject temp(new Box("topwall", 10, WORLDCOORDWINDOWHEIGHT));
+	temp = GameObject(new Box("topwall", 10, WORLDCOORDWINDOWHEIGHT));
 	temp.AddCollisionComponentAsItself();
 	wallTree.insert_back(temp, "topwall");
 	//À§Ä¡;;

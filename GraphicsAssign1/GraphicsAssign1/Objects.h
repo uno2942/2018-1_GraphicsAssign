@@ -14,19 +14,14 @@ class Triangle;
 class CollisionComponent;
 class ObjectWithComponent;
 
-typedef Object Transform;
-typedef ObjectWithComponent GameObject;
-typedef Node<GameObject, string> GameObjectNode;
-typedef BinaryTree<GameObject, string> GameObjectTree;
-
 class Object {
 public:
-	enum Shape { OVAL, BOX, TRIANGLE};
+	enum Shape { OVAL, BOX, TRIANGLE };
 	Shape shape;
 	Object() {
 
 	}
-	Object(int _width, int _height, GLdouble _rotation, Shape shape, GLdouble x=0, GLdouble y = 0, GLdouble vecx=0, GLdouble vecy=0) : width(_width), height(_height), rotation(_rotation) {
+	Object(int _width, int _height, GLdouble _rotation, Shape shape, GLdouble x = 0, GLdouble y = 0, GLdouble vecx = 0, GLdouble vecy = 0) : width(_width), height(_height), rotation(_rotation) {
 		position = Vector2(x, y);
 		velocity = Vector2(vecx, vecy);
 
@@ -74,7 +69,7 @@ public:
 };
 
 class Oval : public Object {
-public: 
+public:
 	Oval() {
 		shape = OVAL;
 	}
@@ -89,13 +84,13 @@ public:
 	Box() {
 		shape = BOX;
 	}
-	Box(string name, int _width, int _height, GLdouble _rotation = 0): Object(_width, _height, _rotation, BOX) {
+	Box(string name, int _width, int _height, GLdouble _rotation = 0) : Object(_width, _height, _rotation, BOX) {
 		shape = BOX;
 		this->name = name;
 	}
 };
 
-class Triangle : public Object{
+class Triangle : public Object {
 public:
 	Triangle() {
 		shape = TRIANGLE;
@@ -106,16 +101,30 @@ public:
 	}
 };
 
+typedef Object Transform;
+
+class ObjectWithComponent {
+public:	
+	Transform* object; //Object의 Transform Component
+	CollisionComponent* collisionComponent; // object의 collision Component
+	ObjectWithComponent(Transform* object=NULL, CollisionComponent* collisionComponent = NULL) {
+		this->object = object;
+		this->collisionComponent = collisionComponent;
+	}
+	void AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation);
+	void AddCollisionComponentAsItself();
+};
+
 class CollisionComponent {
 public:
-	Transform* collisionObject;
-	GameObjectNode* gameObjectNode;
+	Transform* collisionObject; //Collision object를 의미.
+	Node<ObjectWithComponent, string>* gameObjectNode; //이 Component를 가진 GameObjectNode를 가르킴.
 	CollisionComponent(Transform* collisionObject, Object* parentObject) {
 		this->collisionObject = collisionObject;
 		this->collisionObject = collisionObject;
 	}
 	const Vector2 GetWorldPos() const {
-		GameObjectNode* temp = gameObjectNode;
+		Node<ObjectWithComponent, string>* temp = gameObjectNode;
 		Vector2 worldpos = collisionObject->position;
 		while (temp != NULL)
 		{
@@ -130,20 +139,22 @@ public:
 	const int GetHeight() const {
 		return collisionObject->height;
 	}
+	const Object::Shape GetShape() const {
+		return collisionObject->shape;
+	}
 };
 
-class ObjectWithComponent {
-public:
-	Transform* object;
-	CollisionComponent* collisionComponent;
-	ObjectWithComponent(Transform* object, CollisionComponent* collisionComponent = NULL) {
-		this->object = object;
-		this->collisionComponent = collisionComponent;
-	}
-	void AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation) {
-		collisionComponent = new CollisionComponent(new Transform(width, height, rotation, shape, x, y), object);
-	}
-	void AddCollisionComponentAsItself() {
-		collisionComponent = new CollisionComponent(new Transform(object->width, object->height, object->rotation, object->shape, 0, 0), object);
-	}
-};
+typedef ObjectWithComponent GameObject;
+typedef Node<ObjectWithComponent, string> GameObjectNode;
+typedef BinaryTree<GameObject, string> GameObjectTree;
+
+
+void ObjectWithComponent::AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation) {
+	collisionComponent = new CollisionComponent(new Transform(width, height, rotation, shape, x, y), object);
+}
+void ObjectWithComponent::AddCollisionComponentAsItself() {
+	collisionComponent = new CollisionComponent(new Transform(object->width, object->height, object->rotation, object->shape, 0, 0), object);
+}
+
+
+

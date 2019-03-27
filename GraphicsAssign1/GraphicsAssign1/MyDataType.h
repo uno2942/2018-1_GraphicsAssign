@@ -59,8 +59,6 @@ public:
 	Node* precessor = NULL;
 	Node* successor = NULL;
 	Node* sibling = NULL;
-private:
-	Key key;
 	Node(T _data, Key _key) {
 		data = _data;
 		key = _key;
@@ -70,6 +68,7 @@ private:
 		precessor = parent;
 		key = _key;
 	}
+	Key key;
 };
 
 template<typename T, typename Key>

@@ -37,7 +37,7 @@ public:
 		}
 		
 		void RemoveCollisionObjectInObjectNode(GameObject gameObject) {
-			for (int i = 0; i < collisionList.size; i++) //error will occur
+			for (int i = 0; i < collisionList.size(); i++) //error will occur
 				if(collisionList[i].gameObjectNode->data.object == gameObject.object)
 					collisionList.erase(collisionList.begin()+i);
 		}
@@ -73,18 +73,18 @@ public:
 	void operator=(GameManager const&) = delete;
 
 	GameObjectTree playerTree = GameObjectTree("player");
-	GameObject* player;
+	Object* player;
 	GameObjectTree tailTree = GameObjectTree("tail");
 	GameObjectTree earTree = GameObjectTree("ear");
 
 	GameObjectTree enemyTree = GameObjectTree("enemyBox");
-	GameObject* enemy;
+	Object* enemy;
 	GameObjectTree netTree = GameObjectTree("net");
-	GameObject* net;
+	Object* net;
 	GameObjectTree wallTree = GameObjectTree("wall");
 	
 	GameObjectTree ballTree = GameObjectTree("ball");
-	GameObject* ball;
+	Object* ball;
 	GameObjectTree electricity = GameObjectTree("electricity");
 
 	static GLdouble BALL_VELOCITY;
