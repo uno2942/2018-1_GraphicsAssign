@@ -97,8 +97,8 @@ public:
 			while (temp->successor != NULL)
 				temp = temp->successor;
 			temp->successor = new Node<T, Key>(data, key, temp);
-			countOfNodes++;
 		}
+		countOfNodes++;
 	}
 	void insert_back(Node<T, Key>* node) {
 		if (root == NULL)
@@ -110,8 +110,8 @@ public:
 				temp = temp->successor;
 			temp->successor = node;
 			node->precessor = temp;
-			countOfNodes += 1;
 		}
+		countOfNodes += 1;
 	}
 	void insert_back(BinaryTree* tree2) {
 		if (root == NULL)
@@ -123,8 +123,8 @@ public:
 				temp = temp->successor;
 			temp->successor = tree2->root;
 			tree2->root->precessor = temp;
-			countOfNodes += tree2->count();
 		}
+		countOfNodes += tree2->count();
 	}
 	void insertAsChildren(T& data, Key dataKey, Key parentKey) {
 		Node<T, Key>* temp = Find(parentKey);

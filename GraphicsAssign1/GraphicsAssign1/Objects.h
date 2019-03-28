@@ -18,7 +18,7 @@ public:
 	enum Shape { OVAL, BOX, TRIANGLE };
 	Shape shape;
 	Object();
-	Object(int _width, int _height, GLdouble _rotation, Shape shape, GLdouble x = 0, GLdouble y = 0, GLdouble vecx = 0, GLdouble vecy = 0) : width(_width), height(_height), rotation(_rotation) {
+	Object(int _width, int _height, GLdouble _rotation, Shape _shape, GLdouble x = 0, GLdouble y = 0, GLdouble vecx = 0, GLdouble vecy = 0) : width(_width), height(_height), rotation(_rotation), shape(_shape) {
 		position = Vector2(x, y);
 		velocity = Vector2(vecx, vecy);
 
