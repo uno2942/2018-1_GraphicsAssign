@@ -32,18 +32,18 @@ public:
 		void CheckCollision4side(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector);
 		GLdouble ballDeltaTime = 0;
 
-		void PutCollisionObject(CollisionComponent collisionComponent) {
+		static void PutCollisionObject(CollisionComponent collisionComponent) {
 			collisionList.push_back(collisionComponent);
 		}
 		
-		void RemoveCollisionObjectInObjectNode(GameObject gameObject) {
+		static void RemoveCollisionObjectInObjectNode(GameObject gameObject) {
 			for (int i = 0; i < collisionList.size(); i++) //error will occur
 				if(collisionList[i].gameObjectNode->data.object == gameObject.object)
 					collisionList.erase(collisionList.begin()+i);
 		}
 
 	private:
-		vector<CollisionComponent> collisionList;
+		static vector<CollisionComponent> collisionList;
 		vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector;
 		map<string, GLint> collisionwithballmap;
 		GLdouble ballCollideWithCorner = -1;

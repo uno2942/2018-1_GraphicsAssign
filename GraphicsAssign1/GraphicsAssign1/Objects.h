@@ -11,7 +11,6 @@ class Object;
 class Oval;
 class Box;
 class Triangle;
-class CollisionComponent;
 class ObjectWithComponent;
 
 class Object {
@@ -67,6 +66,7 @@ public:
 		return Vector2(width, height);
 	}
 };
+typedef Object Transform;
 
 class Oval : public Object {
 public:
@@ -78,7 +78,6 @@ public:
 		this->name = name;
 	}
 };
-
 class Box : public Object { //플레이어와 적의 Object
 public:
 	Box() {
@@ -89,7 +88,6 @@ public:
 		this->name = name;
 	}
 };
-
 class Triangle : public Object {
 public:
 	Triangle() {
@@ -101,59 +99,64 @@ public:
 	}
 };
 
-typedef Object Transform;
 
 class ObjectWithComponent {
 public:	
+	class CollisionComponent_ {
+	public:
+		Transform* collisionObject; //Collision object를 의미.
+		Node<ObjectWithComponent, string>* gameObjectNode; //이 Component를 가진 GameObjectNode를 가르킴.
+		CollisionComponent_(Transform* collisionObject, Object* parentObject) {
+			this->collisionObject = collisionObject;
+			this->collisionObject = collisionObject;
+			if (f1 != NULL)
+				f1(*this);
+		}
+		const Vector2 GetWorldPos() const {
+			Node<ObjectWithComponent, string>* temp = gameObjectNode;
+			Vector2 worldpos = collisionObject->position;
+			while (temp != NULL)
+			{
+				worldpos += temp->data.object->position;
+				temp = temp->precessor;
+			}
+			return worldpos;
+		}
+		const int GetWidth() const {
+			return collisionObject->width;
+		}
+		const int GetHeight() const {
+			return collisionObject->height;
+		}
+		const Object::Shape GetShape() const {
+			return collisionObject->shape;
+		}
+		static void ConnectCollisionManagerAddFunction(void(*g) (CollisionComponent_ collisionComponent)) {
+			f1 = g;
+		}
+	private:
+		static void(*f1) (CollisionComponent_ collisionComponent);
+	};
 	Transform* object; //Object의 Transform Component
-	CollisionComponent* collisionComponent; // object의 collision Component
-	ObjectWithComponent(Transform* object=NULL, CollisionComponent* collisionComponent = NULL) {
+	CollisionComponent_* collisionComponent; // object의 collision Component
+	ObjectWithComponent(Transform* object=NULL, CollisionComponent_* collisionComponent = NULL) {
 		this->object = object;
 		this->collisionComponent = collisionComponent;
 	}
 	void AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation);
 	void AddCollisionComponentAsItself();
 };
-
-class CollisionComponent {
-public:
-	Transform* collisionObject; //Collision object를 의미.
-	Node<ObjectWithComponent, string>* gameObjectNode; //이 Component를 가진 GameObjectNode를 가르킴.
-	CollisionComponent(Transform* collisionObject, Object* parentObject) {
-		this->collisionObject = collisionObject;
-		this->collisionObject = collisionObject;
-	}
-	const Vector2 GetWorldPos() const {
-		Node<ObjectWithComponent, string>* temp = gameObjectNode;
-		Vector2 worldpos = collisionObject->position;
-		while (temp != NULL)
-		{
-			worldpos += temp->data.object->position;
-			temp = temp->precessor;
-		}
-		return worldpos;
-	}
-	const int GetWidth() const {
-		return collisionObject->width;
-	}
-	const int GetHeight() const {
-		return collisionObject->height;
-	}
-	const Object::Shape GetShape() const {
-		return collisionObject->shape;
-	}
-};
-
+typedef ObjectWithComponent::CollisionComponent_ CollisionComponent;
 typedef ObjectWithComponent GameObject;
 typedef Node<ObjectWithComponent, string> GameObjectNode;
 typedef BinaryTree<GameObject, string> GameObjectTree;
 
 
 void ObjectWithComponent::AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation) {
-	collisionComponent = new CollisionComponent(new Transform(width, height, rotation, shape, x, y), object);
+	collisionComponent = new CollisionComponent_(new Transform(width, height, rotation, shape, x, y), object);
 }
 void ObjectWithComponent::AddCollisionComponentAsItself() {
-	collisionComponent = new CollisionComponent(new Transform(object->width, object->height, object->rotation, object->shape, 0, 0), object);
+	collisionComponent = new CollisionComponent_(new Transform(object->width, object->height, object->rotation, object->shape, 0, 0), object);
 }
 
 

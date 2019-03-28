@@ -8,6 +8,7 @@ using namespace std;
 GLdouble GameManager::BALL_VELOCITY = 300;
 GameManager::GameManager() {
 	srand((unsigned int)time(0));
+	CollisionComponent::ConnectCollisionManagerAddFunction(CollisionManager::PutCollisionObject);
 
 	//Player ºÎºÐ
 	{
