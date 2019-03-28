@@ -102,8 +102,8 @@ public:
 	class CollisionComponent_ {
 	public:
 		Transform* collisionObject=NULL; //Collision object를 의미.
-		Node<ObjectWithComponent, string>* gameObjectNode=NULL; //이 Component를 가진 GameObjectNode를 가르킴.
-		CollisionComponent_(Transform* collisionObject, Object* parentObject);
+		Node<ObjectWithComponent*, string>* gameObjectNode=NULL; //이 Component를 가진 GameObjectNode를 가르킴.
+		CollisionComponent_(Transform* collisionObject, Node<ObjectWithComponent*, string>* parentObject);
 		~CollisionComponent_();
 		const Vector2 GetWorldPos() const;
 		inline const int GetWidth() const {
@@ -115,20 +115,20 @@ public:
 		inline const Object::Shape GetShape() const {
 			return collisionObject->shape;
 		}
-		static void ConnectCollisionManagerAddFunction(void(*g) (CollisionComponent_ collisionComponent));
+		static void ConnectCollisionManagerAddFunction(void(*g) (CollisionComponent_* collisionComponent));
 	private:
-		typedef void(*FuncPointer) (CollisionComponent_ collisionComponent);
+		typedef void(*FuncPointer) (CollisionComponent_* collisionComponent);
 		static FuncPointer f1;
 	};
 	Transform* object; //Object의 Transform Component
 	CollisionComponent_* collisionComponent=NULL; // object의 collision Component
 	ObjectWithComponent(Transform* object = NULL, CollisionComponent_* collisionComponent = NULL);
 	~ObjectWithComponent();
-	void AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation);
-	void AddCollisionComponentAsItself();
+	void AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation, Node<ObjectWithComponent*, string>* parentObject);
+	void AddCollisionComponentAsItself(Node<ObjectWithComponent*, string>* parentObject);
 };
 typedef ObjectWithComponent::CollisionComponent_ CollisionComponent;
 typedef ObjectWithComponent GameObject;
-typedef Node<ObjectWithComponent, string> GameObjectNode;
-typedef BinaryTree<GameObject, string> GameObjectTree;
+typedef Node<ObjectWithComponent*, string> GameObjectNode;
+typedef BinaryTree<GameObject*, string> GameObjectTree;
 

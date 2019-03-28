@@ -59,11 +59,11 @@ public:
 	Node* precessor = NULL;
 	Node* successor = NULL;
 	Node* sibling = NULL;
-	Node(T _data, Key _key) {
+	Node(T& _data, Key _key) {
 		data = _data;
 		key = _key;
 	}
-	Node(T _data, Key _key, Node* parent) {
+	Node(T& _data, Key _key, Node* parent) {
 		data = _data;
 		precessor = parent;
 		key = _key;
@@ -78,7 +78,7 @@ public:
 	BinaryTree(string _name) {
 		name = _name;
 	}
-	BinaryTree(T data, Key key) {
+	BinaryTree(T& data, Key key) {
 		
 		root = new Node<T, Key>(data, key);
 	}
@@ -88,7 +88,7 @@ public:
 	/**
 	루트가 비어있으면 루트에 넣습니다. 루트가 차 있으면 가장 트리의 가장 왼쪽 아래에 넣습니다.
 	**/
-	void insert_back(T data, Key key) {
+	void insert_back(T& data, Key key) {
 		if (root == NULL)
 			root = new Node<T, Key>(data, key);
 		else
@@ -98,6 +98,19 @@ public:
 				temp = temp->successor;
 			temp->successor = new Node<T, Key>(data, key, temp);
 			countOfNodes++;
+		}
+	}
+	void insert_back(Node<T, Key>* node) {
+		if (root == NULL)
+			root = node;
+		else
+		{
+			Node<T, Key>* temp = root;
+			while (temp->successor != NULL)
+				temp = temp->successor;
+			temp->successor = node;
+			node->precessor = temp;
+			countOfNodes += 1;
 		}
 	}
 	void insert_back(BinaryTree* tree2) {
@@ -113,7 +126,7 @@ public:
 			countOfNodes += tree2->count();
 		}
 	}
-	void insertAsChildren(T data, Key dataKey, Key parentKey) {
+	void insertAsChildren(T& data, Key dataKey, Key parentKey) {
 		Node<T, Key>* temp = Find(parentKey);
 		if (temp != NULL)
 		{
@@ -131,7 +144,7 @@ public:
 			countOfNodes += tree2->count();
 		}
 	}
-	void insertAsSibling(T data, Key dataKey, Key siblingKey) {
+	void insertAsSibling(T& data, Key dataKey, Key siblingKey) {
 		Node<T, Key>* temp = Find(siblingKey);
 		if (temp == NULL)
 			return;
