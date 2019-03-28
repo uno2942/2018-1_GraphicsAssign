@@ -49,19 +49,31 @@ void display()
 
 	if (camMode == WHOLE)
 		gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -100.0f, 0.0f, 1.0f, 0.0f);
-	else
-		lookAtBall(GameManager::getInstance().ball);
+	//else
+	//	lookAtBall(GameManager::getInstance().ball);
 	
 	
 
 
 	glClear(GL_COLOR_BUFFER_BIT);
+	//
+	vector<GameObjectTree>::iterator iter; 
+	
+	for (iter = objectsTreeVectorForDraw.begin(); iter != objectsTreeVectorForDraw.end(); iter++)
+	{
+		glLoadIdentity();
+		drawObjectRecursive(iter->root);
+	}
+
+
+
+	/*
 	representBox(GameManager::getInstance().screen, 255, 255, 255);
 	representBox(GameManager::getInstance().enemyBox, 255, 255, 0); //yellow
 	representBox(GameManager::getInstance().playerBox, 255, 255, 0); //yellow
 	representBox(GameManager::getInstance().net, 204, 204, 204); //grey
 	representCircle(GameManager::getInstance().ball);
-
+	*/
 	glLoadIdentity();
 	representScore(GameManager::getInstance().myScore, 100.0, 800.0);
 	glLoadIdentity();
@@ -72,15 +84,46 @@ void display()
 
 }
 
-void representBox(const Box& box, int colorR, int colorG, int colorB)
+void drawObjectRecursive(GameObjectNode* root)
 {
-	GLfloat x = box.GetCurrentPosition().x;
-	GLfloat y = box.GetCurrentPosition().y;
+	glPushMatrix();
+	glTranslatef(root->data->object->position.x, root->data->object->position.y, 0.0f);
+	glRotatef(root->data->object->rotation, 0, 0, 1);
+	
+	GameObjectNode *tmp;
+
+	for (tmp = root->successor; tmp != NULL; tmp = tmp->sibling)
+	{
+		printf("1");
+		drawObjectRecursive(root->successor);
+	}
+
+	representComponent(*(root->data->object));
+	
+	glPopMatrix();
+}
+
+void representComponent(const Transform &object)
+{
+	if (object.shape == Object::OVAL)
+		representCircle(object);
+	else if (object.shape == Object::BOX)
+		representBox(object);
+	else
+		representTriangle(object);
+}
+
+
+
+void representBox(const Transform& box)
+{
+	GLfloat x = 0;
+	GLfloat y = 0;
 	GLfloat w = box.GetSize().x;
 	GLfloat h = box.GetSize().y;
-
 	
-	glColor3f(colorR / 255.0, colorG / 255.0, colorB / 255.0);
+	
+	glColor3f(150 / 255.0, 150 / 255.0, 150 / 255.0);
 	glBegin(GL_QUADS);
 
 	glVertex2f(x, y);
@@ -90,12 +133,12 @@ void representBox(const Box& box, int colorR, int colorG, int colorB)
 	glEnd();
 }
 
-void representCircle(const Oval& circle)
+void representCircle(const Transform &circle)
 {
 	int lineNum = 100; // lineNum각형 으로 근사
 
-	GLfloat x = circle.GetCurrentPosition().x;
-	GLfloat y = circle.GetCurrentPosition().y;
+	GLfloat x = 0;
+	GLfloat y = 0;
 	GLfloat r = circle.GetSize().x / 2;
 
 	
@@ -110,10 +153,26 @@ void representCircle(const Oval& circle)
 	glEnd();
 }
 
+void representTriangle(const Transform & triangle)
+{
+	GLfloat x = 0;
+	GLfloat y = 0;
+	GLfloat w = triangle.GetSize().x;
+	GLfloat h = triangle.GetSize().y;
+
+	printf("1");
+	glColor3f(150 / 255.0, 150 / 255.0, 150 / 255.0);
+	glBegin(GL_TRIANGLES);
+
+	glVertex2f(x, y);
+	glVertex2f(x + w, y);
+	glVertex2f(x + w / 2, y + h);
+	glEnd();
+}
 
 void lookAtBall(const Oval& circle) // to be modified
 {
-
+	/*
 	GLfloat lookAtX = circle.GetCurrentPosition().x + circle.GetSize().x / 2;
 	GLfloat lookAtY = circle.GetCurrentPosition().y + circle.GetSize().y / 2;
 	GLfloat screenX = GameManager::getInstance().screen.GetSize().x;
@@ -133,6 +192,7 @@ void lookAtBall(const Oval& circle) // to be modified
 	gluLookAt(lookAtX, lookAtY, 0.0f,
 		lookAtX, lookAtY, -100.0f,
 		0.0f, 1.0f, 0.0f);
+		*/
 }
 
 void representScore(int score, GLfloat x, GLfloat y)

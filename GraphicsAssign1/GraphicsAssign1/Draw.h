@@ -1,14 +1,21 @@
 #pragma once
 #include<vector>
+#include "GameManager.h"
 #include "Objects.h"
 #include"CommonBetweenGameAndDraw.h"
 void myReshape(int width, int height);
 
 void display();
 
-void representBox(const Box& box, int colorR, int colorG, int colorB);
+void drawObjectRecursive(GameObjectNode* root);
 
-void representCircle(const Oval& circle);
+void representComponent(const Transform &object);
+
+void representBox(const Transform& box);
+
+void representCircle(const Transform& circle);
+
+void representTriangle(const Transform& triangle);
 
 void lookAtBall(const Oval& circle);
 
