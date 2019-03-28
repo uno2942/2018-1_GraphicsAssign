@@ -14,10 +14,10 @@ GameManager::CollisionManager::CollisionManager() {
 void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector)
 {
 	while (collisionPairvector != NULL && !(collisionPairvector->empty())) {
-		if (collisionPairvector->back().first.first->data == Object::Shape::OVAL)
+		if (collisionPairvector->back().first.first->data.object->shape == Object::Shape::OVAL)
 		{
-			GameObjectNode* o1 = collisionPairvector->back().first.first;
-			GameObjectNode* o2 = collisionPairvector->back().first.second;
+			Object* o1 = collisionPairvector->back().first.first->data.object;
+			Object* o2 = collisionPairvector->back().first.second->data.object;
 			if (
 				(collisionPairvector->back().second.x == 0 && collisionPairvector->back().second.y > 0 && collisionwithballmap[o2->name]==3) ||
 				(collisionPairvector->back().second.x == 0 && collisionPairvector->back().second.y < 0 && collisionwithballmap[o2->name] == 4) ||
@@ -29,16 +29,16 @@ void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObject
 				continue;
 			}
 		}
-		if (collisionPairvector->back().first.first->shape == Object::Shape::OVAL)
+		else if (collisionPairvector->back().first.first->data.object->shape == Object::Shape::OVAL)
 		{
-			if (!(Vector2::abs(collisionPairvector->back().first.first->velocity + collisionPairvector->back().second) > GameManager::BALL_VELOCITY - 1 &&
-				Vector2::abs(collisionPairvector->back().first.first->velocity + collisionPairvector->back().second) < GameManager::BALL_VELOCITY + 1))
+			if (!(Vector2::abs(collisionPairvector->back().first.first->data.object->velocity + collisionPairvector->back().second) > GameManager::BALL_VELOCITY - 1 &&
+				Vector2::abs(collisionPairvector->back().first.first->data.object->velocity + collisionPairvector->back().second) < GameManager::BALL_VELOCITY + 1))
 			{
 				collisionPairvector->pop_back();
 				continue;
 			}
 		}
-		collisionPairvector->back().first.first->velocity += collisionPairvector->back().second;
+		collisionPairvector->back().first.first->data.object->velocity += collisionPairvector->back().second;
 
 		collisionPairvector->pop_back();
 	}
@@ -57,13 +57,13 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>*  GameManager::Col
 		int l = collisionPairvector->size();
 		for (int i = 0; i < l; i++)
 		{
-			Object* o1 = iter[i].first.first;
-			Object* o2 = iter[i].first.second;
-			if (iter[i].first.first->shape == Object::Shape::OVAL) {
+			Object* o1 = iter[i].first.first->data.object; //root만 들어온다고 가정
+			Object* o2 = iter[i].first.second->data.object; //root만 들어온다고 가정
+			if (o1->shape == Object::Shape::OVAL) {
 				//right part
 				if (collisionwithballmap[o2->name] == 1) {
 					{
-						if (o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x &&
+						if ( o1->position.x < o2->position.x && o1->position.x + o1->width >= o2->position.x &&
 							(o1->position.y + (o1->height / 2) >= o2->position.y && o1->position.y + (o1->height / 2) <= o2->position.y + o2->height))
 						{
 							GLdouble t = (o1->position.x + o1->width - o2->position.x) / abs(o1->velocity.x);
