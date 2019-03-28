@@ -1,5 +1,17 @@
 #include "GameManager.h"
 using namespace std;
+
+void GameManager::CollisionManager::PutCollisionObject(CollisionComponent collisionComponent) {
+	collisionList->push_back(collisionComponent);
+}
+
+void GameManager::CollisionManager::RemoveCollisionObjectInObjectNode(GameObject gameObject) {
+	for (int i = 0; i < collisionList->size(); i++) //error will occur
+		if ((*collisionList)[i].gameObjectNode->data.object == gameObject.object)
+			collisionList->erase(collisionList->begin() + i);
+}
+
+vector<CollisionComponent>* GameManager::CollisionManager::collisionList = new vector<CollisionComponent>();
 GameManager::CollisionManager::CollisionManager() {
 	collisionPairvector = new vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>();
 	collisionwithballmap["player"] = 0;
@@ -217,9 +229,9 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* GameManager::Coll
 	}
 	else
 	{
-		for (int i = 0; i < collisionList.size(); i++) {
-			for (int j = i + 1; j < collisionList.size(); j++)
-				CheckCollision4side(collisionList[i], collisionList[j], collisionPairvector);
+		for (int i = 0; i < collisionList->size(); i++) {
+			for (int j = i + 1; j < collisionList->size(); j++)
+				CheckCollision4side((*collisionList)[i], (*collisionList)[j], collisionPairvector);
 		}
 		return collisionPairvector;
 	}

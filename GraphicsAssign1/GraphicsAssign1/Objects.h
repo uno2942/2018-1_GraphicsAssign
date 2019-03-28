@@ -17,15 +17,12 @@ class Object {
 public:
 	enum Shape { OVAL, BOX, TRIANGLE };
 	Shape shape;
-	Object() {
-
-	}
+	Object();
 	Object(int _width, int _height, GLdouble _rotation, Shape shape, GLdouble x = 0, GLdouble y = 0, GLdouble vecx = 0, GLdouble vecy = 0) : width(_width), height(_height), rotation(_rotation) {
 		position = Vector2(x, y);
 		velocity = Vector2(vecx, vecy);
 
 	}
-
 	int width;
 	int height;
 
@@ -106,43 +103,25 @@ public:
 	public:
 		Transform* collisionObject; //Collision object를 의미.
 		Node<ObjectWithComponent, string>* gameObjectNode; //이 Component를 가진 GameObjectNode를 가르킴.
-		CollisionComponent_(Transform* collisionObject, Object* parentObject) {
-			this->collisionObject = collisionObject;
-			this->collisionObject = collisionObject;
-			if (f1 != NULL)
-				f1(*this);
-		}
-		const Vector2 GetWorldPos() const {
-			Node<ObjectWithComponent, string>* temp = gameObjectNode;
-			Vector2 worldpos = collisionObject->position;
-			while (temp != NULL)
-			{
-				worldpos += temp->data.object->position;
-				temp = temp->precessor;
-			}
-			return worldpos;
-		}
-		const int GetWidth() const {
+		CollisionComponent_(Transform* collisionObject, Object* parentObject);
+		const Vector2 GetWorldPos() const;
+		inline const int GetWidth() const {
 			return collisionObject->width;
 		}
-		const int GetHeight() const {
+		inline const int GetHeight() const {
 			return collisionObject->height;
 		}
-		const Object::Shape GetShape() const {
+		inline const Object::Shape GetShape() const {
 			return collisionObject->shape;
 		}
-		static void ConnectCollisionManagerAddFunction(void(*g) (CollisionComponent_ collisionComponent)) {
-			f1 = g;
-		}
+		static void ConnectCollisionManagerAddFunction(void(*g) (CollisionComponent_ collisionComponent));
 	private:
-		static void(*f1) (CollisionComponent_ collisionComponent);
+		typedef void(*FuncPointer) (CollisionComponent_ collisionComponent);
+		static FuncPointer f1;
 	};
 	Transform* object; //Object의 Transform Component
 	CollisionComponent_* collisionComponent; // object의 collision Component
-	ObjectWithComponent(Transform* object=NULL, CollisionComponent_* collisionComponent = NULL) {
-		this->object = object;
-		this->collisionComponent = collisionComponent;
-	}
+	ObjectWithComponent(Transform* object = NULL, CollisionComponent_* collisionComponent = NULL);
 	void AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation);
 	void AddCollisionComponentAsItself();
 };
@@ -150,14 +129,4 @@ typedef ObjectWithComponent::CollisionComponent_ CollisionComponent;
 typedef ObjectWithComponent GameObject;
 typedef Node<ObjectWithComponent, string> GameObjectNode;
 typedef BinaryTree<GameObject, string> GameObjectTree;
-
-
-void ObjectWithComponent::AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation) {
-	collisionComponent = new CollisionComponent_(new Transform(width, height, rotation, shape, x, y), object);
-}
-void ObjectWithComponent::AddCollisionComponentAsItself() {
-	collisionComponent = new CollisionComponent_(new Transform(object->width, object->height, object->rotation, object->shape, 0, 0), object);
-}
-
-
 
