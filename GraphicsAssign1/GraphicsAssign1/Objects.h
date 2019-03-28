@@ -101,9 +101,10 @@ class ObjectWithComponent {
 public:	
 	class CollisionComponent_ {
 	public:
-		Transform* collisionObject; //Collision object를 의미.
-		Node<ObjectWithComponent, string>* gameObjectNode; //이 Component를 가진 GameObjectNode를 가르킴.
+		Transform* collisionObject=NULL; //Collision object를 의미.
+		Node<ObjectWithComponent, string>* gameObjectNode=NULL; //이 Component를 가진 GameObjectNode를 가르킴.
 		CollisionComponent_(Transform* collisionObject, Object* parentObject);
+		~CollisionComponent_();
 		const Vector2 GetWorldPos() const;
 		inline const int GetWidth() const {
 			return collisionObject->width;
@@ -120,8 +121,9 @@ public:
 		static FuncPointer f1;
 	};
 	Transform* object; //Object의 Transform Component
-	CollisionComponent_* collisionComponent; // object의 collision Component
+	CollisionComponent_* collisionComponent=NULL; // object의 collision Component
 	ObjectWithComponent(Transform* object = NULL, CollisionComponent_* collisionComponent = NULL);
+	~ObjectWithComponent();
 	void AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation);
 	void AddCollisionComponentAsItself();
 };

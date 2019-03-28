@@ -21,7 +21,18 @@ GameManager::CollisionManager::CollisionManager() {
 	collisionwithballmap["rightwall"] = 0;
 	collisionwithballmap["topwall"] = 0;
 }
-
+GameManager::CollisionManager::~CollisionManager() {
+	if (collisionList != NULL)
+	{
+		delete collisionList;
+		collisionList = NULL;
+	}
+	if (collisionPairvector != NULL)
+	{
+		delete collisionPairvector;
+		collisionPairvector = NULL;
+	}
+}
 //공의 경우 vector normalization 체크
 void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector)
 {

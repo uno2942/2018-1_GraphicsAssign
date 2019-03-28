@@ -22,6 +22,7 @@ public:
 	class CollisionManager {
 	public:
 		CollisionManager();
+		~CollisionManager();
 		vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* CollisionCheck();
 		void CollisionHandler(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector);
 		vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* RestoreBallPosition(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector);
