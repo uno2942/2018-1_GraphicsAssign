@@ -4,7 +4,7 @@
 #include"MyDataType.h"
 
 enum CamMode { WHOLE, FOLLOWBALL };
-CamMode camMode = WHOLE;
-bool ReshapeFlag = false;
+extern CamMode camMode;
+extern bool ReshapeFlag;
 
-static vector<BinaryTree<ObjectWithComponent, string>> objectsTreeVectorForDraw;
+extern vector<BinaryTree<ObjectWithComponent, string>> objectsTreeVectorForDraw;
