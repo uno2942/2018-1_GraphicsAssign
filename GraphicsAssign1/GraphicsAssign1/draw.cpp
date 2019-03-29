@@ -87,9 +87,14 @@ void display()
 void drawObjectRecursive(GameObjectNode* root)
 {
 	glPushMatrix();
+	//위치이동
 	glTranslatef(root->data->object->position.x, root->data->object->position.y, 0.0f);
+
+	//회전축으로 이동한 후 회젼, 되돌리기
+	glTranslatef(root->data->object->rotationAxis.x, root->data->object->rotationAxis.y, 0.0f);
 	glRotatef(root->data->object->rotation, 0, 0, 1);
-	
+	glTranslatef(- root->data->object->rotationAxis.x, - root->data->object->rotationAxis.y, 0.0f);
+
 	GameObjectNode *tmp;
 
 	for (tmp = root->successor; tmp != NULL; tmp = tmp->sibling)
