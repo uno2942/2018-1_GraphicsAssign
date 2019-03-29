@@ -79,7 +79,7 @@ GameManager::GameManager() {
 		playerTree.insert_back(&tailTree);
 		ear = new Oval("ear", 25, 50, MY_CYAN, 0);
 		temp = new GameObject(ear);
-		temp->object->SetRotationAxis(25, 0);
+		temp->object->SetRotationAxis(12.5, 0);
 		temp->object->SetPosition(160, WORLDCOORDWINDOWHEIGHT / 18);
 		playerTree.insertAsSibling(temp, "ear", "tail1");
 
@@ -268,6 +268,11 @@ void GameManager::StartGame() {
 	WhoFinallyWin = 0;
 	InitializeGame();
 	/*...*/
+
+	cloud1root->SetPosition(INITIAL_CLOUD1_POSITION);
+	cloud2root->SetPosition(INITIAL_CLOUD2_POSITION);
+	cloud3root->SetPosition(INITIAL_CLOUD3_POSITION);
+	eleroot->SetRotation(-10);
 }
 
 void GameManager::InitializeGame() {
@@ -293,11 +298,8 @@ void GameManager::InitObjectsPosition() {
 
 	tail1->SetRotation(50);
 	tail2->SetRotation(0);
+	shakeTime = 0;
 	ear->SetRotation(0);
-
-	cloud1root->SetPosition(INITIAL_CLOUD1_POSITION);
-	cloud2root->SetPosition(INITIAL_CLOUD2_POSITION);
-	cloud3root->SetPosition(INITIAL_CLOUD3_POSITION);
 }
 
 /**
@@ -357,9 +359,11 @@ void GameManager::SetenemyBoxVelocity() {
 	}
 }
 void GameManager::SetShakeTime() {
-	shakeTime = 1000;
+	if(shakeTime<=0)
+		shakeTime = 1000;
 }
 void GameManager::SetObjectPosition() {
+	
 	player->position += player->velocity*PLAYER_BOX_VELOCITY;
 	enemy->position += enemy->velocity*ENEMY_BOX_VELOCITY;
 	ball->position += ball->velocity*(((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
