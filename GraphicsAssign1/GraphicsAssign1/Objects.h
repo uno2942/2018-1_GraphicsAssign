@@ -30,6 +30,7 @@ public:
 
 	Vector2 position;
 	Vector2 velocity;
+	Vector2 rotationAxis = Vector2(0, 0);
 	GLdouble rotation;
 	bool isFixed = false;
 	inline const Vector2& GetCurrentPosition() const { return position; }
@@ -58,6 +59,11 @@ public:
 		velocity.x = x;
 		velocity.y = y;
 		return velocity;
+	}
+	inline const Vector2& SetRotationAxis(GLdouble x, GLdouble y) {
+		rotationAxis.x = x;
+		rotationAxis.y = y;
+		return rotationAxis;
 	}
 	inline const Vector2 GetSize() const {
 		return Vector2(width, height);

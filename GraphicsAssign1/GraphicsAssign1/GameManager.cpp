@@ -12,6 +12,7 @@ GameManager::GameManager() {
 		//ball ºÎºÐ
 	{
 		ball = new Oval("ball", 100, 100);
+		ball->SetRotationAxis(50, 50);
 		GameObject* ballObject = new GameObject(ball);
 		GameObjectNode* ballNode = new GameObjectNode(ballObject, "ball");
 		ballObject->AddCollisionComponentAsItself(ballNode);
@@ -26,7 +27,9 @@ GameManager::GameManager() {
 		playerObject->AddCollisionComponentAsItself(playerNode);
 		playerTree.insert_back(playerNode);
 
-		GameObject* temp = new GameObject(new Triangle("tail1", 150, 150, 153));
+		GameObject* temp = new GameObject(new Triangle("tail1", 150, 150, 90));
+		temp->object->SetRotationAxis(150, 0);
+		temp->object->SetPosition(-150, 0);
 		GameObjectNode* tempNode = new GameObjectNode(temp, "tail1");
 		tailTree.insert_back(tempNode);
 		playerTree.insert_back(&tailTree);
