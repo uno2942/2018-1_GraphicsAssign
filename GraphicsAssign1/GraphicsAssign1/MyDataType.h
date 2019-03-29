@@ -6,6 +6,7 @@
 #define MY_YELLOW MyColor(255, 255, 0)
 #define MY_CYAN MyColor(0, 255, 255)
 #define MY_CLOUD_COLOR MyColor(152, 255, 255)
+#define MY_WALL_COLOR MyColor(102, 051, 000)
 using namespace std;
 struct Vector2 {
 public:
@@ -212,7 +213,7 @@ private:
 			if (temp != NULL)
 				return temp;
 			else
-				return Find_aux(name, root->successor);
+				return Find_aux(key, root->sibling);
 		}
 	}
 	void clear_aux(Node<T, Key>* root) {
