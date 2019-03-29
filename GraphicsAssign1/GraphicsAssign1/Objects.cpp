@@ -1,6 +1,6 @@
 #include "Objects.h"
 
-Object::Object() {
+Object::Object() : myColor(0, 0, 0) {
 
 }
 
