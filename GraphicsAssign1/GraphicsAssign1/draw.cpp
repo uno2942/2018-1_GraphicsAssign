@@ -129,7 +129,7 @@ void representBox(const Transform& box)
 	GLfloat h = box.GetSize().y;
 	
 	
-	glColor3f(150 / 255.0, 150 / 255.0, 150 / 255.0);
+	glColor4f(box.myColor.r / 255.0, box.myColor.g / 255.0, box.myColor.b / 255.0, box.myColor.a);
 	glBegin(GL_QUADS);
 
 	glVertex2f(x, y);
@@ -149,7 +149,7 @@ void representCircle(const Transform &circle)
 	GLfloat r_y = circle.GetSize().y / 2;
 
 	
-	glColor3f(1.0, 153.0 / 255, 153.0 / 255);
+	glColor4f(circle.myColor.r / 255.0, circle.myColor.g / 255.0, circle.myColor.b / 255.0, circle.myColor.a);
 	glBegin(GL_POLYGON);
 
 	for (int i = 0; i <= lineNum; i++)
@@ -168,7 +168,7 @@ void representTriangle(const Transform & triangle)
 	GLfloat h = triangle.GetSize().y;
 
 	
-	glColor3f(150 / 255.0, 150 / 255.0, 150 / 255.0);
+	glColor4f(triangle.myColor.r / 255.0, triangle.myColor.g / 255.0, triangle.myColor.b / 255.0, triangle.myColor.a);
 	glBegin(GL_TRIANGLES);
 
 	glVertex2f(x, y);
