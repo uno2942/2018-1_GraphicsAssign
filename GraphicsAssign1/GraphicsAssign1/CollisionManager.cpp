@@ -54,13 +54,15 @@ void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObject
 		}
 		else if (collisionPairvector->back().first.first->data->object->shape == Object::Shape::OVAL)
 		{
-			if (!(Vector2::abs(o1->velocity + collisionPairvector->back().second) > GameManager::BALL_VELOCITY - 1 &&
+			if ((Vector2::abs(o1->velocity + collisionPairvector->back().second) > GameManager::BALL_VELOCITY - 1 &&
 				Vector2::abs(o1->velocity + collisionPairvector->back().second) < GameManager::BALL_VELOCITY + 1))
 			{
 				collisionPairvector->pop_back();
 				continue;
 			}
 		}
+		if (o1->shape == Object::Shape::OVAL && o2->name == "playerBox")
+			GameManager::getInstance().SetShakeTime();
 		o1->velocity += collisionPairvector->back().second;
 
 		collisionPairvector->pop_back();
