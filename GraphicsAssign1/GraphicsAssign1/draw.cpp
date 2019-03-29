@@ -98,15 +98,13 @@ void drawObjectRecursive(GameObjectNode* root)
 	representComponent(*(root->data->object));
 
 	GameObjectNode *tmp;
-
-	for (tmp = root->successor; tmp != NULL; tmp = tmp->sibling)
-	{
-		
-		drawObjectRecursive(tmp);
-		
-	}
-	
+	if (root->successor != NULL) drawObjectRecursive(root->successor);
 	glPopMatrix();
+
+	if (root->sibling != NULL) drawObjectRecursive(root->sibling);
+	
+	
+	
 }
 
 void representComponent(const Transform &object)
