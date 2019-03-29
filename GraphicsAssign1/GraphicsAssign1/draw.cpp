@@ -100,7 +100,8 @@ void drawObjectRecursive(GameObjectNode* root)
 	for (tmp = root->successor; tmp != NULL; tmp = tmp->sibling)
 	{
 		
-		drawObjectRecursive(root->successor);
+		drawObjectRecursive(tmp);
+		
 	}
 
 	representComponent(*(root->data->object));
