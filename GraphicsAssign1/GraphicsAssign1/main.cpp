@@ -21,11 +21,13 @@ void idle2(int value) {
 void idlefunction(int value) {
 	if (GameManager::getInstance().WhoFinallyWin == 0) {
 		head();
-		glutTimerFunc(1, idlefunction, 0);
 	}
+	glutTimerFunc(1, idlefunction, 0);
 }
 
 void myKeyboard(unsigned char c, int x, int y) {
+	if (c == 'r')
+		GameManager::getInstance().StartGame();
 	if (GameManager::getInstance().WhoFinallyWin == 0) {
 		switch (c) {
 		case '1': camMode = WHOLE; break;

@@ -27,9 +27,9 @@ GameManager::GameManager() {
 		playerObject->AddCollisionComponentAsItself(playerNode);
 		playerTree.insert_back(playerNode);
 
-		GameObject* temp = new GameObject(new Triangle("tail1", 150, 150, 90));
-		temp->object->SetRotationAxis(150, 0);
-		temp->object->SetPosition(-150, 0);
+		GameObject* temp = new GameObject(new Triangle("tail1", 50, 50, 90));
+		temp->object->SetRotationAxis(50, 0);
+		temp->object->SetPosition(-50, WORLDCOORDWINDOWHEIGHT / 36);
 		GameObjectNode* tempNode = new GameObjectNode(temp, "tail1");
 		tailTree.insert_back(tempNode);
 		playerTree.insert_back(&tailTree);

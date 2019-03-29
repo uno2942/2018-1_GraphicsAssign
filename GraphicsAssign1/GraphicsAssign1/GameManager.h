@@ -60,6 +60,8 @@ public:
 		timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 		prevTime = glutGet(GLUT_ELAPSED_TIME);;
 	}
+
+	void StartGame();
 	Vector2 playerBoxBeforeReshape;
 	GLdouble DeltaTime() {
 		return timeSinceStart - prevTime;
@@ -126,7 +128,6 @@ private:
 	bool ballUpCollisionFlag = false;
 	bool ballDownCollisionFlag = false;
 
-	void StartGame();
 	void InitializeGame();
 	void InitBallVelocity();
 	void InitObjectsPosition();
