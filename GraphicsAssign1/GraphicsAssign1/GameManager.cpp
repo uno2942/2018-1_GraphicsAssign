@@ -125,20 +125,20 @@ GameManager::GameManager() {
 
 	//wall(스크린 밖에 안 보이는 벽) 부분
 	{
-	GameObject* temp = new GameObject(new Box("leftwall", 10, WORLDCOORDWINDOWHEIGHT));
+	GameObject* temp = new GameObject(new Box("leftwall", 10, WORLDCOORDWINDOWHEIGHT, MY_WALL_COLOR));
 	GameObjectNode* tempNode = new GameObjectNode(temp, "leftwall");
 	temp->AddCollisionComponentAsItself(tempNode);
 	wallTree.insert_back(temp, "leftwall");
 
-	temp = new GameObject(new Box("rightwall", 10, WORLDCOORDWINDOWHEIGHT));
+	temp = new GameObject(new Box("rightwall", 10, WORLDCOORDWINDOWHEIGHT, MY_WALL_COLOR));
 	tempNode = new GameObjectNode(temp, "rightwall");
 	temp->AddCollisionComponentAsItself(tempNode);
-	wallTree.insert_back(temp, "rightwall");
+	wallTree.insertAsSibling(temp, "rightwall", "leftwall");
 
-	temp = new GameObject(new Box("topwall", 10, WORLDCOORDWINDOWHEIGHT));
+	temp = new GameObject(new Box("topwall", WORLDCOORDWINDOWWIDTH, 10, MY_WALL_COLOR));
 	tempNode = new GameObjectNode(temp, "topwall");
 	temp->AddCollisionComponentAsItself(tempNode);
-	wallTree.insert_back(temp, "topwall");
+	wallTree.insertAsSibling(temp, "topwall", "leftwall");
 	}
 	
 	objectsTreeVectorForDraw.push_back(playerTree);
