@@ -297,6 +297,7 @@ void GameManager::InitObjectsPosition() {
 
 	tail1->SetRotation(50);
 	tail2->SetRotation(0);
+	shakeTime = 0;
 	ear->SetRotation(0);
 }
 
@@ -357,9 +358,11 @@ void GameManager::SetenemyBoxVelocity() {
 	}
 }
 void GameManager::SetShakeTime() {
-	shakeTime = 1000;
+	if(shakeTime<=0)
+		shakeTime = 1000;
 }
 void GameManager::SetObjectPosition() {
+	
 	player->position += player->velocity*PLAYER_BOX_VELOCITY;
 	enemy->position += enemy->velocity*ENEMY_BOX_VELOCITY;
 	ball->position += ball->velocity*(((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
