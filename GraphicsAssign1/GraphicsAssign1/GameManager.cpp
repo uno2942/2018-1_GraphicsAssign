@@ -79,7 +79,7 @@ GameManager::GameManager() {
 		playerTree.insert_back(&tailTree);
 		ear = new Oval("ear", 25, 50, MY_CYAN, 0);
 		temp = new GameObject(ear);
-		temp->object->SetRotationAxis(25, 0);
+		temp->object->SetRotationAxis(12.5, 0);
 		temp->object->SetPosition(160, WORLDCOORDWINDOWHEIGHT / 18);
 		playerTree.insertAsSibling(temp, "ear", "tail1");
 
@@ -272,6 +272,7 @@ void GameManager::StartGame() {
 	cloud1root->SetPosition(INITIAL_CLOUD1_POSITION);
 	cloud2root->SetPosition(INITIAL_CLOUD2_POSITION);
 	cloud3root->SetPosition(INITIAL_CLOUD3_POSITION);
+	eleroot->SetRotation(-10);
 }
 
 void GameManager::InitializeGame() {
