@@ -93,6 +93,7 @@ public:
 	GameObjectTree ballTree = GameObjectTree("ball");
 	Object* ball;
 	GameObjectTree electricity = GameObjectTree("electricity");
+	Object* eleroot;
 
 	GameObjectTree cloudTree1 = GameObjectTree("cloud1");
 	Object* cloud1;

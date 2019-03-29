@@ -1,4 +1,11 @@
 #pragma once
+#define MY_RED MyColor(255, 0, 0)
+#define MY_GREEN MyColor(0, 255, 0)
+#define MY_BLUE MyColor(0, 0, 255)
+#define MY_MAGENTA MyColor(255, 0, 255)
+#define MY_YELLOW MyColor(255, 255, 0)
+#define MY_CYAN MyColor(0, 255, 255)
+#define MY_CLOUD_COLOR MyColor(152, 255, 255)
 using namespace std;
 struct Vector2 {
 public:
@@ -49,6 +56,19 @@ public:
 	friend ostream& operator<<(ostream& os, const Vector2& dt) {
 		os << '(' << dt.x << ',' << dt.y << ')';
 		return os;
+	}
+};
+struct MyColor {
+public:
+	int r;
+	int g;
+	int b;
+	double a;
+	MyColor(int _r, int _g, int _b, double _a = 1) {
+		r = _r;
+		g = _g;
+		b = _b;
+		a = _a;
 	}
 };
 

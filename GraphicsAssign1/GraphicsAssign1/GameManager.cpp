@@ -11,57 +11,68 @@ GameManager::GameManager() {
 	CollisionComponent::ConnectCollisionManagerAddFunction(CollisionManager::PutCollisionObject);
 		//ball 何盒
 	{
-		ball = new Oval("ball", 100, 100);
-		ball->SetRotationAxis(50, 50);
+		ball = new Oval("ball", 100, 100, MY_RED);
 		GameObject* ballObject = new GameObject(ball);
 		GameObjectNode* ballNode = new GameObjectNode(ballObject, "ball");
 		ballObject->AddCollisionComponentAsItself(ballNode);
 		ballTree.insert_back(ballNode);
-		Object* ele = new Box("elec1", 20, 7, 10);
-		ele->SetPosition(0, 0);
+		Object* ele = new Box("elec1", 20, 7, MY_YELLOW, -10);
+		eleroot = ele;
+		ele->SetPosition(25, 15);
+		ele->SetRotationAxis(25, 35);
 		GameObject* elegObject = new GameObject(ele);
 		electricity.insert_back(elegObject, "ele1");
-		ele = new Box("elec1", 20, 7, -20);
+
+		ele = new Box("elec2", 20, 7, MY_YELLOW,30);
 		ele->SetPosition(20 * cos(10.* 3.1416/180), 20 * sin(10.* 3.1416 / 180)-3);
 		elegObject = new GameObject(ele);
-		electricity.insert_back(elegObject, "ele1");
+		electricity.insert_back(elegObject, "ele2");
+
+		ele = new Box("elec3", 20, 7, MY_YELLOW ,-10);
+		ele->SetPosition(20 * cos(10.* 3.1416 / 180), -20 * sin(10.* 3.1416 / 180) + 3);
+		elegObject = new GameObject(ele);
+		electricity.insert_back(elegObject, "ele3");
+
+		ele = new Box("elec4", 20, 7, MY_YELLOW,30);
+		ele->SetPosition(20 * cos(10.* 3.1416 / 180), 20 * sin(10.* 3.1416 / 180) - 3);
+		elegObject = new GameObject(ele);
+		electricity.insert_back(elegObject, "ele4");
 
 		ballTree.insert_back(&electricity);
 	}
 	//Player 何盒
 	{
-		player = new Box("playerBox", WORLDCOORDWINDOWWIDTH / 8, WORLDCOORDWINDOWHEIGHT / 18);
+		player = new Box("playerBox", WORLDCOORDWINDOWWIDTH / 8, WORLDCOORDWINDOWHEIGHT / 18, MY_YELLOW);
 		GameObject* playerObject = new GameObject(player);
 		GameObjectNode* playerNode = new GameObjectNode(playerObject, "player");
 		playerObject->AddCollisionComponentAsItself(playerNode);
 		playerTree.insert_back(playerNode);
 		
-		tail1 = new Triangle("tail1", 50, 50, 50);
+		tail1 = new Triangle("tail1", 50, 50, MY_CYAN, 50);
 		GameObject* temp = new GameObject(tail1);
 		temp->object->SetRotationAxis(50, 0);
 		temp->object->SetPosition(-50, WORLDCOORDWINDOWHEIGHT / 36);
 		GameObjectNode* tempNode = new GameObjectNode(temp, "tail1");
 		tailTree.insert_back(tempNode);
 
-		tail2 = new Triangle("tail2", 50, 50);
+		tail2 = new Triangle("tail2", 50, 50, MY_CYAN);
 		temp = new GameObject(tail2);
 		temp->object->SetRotationAxis(50, 0);
 		temp->object->SetPosition(-40, WORLDCOORDWINDOWHEIGHT / 36);
 		tempNode = new GameObjectNode(temp, "tail2");
 		tailTree.insert_back(tempNode);
 
-//		playerTree.insert_back(&tailTree);
-		ear = new Oval("ear", 200, 200, 0);
+		playerTree.insert_back(&tailTree);
+		ear = new Oval("ear", 25, 50, MY_CYAN, 0);
 		temp = new GameObject(ear);
 		temp->object->SetRotationAxis(25, 0);
-		temp->object->SetPosition(-50, WORLDCOORDWINDOWHEIGHT / 36);
-//		playerTree.insertAsSibling(temp, "ear", "tail1");
-		playerTree.insert_back(&electricity);
+		temp->object->SetPosition(160, WORLDCOORDWINDOWHEIGHT / 18);
+		playerTree.insertAsSibling(temp, "ear", "tail1");
 
 	}
 	//enemy 何盒
 	{
-		enemy = new Box("enemyBox", WORLDCOORDWINDOWWIDTH / 8, WORLDCOORDWINDOWHEIGHT / 18);
+		enemy = new Box("enemyBox", WORLDCOORDWINDOWWIDTH / 8, WORLDCOORDWINDOWHEIGHT / 18, MY_YELLOW);
 		GameObject* enemyObject = new GameObject(enemy);
 		GameObjectNode* enemyNode = new GameObjectNode(enemyObject, "enemy");
 		enemyObject->AddCollisionComponentAsItself(enemyNode);
@@ -70,7 +81,7 @@ GameManager::GameManager() {
 	}
 	//net 何盒
 	{
-		net = new Box("net", WORLDCOORDWINDOWWIDTH / 32, WORLDCOORDWINDOWHEIGHT / 2);
+		net = new Box("net", WORLDCOORDWINDOWWIDTH / 32, WORLDCOORDWINDOWHEIGHT / 2, MY_GREEN);
 		GameObject* netObject = new GameObject(net);
 		GameObjectNode* netNode = new GameObjectNode(netObject, "net");
 		netObject->AddCollisionComponentAsItself(netNode);
@@ -79,29 +90,29 @@ GameManager::GameManager() {
 
 	//cloud 何盒
 	{
-		cloud1 = new Oval("cluod_mid", 80, 80);
+		cloud1 = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
 		GameObject* cloudObject1 = new GameObject(cloud1);
 		cloudObject1->object->SetPosition(500, 700);
 		GameObjectNode* cloudNode = new GameObjectNode(cloudObject1, "cloud_mid");
 		cloudTree1.insert_back(cloudNode);
 		
-		cloud1 = new Oval("cluod_mid", 80, 80);
+		cloud1 = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
 		GameObject* cloudObject2 = new GameObject(cloud1);
 		cloudObject2->object->SetPosition(-60, -60);
 		cloudTree1.insertAsChildren(cloudObject2, "cloud_left_1", "cloud_mid");
 		
-		cloud1 = new Oval("cluod_mid", 80, 80);
+		cloud1 = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
 		GameObject* cloudObject3 = new GameObject(cloud1);
 		cloudObject3->object->SetPosition(60, -60);
 		cloudTree1.insertAsSibling(cloudObject3, "cloud_right_1", "cloud_left_1");
 		
-		cloud1 = new Oval("cluod_mid", 80, 80);
+		cloud1 = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
 		GameObject* cloudObject4 = new GameObject(cloud1);
 		cloudObject4->object->SetPosition(-60, 60);
 		cloudObject4->object->SetRotationAxis(28, -28);
 		cloudTree1.insertAsChildren(cloudObject4, "cloud_left_2", "cloud_left_1");
 		
-		cloud1 = new Oval("cluod_mid", 80, 80);
+		cloud1 = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
 		GameObject* cloudObject5 = new GameObject(cloud1);
 		cloudObject5->object->SetPosition(60, 60);
 		cloudObject5->object->SetRotationAxis(-28, -28);
@@ -253,7 +264,7 @@ void GameManager::SetObjectPosition() {
 	player->position += player->velocity*PLAYER_BOX_VELOCITY;
 	enemy->position += enemy->velocity*ENEMY_BOX_VELOCITY;
 	ball->position += ball->velocity*(((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
-	ball->rotation += 40 * (((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
+	eleroot->rotation += 40 * (((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
 	if (shakeTime > 0) {
 		//tail1
 		{

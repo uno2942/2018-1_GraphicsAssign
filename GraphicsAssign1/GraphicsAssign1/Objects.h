@@ -18,7 +18,12 @@ public:
 	enum Shape { OVAL, BOX, TRIANGLE };
 	Shape shape;
 	Object();
-	Object(int _width, int _height, GLdouble _rotation, Shape _shape, GLdouble x = 0, GLdouble y = 0, GLdouble vecx = 0, GLdouble vecy = 0) : width(_width), height(_height), rotation(_rotation), shape(_shape) {
+	Object(int _width, int _height, GLdouble _rotation, Shape _shape, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble x = 0, GLdouble y = 0, GLdouble vecx = 0, GLdouble vecy = 0) : width(_width), height(_height), rotation(_rotation), shape(_shape), myColor(r, g, b, a) {
+		position = Vector2(x, y);
+		velocity = Vector2(vecx, vecy);
+
+	}
+	Object(int _width, int _height, GLdouble _rotation, Shape _shape, MyColor mColor, GLdouble x = 0, GLdouble y = 0, GLdouble vecx = 0, GLdouble vecy = 0) : width(_width), height(_height), rotation(_rotation), shape(_shape), myColor(mColor) {
 		position = Vector2(x, y);
 		velocity = Vector2(vecx, vecy);
 
@@ -32,6 +37,7 @@ public:
 	Vector2 velocity;
 	Vector2 rotationAxis = Vector2(0, 0);
 	GLdouble rotation;
+	MyColor myColor;
 	bool isFixed = false;
 	inline const Vector2& GetCurrentPosition() const { return position; }
 	inline const GLdouble& GetCurrentRotation() const { return rotation; }
@@ -76,7 +82,11 @@ public:
 	Oval() {
 		shape = OVAL;
 	}
-	Oval(string name, int _width, int _height, GLdouble _rotation = 0) : Object(_width, _height, _rotation, OVAL) {
+	Oval(string name, int _width, int _height, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(_width, _height, _rotation, OVAL, r, g, b, a) {
+		shape = OVAL;
+		this->name = name;
+	}
+	Oval(string name, int _width, int _height, MyColor mColor, GLdouble _rotation = 0) : Object(_width, _height, _rotation, OVAL, mColor) {
 		shape = OVAL;
 		this->name = name;
 	}
@@ -86,7 +96,11 @@ public:
 	Box() {
 		shape = BOX;
 	}
-	Box(string name, int _width, int _height, GLdouble _rotation = 0) : Object(_width, _height, _rotation, BOX) {
+	Box(string name, int _width, int _height, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(_width, _height, _rotation, BOX, r, g, b, a) {
+		shape = BOX;
+		this->name = name;
+	}
+	Box(string name, int _width, int _height, MyColor mColor, GLdouble _rotation = 0) : Object(_width, _height, _rotation, BOX, mColor) {
 		shape = BOX;
 		this->name = name;
 	}
@@ -96,7 +110,11 @@ public:
 	Triangle() {
 		shape = TRIANGLE;
 	}
-	Triangle(string _name, int _width, int _height, GLdouble _rotation = 0) : Object(_width, _height, _rotation, TRIANGLE) {
+	Triangle(string _name, int _width, int _height, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(_width, _height, _rotation, TRIANGLE, r,g, b, a) {
+		shape = TRIANGLE;
+		name = _name;
+	}
+	Triangle(string _name, int _width, int _height, MyColor mColor, GLdouble _rotation = 0) : Object(_width, _height, _rotation, TRIANGLE, mColor) {
 		shape = TRIANGLE;
 		name = _name;
 	}
