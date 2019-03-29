@@ -26,11 +26,8 @@ GameManager::GameManager() {
 		playerObject->AddCollisionComponentAsItself(playerNode);
 		playerTree.insert_back(playerNode);
 
-		GameObject* temp = new GameObject(new Triangle("tail1", 10, 10, 180));
+		GameObject* temp = new GameObject(new Triangle("tail1", 150, 150, 153));
 		GameObjectNode* tempNode = new GameObjectNode(temp, "tail1");
-		tailTree.insert_back(tempNode);
-		temp = new GameObject(new Triangle("tail2", 10, 10, -30));
-		tempNode = new GameObjectNode(temp, "tail2");
 		tailTree.insert_back(tempNode);
 		playerTree.insert_back(&tailTree);
 
@@ -70,7 +67,6 @@ GameManager::GameManager() {
 	tempNode = new GameObjectNode(temp, "topwall");
 	temp->AddCollisionComponentAsItself(tempNode);
 	wallTree.insert_back(temp, "topwall");
-	//À§Ä¡;;
 	}
 	
 	objectsTreeVectorForDraw.push_back(playerTree);

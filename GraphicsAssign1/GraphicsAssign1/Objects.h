@@ -115,6 +115,7 @@ public:
 		inline const Object::Shape GetShape() const {
 			return collisionObject->shape;
 		}
+		const Vector2 GetVelocity() const;
 		static void ConnectCollisionManagerAddFunction(void(*g) (CollisionComponent_* collisionComponent));
 	private:
 		typedef void(*FuncPointer) (CollisionComponent_* collisionComponent);

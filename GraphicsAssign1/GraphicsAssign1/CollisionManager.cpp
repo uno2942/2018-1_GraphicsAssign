@@ -37,10 +37,10 @@ GameManager::CollisionManager::~CollisionManager() {
 void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector)
 {
 	while (collisionPairvector != NULL && !(collisionPairvector->empty())) {
-		if (collisionPairvector->back().first.first->data->object->shape == Object::Shape::OVAL)
+		Object* o1 = collisionPairvector->back().first.first->data->object;
+		Object* o2 = collisionPairvector->back().first.second->data->object;
+		if (o1->shape == Object::Shape::OVAL)
 		{
-			Object* o1 = collisionPairvector->back().first.first->data->object;
-			Object* o2 = collisionPairvector->back().first.second->data->object;
 			if (
 				(collisionPairvector->back().second.x == 0 && collisionPairvector->back().second.y > 0 && collisionwithballmap[o2->name]==3) ||
 				(collisionPairvector->back().second.x == 0 && collisionPairvector->back().second.y < 0 && collisionwithballmap[o2->name] == 4) ||
@@ -54,14 +54,14 @@ void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObject
 		}
 		else if (collisionPairvector->back().first.first->data->object->shape == Object::Shape::OVAL)
 		{
-			if (!(Vector2::abs(collisionPairvector->back().first.first->data->object->velocity + collisionPairvector->back().second) > GameManager::BALL_VELOCITY - 1 &&
-				Vector2::abs(collisionPairvector->back().first.first->data->object->velocity + collisionPairvector->back().second) < GameManager::BALL_VELOCITY + 1))
+			if (!(Vector2::abs(o1->velocity + collisionPairvector->back().second) > GameManager::BALL_VELOCITY - 1 &&
+				Vector2::abs(o1->velocity + collisionPairvector->back().second) < GameManager::BALL_VELOCITY + 1))
 			{
 				collisionPairvector->pop_back();
 				continue;
 			}
 		}
-		collisionPairvector->back().first.first->data->object->velocity += collisionPairvector->back().second;
+		o1->velocity += collisionPairvector->back().second;
 
 		collisionPairvector->pop_back();
 	}
@@ -276,7 +276,6 @@ bool GameManager::CollisionManager::CheckCollisionAtRightSide(const CollisionCom
 		if (o1.GetWorldPos().x < o2.GetWorldPos().x && o1.GetWorldPos().x + o1.GetWidth() >= o2.GetWorldPos().x)
 		{
 			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(-1, 0)));
-			collisionPairvector->push_back(make_pair(make_pair(o2.gameObjectNode, o1.gameObjectNode), Vector2(1, 0)));
 			return true;
 		}
 		return false;
@@ -285,8 +284,8 @@ bool GameManager::CollisionManager::CheckCollisionAtRightSide(const CollisionCom
 		if (o1.GetWorldPos().x < o2.GetWorldPos().x &&  o1.GetWorldPos().x + o1.GetWidth() >= o2.GetWorldPos().x &&
 			(o1.GetWorldPos().y + (o1.GetHeight() / 2) >= o2.GetWorldPos().y && o1.GetWorldPos().y + (o1.GetHeight() / 2) <= o2.GetWorldPos().y + o2.GetHeight()))
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(-1, 0)));
-			collisionPairvector->push_back(make_pair(make_pair(o2.gameObjectNode, o1.gameObjectNode), Vector2(1, 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(-2 * (o1.GetVelocity().x), 0)));
+			collisionwithballmap[o2.gameObjectNode->data->object->name] = 1;
 			return true;
 		}
 		else {
@@ -298,9 +297,10 @@ bool GameManager::CollisionManager::CheckCollisionAtRightSide(const CollisionCom
 			if (r >= distance)
 			{
 				collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode),
-					Vector2::normalize(centertocorner)));
-				collisionPairvector->push_back(make_pair(make_pair(o2.gameObjectNode, o1.gameObjectNode),
-					-Vector2::normalize(centertocorner)));
+					Vector2::normalize(centertocorner)*
+					(2 * BALL_VELOCITY*abs(o1.GetVelocity().x*centertocorner.x + o1.GetVelocity().y*centertocorner.y) /
+					(Vector2::abs(o1.GetVelocity())*Vector2::abs(centertocorner)))));
+				collisionwithballmap[o2.gameObjectNode->data->object->name] = 1;
 				return true;
 			}
 		}
@@ -317,7 +317,6 @@ bool GameManager::CollisionManager::CheckCollisionAtLeftSide(const CollisionComp
 		if (o1.GetWorldPos().x + o1.GetWidth() > o2.GetWorldPos().x + o2.GetWidth() && o1.GetWorldPos().x <= o2.GetWorldPos().x + o2.GetWidth())
 		{
 			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(1, 0)));
-			collisionPairvector->push_back(make_pair(make_pair(o2.gameObjectNode, o1.gameObjectNode), Vector2(-1, 0)));
 			return true;
 		}
 		return false;
@@ -326,8 +325,8 @@ bool GameManager::CollisionManager::CheckCollisionAtLeftSide(const CollisionComp
 		if (o1.GetWorldPos().x + o1.GetWidth() > o2.GetWorldPos().x + o2.GetWidth() && o1.GetWorldPos().x <= o2.GetWorldPos().x + o2.GetWidth() &&
 			(o1.GetWorldPos().y + (o1.GetHeight() / 2) >= o2.GetWorldPos().y && o1.GetWorldPos().y + (o1.GetHeight() / 2) <= o2.GetWorldPos().y + o2.GetHeight()))
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(1, 0)));
-			collisionPairvector->push_back(make_pair(make_pair(o2.gameObjectNode, o1.gameObjectNode), Vector2(-1, 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(-2 * (o1.GetVelocity().x), 0)));
+			collisionwithballmap[o2.gameObjectNode->data->object->name] = 2;
 			return true;
 		}
 		else {
@@ -339,9 +338,10 @@ bool GameManager::CollisionManager::CheckCollisionAtLeftSide(const CollisionComp
 			if (r >= distance)
 			{
 				collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode),
-					Vector2::normalize(centertocorner)));
-				collisionPairvector->push_back(make_pair(make_pair(o2.gameObjectNode, o1.gameObjectNode),
-					-Vector2::normalize(centertocorner)));
+					Vector2::normalize(centertocorner)*
+					(2 * BALL_VELOCITY*abs(o1.GetVelocity().x*centertocorner.x + o1.GetVelocity().y*centertocorner.y) /
+					(Vector2::abs(o1.GetVelocity())*distance))));
+				collisionwithballmap[o2.gameObjectNode->data->object->name] = 2;
 				return true;
 			}
 		}
@@ -358,10 +358,13 @@ bool GameManager::CollisionManager::CheckCollisionAtUpSide(const CollisionCompon
 	{
 		if (o1.GetWorldPos().y < o2.GetWorldPos().y && o1.GetWorldPos().y + o1.GetHeight() >= o2.GetWorldPos().y)
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(0, -1)));
-			collisionPairvector->push_back(make_pair(make_pair(o2.gameObjectNode, o1.gameObjectNode), Vector2(0, 1)));
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(0, -2 * (o1.GetVelocity().y))));
+			collisionwithballmap[o2.gameObjectNode->data->object->name] = 3;
 			return true;
 		}
+	}
+	else {
+		return true;
 	}
 	return false;
 }
@@ -376,10 +379,12 @@ bool GameManager::CollisionManager::CheckCollisionAtDownSide(const CollisionComp
 		if (o1.GetWorldPos().y < o2.GetWorldPos().y + o2.GetHeight() && o1.GetWorldPos().y + o1.GetHeight() >= o2.GetWorldPos().y + o2.GetHeight() &&
 			(o1.GetWorldPos().x + (o1.GetWidth() / 2) >= o2.GetWorldPos().x && o1.GetWorldPos().x + (o1.GetWidth() / 2) <= o2.GetWorldPos().x + o2.GetWidth()))
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(0, 1)));
-			collisionPairvector->push_back(make_pair(make_pair(o2.gameObjectNode, o1.gameObjectNode), Vector2(0, -1)));
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(0, -2 * (o1.GetVelocity().y))));			collisionwithballmap[o2.gameObjectNode->data->object->name] = 4;
 			return true;
 		}
+	}
+	else {
+		return true;
 	}
 	return false;
 }

@@ -29,6 +29,17 @@ const Vector2 ObjectWithComponent::CollisionComponent_::GetWorldPos() const {
 	return worldpos;
 }
 
+const Vector2 ObjectWithComponent::CollisionComponent_::GetVelocity() const {
+	Node<ObjectWithComponent*, string>* temp = gameObjectNode;
+	Vector2 worldvel = collisionObject->velocity;
+	while (temp != NULL)
+	{
+		worldvel += temp->data->object->velocity;
+		temp = temp->precessor;
+	}
+	return worldvel;
+}
+
 ObjectWithComponent::CollisionComponent_::FuncPointer ObjectWithComponent::CollisionComponent_::f1 = NULL;
 void ObjectWithComponent::CollisionComponent_::ConnectCollisionManagerAddFunction(void(*g) (CollisionComponent_* collisionComponent))
 {
