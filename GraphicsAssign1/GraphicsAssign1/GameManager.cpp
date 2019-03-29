@@ -17,7 +17,16 @@ GameManager::GameManager() {
 		GameObjectNode* ballNode = new GameObjectNode(ballObject, "ball");
 		ballObject->AddCollisionComponentAsItself(ballNode);
 		ballTree.insert_back(ballNode);
-		//electricity 그려야 함.
+		Object* ele = new Box("elec1", 20, 7, 10);
+		ele->SetPosition(0, 0);
+		GameObject* elegObject = new GameObject(ele);
+		electricity.insert_back(elegObject, "ele1");
+		ele = new Box("elec1", 20, 7, -20);
+		ele->SetPosition(20 * cos(10.* 3.1416/180), 20 * sin(10.* 3.1416 / 180)-3);
+		elegObject = new GameObject(ele);
+		electricity.insert_back(elegObject, "ele1");
+
+		ballTree.insert_back(&electricity);
 	}
 	//Player 부분
 	{
@@ -41,12 +50,13 @@ GameManager::GameManager() {
 		tempNode = new GameObjectNode(temp, "tail2");
 		tailTree.insert_back(tempNode);
 
-		playerTree.insert_back(&tailTree);
+//		playerTree.insert_back(&tailTree);
 		ear = new Oval("ear", 200, 200, 0);
 		temp = new GameObject(ear);
 		temp->object->SetRotationAxis(25, 0);
 		temp->object->SetPosition(-50, WORLDCOORDWINDOWHEIGHT / 36);
-		playerTree.insertAsSibling(temp, "ear", "tail1");
+//		playerTree.insertAsSibling(temp, "ear", "tail1");
+		playerTree.insert_back(&electricity);
 
 	}
 	//enemy 부분
