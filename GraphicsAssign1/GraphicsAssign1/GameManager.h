@@ -66,14 +66,24 @@ public:
 	GLdouble DeltaTime() {
 		return timeSinceStart - prevTime;
 	}
+
 	GameManager(GameManager const&) = delete;
 	void operator=(GameManager const&) = delete;
 
 	GameObjectTree playerTree = GameObjectTree("player");
 	Object* player;
 	GameObjectTree tailTree = GameObjectTree("tail");
-	GameObjectTree earTree = GameObjectTree("ear");
-
+	Object* tail1;
+	Object* tail2;
+	Object* ear;
+	void SetShakeTime();
+	int shakeTime = 0;
+	bool tail1upflag = true;
+	bool tail1downflag = false;
+	bool tail2upflag = false;
+	bool tail2downflag = true;
+	bool earleftflag = true;
+	bool earrightflag = false;
 	GameObjectTree enemyTree = GameObjectTree("enemyBox");
 	Object* enemy;
 	GameObjectTree netTree = GameObjectTree("net");

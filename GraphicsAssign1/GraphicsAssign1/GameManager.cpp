@@ -26,15 +26,27 @@ GameManager::GameManager() {
 		GameObjectNode* playerNode = new GameObjectNode(playerObject, "player");
 		playerObject->AddCollisionComponentAsItself(playerNode);
 		playerTree.insert_back(playerNode);
-
-		GameObject* temp = new GameObject(new Triangle("tail1", 50, 50, 90));
+		
+		tail1 = new Triangle("tail1", 50, 50, 50);
+		GameObject* temp = new GameObject(tail1);
 		temp->object->SetRotationAxis(50, 0);
 		temp->object->SetPosition(-50, WORLDCOORDWINDOWHEIGHT / 36);
 		GameObjectNode* tempNode = new GameObjectNode(temp, "tail1");
 		tailTree.insert_back(tempNode);
-		playerTree.insert_back(&tailTree);
 
-		//ear를 그려야 하는데 보면서 그려야 할 듯...
+		tail2 = new Triangle("tail2", 50, 50);
+		temp = new GameObject(tail2);
+		temp->object->SetRotationAxis(50, 0);
+		temp->object->SetPosition(-40, WORLDCOORDWINDOWHEIGHT / 36);
+		tempNode = new GameObjectNode(temp, "tail2");
+		tailTree.insert_back(tempNode);
+
+		playerTree.insert_back(&tailTree);
+		ear = new Oval("ear", 200, 200, 0);
+		temp = new GameObject(ear);
+		temp->object->SetRotationAxis(25, 0);
+		temp->object->SetPosition(-50, WORLDCOORDWINDOWHEIGHT / 36);
+		playerTree.insertAsSibling(temp, "ear", "tail1");
 
 	}
 	//enemy 부분
@@ -125,6 +137,10 @@ void GameManager::InitObjectsPosition() {
 	wallTree.root->data->object->SetPosition(INITIAL_LEFT_WALL_POSITION);
 	wallTree.Find("rightwall")->data->object->SetPosition(INITIAL_RIGHT_WALL_POSITION);
 	wallTree.Find("topwall")->data->object->SetPosition(INITIAL_TOP_WALL_POSITION);
+
+	tail1->SetRotation(50);
+	tail2->SetRotation(0);
+	ear->SetRotation(0);
 }
 
 /**
@@ -183,11 +199,70 @@ void GameManager::SetenemyBoxVelocity() {
 		enemyBoxMoveLeftFlag = false;
 	}
 }
-
+void GameManager::SetShakeTime() {
+	shakeTime = 1000;
+}
 void GameManager::SetObjectPosition() {
 	player->position += player->velocity*PLAYER_BOX_VELOCITY;
 	enemy->position += enemy->velocity*ENEMY_BOX_VELOCITY;
 	ball->position += ball->velocity*(((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
+	ball->rotation += 40 * (((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
+	if (shakeTime > 0) {
+		//tail1
+		{
+			if (tail1->rotation >= 70)
+			{
+				tail1upflag = false;
+				tail1downflag = true;
+			}
+			else if (tail1->rotation <= 50)
+			{
+				tail1upflag = true;
+				tail1downflag = false;
+			}
+			if (tail1upflag)
+				tail1->rotation += 40 * (((timeSinceStart - prevTime) / 1000.));
+			else if (tail1downflag)
+				tail1->rotation -= 40 * (((timeSinceStart - prevTime) / 1000.));
+		}
+		//tail2
+		{
+			if (tail2->rotation >= 20)
+			{
+				tail2upflag = false;
+				tail2downflag = true;
+			}
+			else if (tail2->rotation <= -20)
+			{
+				tail2upflag = true;
+				tail2downflag = false;
+			}
+			if (tail2upflag)
+				tail2->rotation += 80 * (((timeSinceStart - prevTime) / 1000.));
+			else if (tail2downflag)
+				tail2->rotation -= 80 * (((timeSinceStart - prevTime) / 1000.));
+		}
+		//ear
+		{
+			if (ear->rotation >= 20)
+			{
+				earleftflag = false;
+				earrightflag = true;
+			}
+			else if (ear->rotation <= -20)
+			{
+				earleftflag = true;
+				earrightflag = false;
+			}
+			if (earleftflag)
+				ear->rotation += 80 * (((timeSinceStart - prevTime) / 1000.));
+			else if (earrightflag)
+				ear->rotation -= 80 * (((timeSinceStart - prevTime) / 1000.));
+		}
+		shakeTime -= (timeSinceStart - prevTime);
+	}
+	
+
 }
 
 void GameManager::OneGameEnd(bool whoWin) {
