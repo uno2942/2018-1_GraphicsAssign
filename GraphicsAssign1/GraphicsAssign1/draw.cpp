@@ -54,7 +54,7 @@ void display()
 	
 	
 
-
+	//glClearColor(224/255.0, 1, 1, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
 	
 	vector<GameObjectTree>::iterator iter; 
@@ -150,10 +150,26 @@ void representCircle(const Transform &circle)
 	glColor4f(circle.myColor.r / 255.0, circle.myColor.g / 255.0, circle.myColor.b / 255.0, circle.myColor.a);
 	glBegin(GL_POLYGON);
 
-	for (int i = 0; i <= lineNum; i++)
+	for (int i = 0; i < lineNum/2; i++)
 	{
 		glVertex2f(x + r_x + r_x * sinf(i * PI * 2 / lineNum), y + r_y + r_y * cosf(i * PI * 2 / lineNum));
+		
+		float colR = (circle.myColor.r * (lineNum / 2 - i) + 1 * i) / (float)(lineNum / 2);
+		float colG = (circle.myColor.g * (lineNum / 2 - i) + 1 * i) / (float)(lineNum / 2);
+		float colB = (circle.myColor.b * (lineNum / 2 - i) + 1 * i) / (float)(lineNum / 2);
+		glColor4f(colR, colG, colB, 1);
 	}
+	for (int i = lineNum/2; i < lineNum; i++)
+	{
+		glVertex2f(x + r_x + r_x * sinf(i * PI * 2 / lineNum), y + r_y + r_y * cosf(i * PI * 2 / lineNum));
+		
+		float colR = (circle.myColor.r * (i - lineNum / 2 ) + 1 * (lineNum - i)) / (float)(lineNum / 2);
+		float colG = (circle.myColor.g * (i - lineNum / 2) + 1 * (lineNum - i)) / (float)(lineNum / 2);
+		float colB = (circle.myColor.b * (i - lineNum / 2) + 1 * (lineNum - i)) / (float)(lineNum / 2);
+		glColor4f(colR, colG, colB, 1);
+	}
+
+
 
 	glEnd();
 }
