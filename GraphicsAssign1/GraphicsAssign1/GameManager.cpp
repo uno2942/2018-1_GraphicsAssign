@@ -4,6 +4,19 @@ using namespace std;
 /**
 여기서 srand 함수를 실행시킨다.
 **/
+void GameManager::deleteTree(GameObjectTree& tree) {
+	deleteTree_aux(tree.root);
+}
+void GameManager::deleteTree_aux(GameObjectNode* root) {
+	if (root == NULL) return;
+	GameObjectNode* temp1 = root->successor;
+	GameObjectNode* temp2 = root->sibling;
+	delete root;
+	if (temp1 != NULL)
+		deleteTree_aux(temp1);
+	if (temp2 != NULL)
+		deleteTree_aux(temp2);
+}
 
 GLdouble GameManager::BALL_VELOCITY = 300;
 GameManager::GameManager() {
@@ -16,6 +29,7 @@ GameManager::GameManager() {
 		GameObjectNode* ballNode = new GameObjectNode(ballObject, "ball");
 		ballObject->AddCollisionComponentAsItself(ballNode);
 		ballTree.insert_back(ballNode);
+
 		Object* ele = new Box("elec1", 20, 7, MY_YELLOW, -10);
 		eleroot = ele;
 		ele->SetPosition(25, 15);
@@ -88,40 +102,98 @@ GameManager::GameManager() {
 		netTree.insert_back(netNode);
 	}
 
-	//cloud 부분
+	//cloud1 부분
 	{
-		cloud1 = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
-		GameObject* cloudObject1 = new GameObject(cloud1);
-		cloudObject1->object->SetPosition(500, 700);
+		Object* cloud;
+		cloud1root = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
+		GameObject* cloudObject1 = new GameObject(cloud1root);
 		GameObjectNode* cloudNode = new GameObjectNode(cloudObject1, "cloud_mid");
 		cloudTree1.insert_back(cloudNode);
 		
-		cloud1 = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
-		GameObject* cloudObject2 = new GameObject(cloud1);
-		cloudObject2->object->SetPosition(-60, -60);
+		cloud1left = new Oval("cluod_left1", 80, 80, MY_CLOUD_COLOR);
+		cloud1left->SetRotationAxis(70, 70);
+		GameObject* cloudObject2 = new GameObject(cloud1left);
+		cloudObject2->object->SetPosition(-30, -30);
 		cloudTree1.insertAsChildren(cloudObject2, "cloud_left_1", "cloud_mid");
 		
-		cloud1 = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
-		GameObject* cloudObject3 = new GameObject(cloud1);
-		cloudObject3->object->SetPosition(60, -60);
+		cloud1right = new Oval("cloud_right_1", 80, 80, MY_CLOUD_COLOR);
+		cloud1right->SetRotationAxis(10, 70);
+		GameObject* cloudObject3 = new GameObject(cloud1right);
+		cloudObject3->object->SetPosition(30, -30);
 		cloudTree1.insertAsSibling(cloudObject3, "cloud_right_1", "cloud_left_1");
 		
-		cloud1 = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
-		GameObject* cloudObject4 = new GameObject(cloud1);
-		cloudObject4->object->SetPosition(-60, 60);
-		cloudObject4->object->SetRotationAxis(28, -28);
+		cloud = new Oval("cloud_left_2", 80, 80, MY_CLOUD_COLOR);
+		GameObject* cloudObject4 = new GameObject(cloud);
+		cloudObject4->object->SetPosition(-30, 30);
 		cloudTree1.insertAsChildren(cloudObject4, "cloud_left_2", "cloud_left_1");
 		
-		cloud1 = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
-		GameObject* cloudObject5 = new GameObject(cloud1);
-		cloudObject5->object->SetPosition(60, 60);
-		cloudObject5->object->SetRotationAxis(-28, -28);
+		cloud = new Oval("cloud_right_2", 80, 80, MY_CLOUD_COLOR);
+		GameObject* cloudObject5 = new GameObject(cloud);
+		cloudObject5->object->SetPosition(30, 30);
 		cloudTree1.insertAsChildren(cloudObject5, "cloud_right_2", "cloud_right_1");
-		
-		printf("hi");
 	}
 	
+	//cloud2 부분
+	{
+		Object* cloud;
+		cloud2root = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
+		GameObject* cloudObject1 = new GameObject(cloud2root);
+		GameObjectNode* cloudNode = new GameObjectNode(cloudObject1, "cloud_mid");
+		cloudTree2.insert_back(cloudNode);
 
+		cloud2left = new Oval("cluod_left1", 80, 80, MY_CLOUD_COLOR);
+		cloud2left->SetRotationAxis(70, 70);
+		GameObject* cloudObject2 = new GameObject(cloud2left);
+		cloudObject2->object->SetPosition(-30, -30);
+		cloudTree2.insertAsChildren(cloudObject2, "cloud_left_1", "cloud_mid");
+
+		cloud2right = new Oval("cloud_right_1", 80, 80, MY_CLOUD_COLOR);
+		cloud2right->SetRotationAxis(10, 70);
+		GameObject* cloudObject3 = new GameObject(cloud2right);
+		cloudObject3->object->SetPosition(30, -30);
+		cloudTree2.insertAsSibling(cloudObject3, "cloud_right_1", "cloud_left_1");
+
+		cloud = new Oval("cloud_left_2", 80, 80, MY_CLOUD_COLOR);
+		GameObject* cloudObject4 = new GameObject(cloud);
+		cloudObject4->object->SetPosition(-30, 30);
+		cloudTree2.insertAsChildren(cloudObject4, "cloud_left_2", "cloud_left_1");
+
+		cloud = new Oval("cloud_right_2", 80, 80, MY_CLOUD_COLOR);
+		GameObject* cloudObject5 = new GameObject(cloud);
+		cloudObject5->object->SetPosition(30, 30);
+		cloudTree2.insertAsChildren(cloudObject5, "cloud_right_2", "cloud_right_1");
+	}
+
+	//cloud3 부분
+	{
+		Object* cloud;
+		cloud3root = new Oval("cluod_mid", 80, 80, MY_CLOUD_COLOR);
+		GameObject* cloudObject1 = new GameObject(cloud3root);
+		GameObjectNode* cloudNode = new GameObjectNode(cloudObject1, "cloud_mid");
+		cloudTree3.insert_back(cloudNode);
+
+		cloud3left = new Oval("cluod_left1", 80, 80, MY_CLOUD_COLOR);
+		cloud3left->SetRotationAxis(70, 70);
+		GameObject* cloudObject2 = new GameObject(cloud3left);
+		cloudObject2->object->SetPosition(-30, -30);
+		cloudTree3.insertAsChildren(cloudObject2, "cloud_left_1", "cloud_mid");
+
+		cloud3right = new Oval("cloud_right_1", 80, 80, MY_CLOUD_COLOR);
+		cloud3right->SetRotationAxis(10, 70);
+		GameObject* cloudObject3 = new GameObject(cloud3right);
+		cloudObject3->object->SetPosition(30, -30);
+		cloudTree3.insertAsSibling(cloudObject3, "cloud_right_1", "cloud_left_1");
+
+		cloud = new Oval("cloud_left_2", 80, 80, MY_CLOUD_COLOR);
+		GameObject* cloudObject4 = new GameObject(cloud);
+		cloudObject4->object->SetPosition(-30, 30);
+		cloudTree3.insertAsChildren(cloudObject4, "cloud_left_2", "cloud_left_1");
+
+		cloud = new Oval("cloud_right_2", 80, 80, MY_CLOUD_COLOR);
+		GameObject* cloudObject5 = new GameObject(cloud);
+		cloudObject5->object->SetPosition(30, 30);
+		cloudTree3.insertAsChildren(cloudObject5, "cloud_right_2", "cloud_right_1");
+	}
 
 	//wall(스크린 밖에 안 보이는 벽) 부분
 	{
@@ -139,16 +211,39 @@ GameManager::GameManager() {
 	tempNode = new GameObjectNode(temp, "topwall");
 	temp->AddCollisionComponentAsItself(tempNode);
 	wallTree.insertAsSibling(temp, "topwall", "leftwall");
+
+	temp = new GameObject(new Box("leftwallofleft", 300, WORLDCOORDWINDOWHEIGHT));
+	temp->object->SetPosition(-300, 0);
+	tempNode = new GameObjectNode(temp, "leftwallofleft");
+	wallTree.insertAsChildren(temp, "leftwallofleft", "leftwall");
+
+	temp = new GameObject(new Box("rightwallofright", 300, WORLDCOORDWINDOWHEIGHT));
+	temp->object->SetPosition(10, 0);
+	tempNode = new GameObjectNode(temp, "rightwallofright");
+	wallTree.insertAsChildren(temp, "rightwallofright", "rightwall");
 	}
 	
 	objectsTreeVectorForDraw.push_back(playerTree);
 	objectsTreeVectorForDraw.push_back(enemyTree);
 	objectsTreeVectorForDraw.push_back(netTree);
-	objectsTreeVectorForDraw.push_back(wallTree);
 	objectsTreeVectorForDraw.push_back(cloudTree1);
+	objectsTreeVectorForDraw.push_back(cloudTree2);
+	objectsTreeVectorForDraw.push_back(cloudTree3);
+	objectsTreeVectorForDraw.push_back(wallTree);
 	objectsTreeVectorForDraw.push_back(ballTree);
 	
 	StartGame();
+}
+
+GameManager::~GameManager() {
+	deleteTree(playerTree);
+	deleteTree(enemyTree);
+	deleteTree(netTree);
+	deleteTree(wallTree);
+	deleteTree(ballTree);
+	deleteTree(cloudTree1);
+	deleteTree(cloudTree2);
+	deleteTree(cloudTree3);
 }
 
 void GameManager::OneFramePipeline() {
@@ -199,6 +294,10 @@ void GameManager::InitObjectsPosition() {
 	tail1->SetRotation(50);
 	tail2->SetRotation(0);
 	ear->SetRotation(0);
+
+	cloud1root->SetPosition(INITIAL_CLOUD1_POSITION);
+	cloud2root->SetPosition(INITIAL_CLOUD2_POSITION);
+	cloud3root->SetPosition(INITIAL_CLOUD3_POSITION);
 }
 
 /**
@@ -320,7 +419,52 @@ void GameManager::SetObjectPosition() {
 		shakeTime -= (timeSinceStart - prevTime);
 	}
 	
+	cloud1root->position += Vector2(80, 0) * (((timeSinceStart - prevTime) / 1000.));
+	cloud2root->position += Vector2(80, 0) * (((timeSinceStart - prevTime) / 1000.));
+	cloud3root->position += Vector2(80, 0) * (((timeSinceStart - prevTime) / 1000.));
 
+	if (cloud1root->position.x > WORLDCOORDWINDOWWIDTH+200)
+		cloud1root->position.x -= WORLDCOORDWINDOWWIDTH+500;
+
+	if (cloud2root->position.x > WORLDCOORDWINDOWWIDTH + 200)
+		cloud2root->position.x -= WORLDCOORDWINDOWWIDTH + 500;
+
+	if (cloud3root->position.x > WORLDCOORDWINDOWWIDTH + 200)
+		cloud3root->position.x -= WORLDCOORDWINDOWWIDTH + 500;
+
+	if (cloud1left->rotation > 20)
+		cloudLeftUp = false;
+	else if (cloud1left->rotation < -20)
+		cloudLeftUp = true;
+	if (cloud1right->rotation > 20)
+		cloudRightUp = false;
+	else if (cloud1right->rotation < -20)
+		cloudRightUp = true;
+	
+	if (cloudLeftUp)
+	{
+		cloud1left->rotation += 40 * (((timeSinceStart - prevTime) / 1000.));
+		cloud2left->rotation += 40 * (((timeSinceStart - prevTime) / 1000.));
+		cloud3left->rotation += 40 * (((timeSinceStart - prevTime) / 1000.));
+	}
+	else {
+		cloud1left->rotation -= 40 * (((timeSinceStart - prevTime) / 1000.));
+		cloud2left->rotation -= 40 * (((timeSinceStart - prevTime) / 1000.));
+		cloud3left->rotation -= 40 * (((timeSinceStart - prevTime) / 1000.));
+	}
+
+	if (cloudRightUp)
+	{
+		cloud1right->rotation += 40 * (((timeSinceStart - prevTime) / 1000.));
+		cloud2right->rotation += 40 * (((timeSinceStart - prevTime) / 1000.));
+		cloud3right->rotation += 40 * (((timeSinceStart - prevTime) / 1000.));
+	}
+	else
+	{
+		cloud1right->rotation -= 40 * (((timeSinceStart - prevTime) / 1000.));
+		cloud2right->rotation -= 40 * (((timeSinceStart - prevTime) / 1000.));
+		cloud3right->rotation -= 40 * (((timeSinceStart - prevTime) / 1000.));
+	}
 }
 
 void GameManager::OneGameEnd(bool whoWin) {

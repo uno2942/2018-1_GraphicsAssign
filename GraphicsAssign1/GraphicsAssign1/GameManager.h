@@ -96,9 +96,19 @@ public:
 	Object* eleroot;
 
 	GameObjectTree cloudTree1 = GameObjectTree("cloud1");
-	Object* cloud1;
+	Object* cloud1root;
+	Object* cloud1left;
+	Object* cloud1right;
+	bool cloudLeftUp = true;
+	bool cloudRightUp = false;
 	GameObjectTree cloudTree2 = GameObjectTree("cloud2");
-	Object* cloud2;
+	Object* cloud2root;
+	Object* cloud2left;
+	Object* cloud2right;
+	GameObjectTree cloudTree3 = GameObjectTree("cloud3");
+	Object* cloud3root;
+	Object* cloud3left;
+	Object* cloud3right;
 
 	static GLdouble BALL_VELOCITY;
 	int myScore = 0;
@@ -107,6 +117,9 @@ public:
 
 private:
 	GameManager();
+	~GameManager();
+	void deleteTree(GameObjectTree& tree);
+	void deleteTree_aux(GameObjectNode* root);
 //	GameManager(GameManager const&);   // Don't Implement
 //	void operator=(GameManager const&); // Don't implement
 	//Manager
@@ -134,6 +147,9 @@ private:
 	const Vector2 INITIAL_LEFT_WALL_POSITION = Vector2(-10, 0);
 	const Vector2 INITIAL_RIGHT_WALL_POSITION = Vector2(WORLDCOORDWINDOWWIDTH, 0);
 	const Vector2 INITIAL_TOP_WALL_POSITION = Vector2(0, WORLDCOORDWINDOWHEIGHT);
+	const Vector2 INITIAL_CLOUD1_POSITION = Vector2(-400, 800);
+	const Vector2 INITIAL_CLOUD2_POSITION = Vector2(400, 600);
+	const Vector2 INITIAL_CLOUD3_POSITION = Vector2(1200, 700);
 
 	bool playerBoxMoveRightFlag = false;
 	bool playerBoxMoveLeftFlag = false;

@@ -156,4 +156,3 @@ typedef ObjectWithComponent::CollisionComponent_ CollisionComponent;
 typedef ObjectWithComponent GameObject;
 typedef Node<ObjectWithComponent*, string> GameObjectNode;
 typedef BinaryTree<GameObject*, string> GameObjectTree;
-

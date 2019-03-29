@@ -70,4 +70,3 @@ void ObjectWithComponent::AddCollisionComponent(Object::Shape shape, GLdouble x,
 void ObjectWithComponent::AddCollisionComponentAsItself(Node<ObjectWithComponent*, string>* parentObject) {
 	collisionComponent = new CollisionComponent_(new Transform(object->width, object->height, object->rotation, object->shape, 0, 0), parentObject);
 }
-
