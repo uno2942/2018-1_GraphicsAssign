@@ -268,6 +268,10 @@ void GameManager::StartGame() {
 	WhoFinallyWin = 0;
 	InitializeGame();
 	/*...*/
+
+	cloud1root->SetPosition(INITIAL_CLOUD1_POSITION);
+	cloud2root->SetPosition(INITIAL_CLOUD2_POSITION);
+	cloud3root->SetPosition(INITIAL_CLOUD3_POSITION);
 }
 
 void GameManager::InitializeGame() {
@@ -294,10 +298,6 @@ void GameManager::InitObjectsPosition() {
 	tail1->SetRotation(50);
 	tail2->SetRotation(0);
 	ear->SetRotation(0);
-
-	cloud1root->SetPosition(INITIAL_CLOUD1_POSITION);
-	cloud2root->SetPosition(INITIAL_CLOUD2_POSITION);
-	cloud3root->SetPosition(INITIAL_CLOUD3_POSITION);
 }
 
 /**
