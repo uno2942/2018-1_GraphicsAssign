@@ -76,6 +76,42 @@ GameManager::GameManager() {
 		netObject->AddCollisionComponentAsItself(netNode);
 		netTree.insert_back(netNode);
 	}
+
+	//cloud 부분
+	{
+		cloud1 = new Oval("cluod_mid", 80, 80);
+		GameObject* cloudObject1 = new GameObject(cloud1);
+		cloudObject1->object->SetPosition(500, 700);
+		GameObjectNode* cloudNode = new GameObjectNode(cloudObject1, "cloud_mid");
+		cloudTree1.insert_back(cloudNode);
+		
+		cloud1 = new Oval("cluod_mid", 80, 80);
+		GameObject* cloudObject2 = new GameObject(cloud1);
+		cloudObject2->object->SetPosition(-60, -60);
+		cloudTree1.insertAsChildren(cloudObject2, "cloud_left_1", "cloud_mid");
+		
+		cloud1 = new Oval("cluod_mid", 80, 80);
+		GameObject* cloudObject3 = new GameObject(cloud1);
+		cloudObject3->object->SetPosition(60, -60);
+		cloudTree1.insertAsSibling(cloudObject3, "cloud_right_1", "cloud_left_1");
+		
+		cloud1 = new Oval("cluod_mid", 80, 80);
+		GameObject* cloudObject4 = new GameObject(cloud1);
+		cloudObject4->object->SetPosition(-60, 60);
+		cloudObject4->object->SetRotationAxis(28, -28);
+		cloudTree1.insertAsChildren(cloudObject4, "cloud_left_2", "cloud_left_1");
+		
+		cloud1 = new Oval("cluod_mid", 80, 80);
+		GameObject* cloudObject5 = new GameObject(cloud1);
+		cloudObject5->object->SetPosition(60, 60);
+		cloudObject5->object->SetRotationAxis(-28, -28);
+		cloudTree1.insertAsChildren(cloudObject5, "cloud_right_2", "cloud_right_1");
+		
+		printf("hi");
+	}
+	
+
+
 	//wall(스크린 밖에 안 보이는 벽) 부분
 	{
 	GameObject* temp = new GameObject(new Box("leftwall", 10, WORLDCOORDWINDOWHEIGHT));
@@ -98,6 +134,7 @@ GameManager::GameManager() {
 	objectsTreeVectorForDraw.push_back(enemyTree);
 	objectsTreeVectorForDraw.push_back(netTree);
 	objectsTreeVectorForDraw.push_back(wallTree);
+	objectsTreeVectorForDraw.push_back(cloudTree1);
 	objectsTreeVectorForDraw.push_back(ballTree);
 	
 	StartGame();

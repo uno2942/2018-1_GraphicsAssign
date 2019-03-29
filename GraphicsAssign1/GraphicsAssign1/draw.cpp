@@ -95,15 +95,16 @@ void drawObjectRecursive(GameObjectNode* root)
 	glRotatef(root->data->object->rotation, 0, 0, 1);
 	glTranslatef(- root->data->object->rotationAxis.x, - root->data->object->rotationAxis.y, 0.0f);
 
+	representComponent(*(root->data->object));
+
 	GameObjectNode *tmp;
 
 	for (tmp = root->successor; tmp != NULL; tmp = tmp->sibling)
 	{
 		
-		drawObjectRecursive(root->successor);
+		drawObjectRecursive(tmp);
+		
 	}
-
-	representComponent(*(root->data->object));
 	
 	glPopMatrix();
 }
@@ -144,7 +145,8 @@ void representCircle(const Transform &circle)
 
 	GLfloat x = 0;
 	GLfloat y = 0;
-	GLfloat r = circle.GetSize().x / 2;
+	GLfloat r_x = circle.GetSize().x / 2;
+	GLfloat r_y = circle.GetSize().y / 2;
 
 	
 	glColor3f(1.0, 153.0 / 255, 153.0 / 255);
@@ -152,7 +154,7 @@ void representCircle(const Transform &circle)
 
 	for (int i = 0; i <= lineNum; i++)
 	{
-		glVertex2f(x + r + r * sinf(i * PI * 2 / lineNum), y + r + r * cosf(i * PI * 2 / lineNum));
+		glVertex2f(x + r_x + r_x * sinf(i * PI * 2 / lineNum), y + r_y + r_y * cosf(i * PI * 2 / lineNum));
 	}
 
 	glEnd();

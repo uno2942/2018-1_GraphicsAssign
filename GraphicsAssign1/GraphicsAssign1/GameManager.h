@@ -94,6 +94,11 @@ public:
 	Object* ball;
 	GameObjectTree electricity = GameObjectTree("electricity");
 
+	GameObjectTree cloudTree1 = GameObjectTree("cloud1");
+	Object* cloud1;
+	GameObjectTree cloudTree2 = GameObjectTree("cloud2");
+	Object* cloud2;
+
 	static GLdouble BALL_VELOCITY;
 	int myScore = 0;
 	int enemyScore = 0;
