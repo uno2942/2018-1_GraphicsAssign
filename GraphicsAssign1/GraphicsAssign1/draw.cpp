@@ -46,25 +46,25 @@ void display()
 		glutSwapBuffers();
 		return;
 	}
-
+	
 	if (camMode == WHOLE)
 		gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -100.0f, 0.0f, 1.0f, 0.0f);
-	//else
-	//	lookAtBall(GameManager::getInstance().ball);
+	else
+		lookAtBall(*GameManager::getInstance().ball);
 	
 	
 
 
 	glClear(GL_COLOR_BUFFER_BIT);
-	//
+	
 	vector<GameObjectTree>::iterator iter; 
 	
 	for (iter = objectsTreeVectorForDraw.begin(); iter != objectsTreeVectorForDraw.end(); iter++)
 	{
-		glLoadIdentity();
+		
 		drawObjectRecursive(iter->root);
 	}
-
+	
 
 
 	/*
@@ -78,7 +78,7 @@ void display()
 	representScore(GameManager::getInstance().myScore, 100.0, 800.0);
 	glLoadIdentity();
 	representScore(GameManager::getInstance().enemyScore, 1400.0, 800.0);
-
+	
 
 	glutSwapBuffers();
 
@@ -94,7 +94,7 @@ void drawObjectRecursive(GameObjectNode* root)
 
 	for (tmp = root->successor; tmp != NULL; tmp = tmp->sibling)
 	{
-		printf("1");
+		
 		drawObjectRecursive(root->successor);
 	}
 
@@ -160,7 +160,7 @@ void representTriangle(const Transform & triangle)
 	GLfloat w = triangle.GetSize().x;
 	GLfloat h = triangle.GetSize().y;
 
-	printf("1");
+	
 	glColor3f(150 / 255.0, 150 / 255.0, 150 / 255.0);
 	glBegin(GL_TRIANGLES);
 
@@ -170,29 +170,29 @@ void representTriangle(const Transform & triangle)
 	glEnd();
 }
 
-void lookAtBall(const Oval& circle) // to be modified
+void lookAtBall(const Object& ball) // to be modified
 {
-	/*
-	GLfloat lookAtX = circle.GetCurrentPosition().x + circle.GetSize().x / 2;
-	GLfloat lookAtY = circle.GetCurrentPosition().y + circle.GetSize().y / 2;
-	GLfloat screenX = GameManager::getInstance().screen.GetSize().x;
-	GLfloat screenY = GameManager::getInstance().screen.GetSize().y;
 
+	GLfloat lookAtX = ball.GetCurrentPosition().x + ball.GetSize().x / 2;
+	GLfloat lookAtY = ball.GetCurrentPosition().y + ball.GetSize().y / 2;
+	GLfloat screenX = WORLDCOORDWINDOWWIDTH;
+	GLfloat screenY = WORLDCOORDWINDOWHEIGHT;
+	
 	if (lookAtX > screenX - BVIEW_HALF_W)
 		lookAtX = screenX - BVIEW_HALF_W;
 	else if (lookAtX < BVIEW_HALF_W)
 		lookAtX = BVIEW_HALF_W;
-
+	
 	if (lookAtY > screenY - BVIEW_HALF_H)
 		lookAtY = screenY - BVIEW_HALF_H;
 	else if (lookAtY < BVIEW_HALF_H)
 		lookAtY = BVIEW_HALF_H;
-
+		
 
 	gluLookAt(lookAtX, lookAtY, 0.0f,
 		lookAtX, lookAtY, -100.0f,
 		0.0f, 1.0f, 0.0f);
-		*/
+	printf("%f\n", lookAtX);
 }
 
 void representScore(int score, GLfloat x, GLfloat y)

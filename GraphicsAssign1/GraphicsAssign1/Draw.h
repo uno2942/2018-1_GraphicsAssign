@@ -17,7 +17,7 @@ void representCircle(const Transform& circle);
 
 void representTriangle(const Transform& triangle);
 
-void lookAtBall(const Oval& circle);
+void lookAtBall(const Object& circle);
 
 void representScore(int score, GLfloat x, GLfloat y);
 
