@@ -136,6 +136,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ball.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="CommonBetweenGameAndDraw.cpp" />
     <ClCompile Include="draw.cpp" />
@@ -147,6 +148,7 @@
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="CommonBetweenGameAndDraw.h" />
     <ClInclude Include="Draw.h" />
     <ClInclude Include="GameManager.h" />

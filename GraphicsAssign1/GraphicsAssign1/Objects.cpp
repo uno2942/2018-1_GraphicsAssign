@@ -18,9 +18,9 @@ ObjectWithComponent::CollisionComponent_::~CollisionComponent_() {
 		collisionObject = NULL;
 	}
 }
-const Vector2 ObjectWithComponent::CollisionComponent_::GetWorldPos() const {
+const Vector3 ObjectWithComponent::CollisionComponent_::GetWorldPos() const {
 	Node<ObjectWithComponent*, string>* temp = gameObjectNode;
-	Vector2 worldpos = collisionObject->position;
+	Vector3 worldpos = collisionObject->position;
 	while (temp != NULL)
 	{
 		worldpos += temp->data->object->position;
@@ -29,9 +29,9 @@ const Vector2 ObjectWithComponent::CollisionComponent_::GetWorldPos() const {
 	return worldpos;
 }
 
-const Vector2 ObjectWithComponent::CollisionComponent_::GetVelocity() const {
+const Vector3 ObjectWithComponent::CollisionComponent_::GetVelocity() const {
 	Node<ObjectWithComponent*, string>* temp = gameObjectNode;
-	Vector2 worldvel = collisionObject->velocity;
+	Vector3 worldvel = collisionObject->velocity;
 	while (temp != NULL)
 	{
 		worldvel += temp->data->object->velocity;
@@ -64,9 +64,9 @@ ObjectWithComponent::~ObjectWithComponent() {
 	}
 }
 
-void ObjectWithComponent::AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation, Node<ObjectWithComponent*, string>* parentObject) {
-	collisionComponent = new CollisionComponent_(new Transform(width, height, rotation, shape, x, y), parentObject);
+void ObjectWithComponent::AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, GLdouble xlen, GLdouble ylen, GLdouble zlen, GLdouble rotation, Node<ObjectWithComponent*, string>* parentObject) {
+	collisionComponent = new CollisionComponent_(new Transform(xlen, ylen, zlen, rotation, shape, x, y), parentObject);
 }
 void ObjectWithComponent::AddCollisionComponentAsItself(Node<ObjectWithComponent*, string>* parentObject) {
-	collisionComponent = new CollisionComponent_(new Transform(object->width, object->height, object->rotation, object->shape, 0, 0), parentObject);
+	collisionComponent = new CollisionComponent_(new Transform(object->xlen, object->ylen, object->zlen, object->rotation, object->shape, 0, 0), parentObject);
 }

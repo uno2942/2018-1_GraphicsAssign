@@ -18,61 +18,65 @@ public:
 	enum Shape { OVAL, BOX, TRIANGLE };
 	Shape shape;
 	Object();
-	Object(int _width, int _height, GLdouble _rotation, Shape _shape, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble x = 0, GLdouble y = 0, GLdouble vecx = 0, GLdouble vecy = 0) : width(_width), height(_height), rotation(_rotation), shape(_shape), myColor(r, g, b, a) {
-		position = Vector2(x, y);
-		velocity = Vector2(vecx, vecy);
+	Object(GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, GLdouble _rotation, Shape _shape, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble x = 0, GLdouble y = 0, GLdouble z = 0, GLdouble vecx = 0, GLdouble vecy = 0, GLdouble vecz = 0) : xlen(_xlen), ylen(_ylen), zlen(_zlen), rotation(_rotation), shape(_shape), myColor(r, g, b, a) {
+		position = Vector3(x, y, z);
+		velocity = Vector3(vecx, vecy, vecz);
 
 	}
-	Object(int _width, int _height, GLdouble _rotation, Shape _shape, MyColor mColor, GLdouble x = 0, GLdouble y = 0, GLdouble vecx = 0, GLdouble vecy = 0) : width(_width), height(_height), rotation(_rotation), shape(_shape), myColor(mColor) {
-		position = Vector2(x, y);
-		velocity = Vector2(vecx, vecy);
+	Object(GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, GLdouble _rotation, Shape _shape, MyColor mColor, GLdouble x = 0, GLdouble y = 0, GLdouble z = 0,GLdouble vecx = 0, GLdouble vecy = 0, GLdouble vecz=0) : xlen(_xlen), ylen(_ylen), zlen(_zlen), rotation(_rotation), shape(_shape), myColor(mColor) {
+		position = Vector3(x, y, z);
+		velocity = Vector3(vecx, vecy, vecz);
 
 	}
-	int width;
-	int height;
+	GLdouble xlen;
+	GLdouble ylen;
+	GLdouble zlen;
 
 	string name;
 
-	Vector2 position;
-	Vector2 velocity;
-	Vector2 rotationAxis = Vector2(0, 0);
+	Vector3 position;
+	Vector3 velocity;
+	Vector3 rotationAxis = Vector3(0, 0, 0);
 	GLdouble rotation;
 	MyColor myColor;
 	bool isFixed = false;
-	inline const Vector2& GetCurrentPosition() const { return position; }
+	inline const Vector3& GetCurrentPosition() const { return position; }
 	inline const GLdouble& GetCurrentRotation() const { return rotation; }
-	inline const Vector2& GetCurrentVelocity() const {
+	inline const Vector3& GetCurrentVelocity() const {
 		return velocity;
 	}
-	inline const Vector2& SetPosition(Vector2 _position) {
+	inline const Vector3& SetPosition(Vector3 _position) {
 		position = _position;
 		return position;
 	}
-	inline const Vector2& SetPosition(GLdouble x, GLdouble y) {
+	inline const Vector3& SetPosition(GLdouble x, GLdouble y, GLdouble z) {
 		position.x = x;
 		position.y = y;
+		position.z = z;
 		return position;
 	}
 	inline const GLdouble& SetRotation(GLdouble _rotation) {
 		rotation = _rotation;
 		return rotation;
 	}
-	inline const Vector2& SetVelocity(Vector2 _velocity) {
+	inline const Vector3& SetVelocity(Vector3 _velocity) {
 		velocity = _velocity;
 		return velocity;
 	}
-	inline const Vector2& SetVelocity(GLdouble x, GLdouble y) {
+	inline const Vector3& SetVelocity(GLdouble x, GLdouble y, GLdouble z) {
 		velocity.x = x;
 		velocity.y = y;
+		velocity.z = z;
 		return velocity;
 	}
-	inline const Vector2& SetRotationAxis(GLdouble x, GLdouble y) {
+	inline const Vector3& SetRotationAxis(GLdouble x, GLdouble y, GLdouble z) {
 		rotationAxis.x = x;
 		rotationAxis.y = y;
+		rotationAxis.z = z;
 		return rotationAxis;
 	}
-	inline const Vector2 GetSize() const {
-		return Vector2(width, height);
+	inline const Vector3 GetSize() const {
+		return Vector3(zlen, ylen, zlen);
 	}
 };
 typedef Object Transform;
@@ -82,11 +86,11 @@ public:
 	Oval() {
 		shape = OVAL;
 	}
-	Oval(string name, int _width, int _height, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(_width, _height, _rotation, OVAL, r, g, b, a) {
+	Oval(string name, GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(_xlen, _ylen, _zlen, _rotation, OVAL, r, g, b, a) {
 		shape = OVAL;
 		this->name = name;
 	}
-	Oval(string name, int _width, int _height, MyColor mColor, GLdouble _rotation = 0) : Object(_width, _height, _rotation, OVAL, mColor) {
+	Oval(string name, GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, MyColor mColor, GLdouble _rotation = 0) : Object(_xlen, _ylen, _zlen, _rotation, OVAL, mColor) {
 		shape = OVAL;
 		this->name = name;
 	}
@@ -96,11 +100,11 @@ public:
 	Box() {
 		shape = BOX;
 	}
-	Box(string name, int _width, int _height, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(_width, _height, _rotation, BOX, r, g, b, a) {
+	Box(string name, GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(_xlen, _ylen, _zlen, _rotation, BOX, r, g, b, a) {
 		shape = BOX;
 		this->name = name;
 	}
-	Box(string name, int _width, int _height, MyColor mColor, GLdouble _rotation = 0) : Object(_width, _height, _rotation, BOX, mColor) {
+	Box(string name, GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, MyColor mColor, GLdouble _rotation = 0) : Object(_xlen, _ylen, _zlen, _rotation, BOX, mColor) {
 		shape = BOX;
 		this->name = name;
 	}
@@ -110,11 +114,11 @@ public:
 	Triangle() {
 		shape = TRIANGLE;
 	}
-	Triangle(string _name, int _width, int _height, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(_width, _height, _rotation, TRIANGLE, r,g, b, a) {
+	Triangle(string _name, GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(xlen, ylen, zlen, _rotation, TRIANGLE, r,g, b, a) {
 		shape = TRIANGLE;
 		name = _name;
 	}
-	Triangle(string _name, int _width, int _height, MyColor mColor, GLdouble _rotation = 0) : Object(_width, _height, _rotation, TRIANGLE, mColor) {
+	Triangle(string _name, GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, MyColor mColor, GLdouble _rotation = 0) : Object(xlen, ylen, zlen, _rotation, TRIANGLE, mColor) {
 		shape = TRIANGLE;
 		name = _name;
 	}
@@ -129,17 +133,17 @@ public:
 		Node<ObjectWithComponent*, string>* gameObjectNode=NULL; //이 Component를 가진 GameObjectNode를 가르킴.
 		CollisionComponent_(Transform* collisionObject, Node<ObjectWithComponent*, string>* parentObject);
 		~CollisionComponent_();
-		const Vector2 GetWorldPos() const;
-		inline const int GetWidth() const {
-			return collisionObject->width;
+		const Vector3 GetWorldPos() const;
+		inline const int Getxlen() const {
+			return collisionObject->xlen;
 		}
-		inline const int GetHeight() const {
-			return collisionObject->height;
+		inline const int Getylen() const {
+			return collisionObject->ylen;
 		}
 		inline const Object::Shape GetShape() const {
 			return collisionObject->shape;
 		}
-		const Vector2 GetVelocity() const;
+		const Vector3 GetVelocity() const;
 		static void ConnectCollisionManagerAddFunction(void(*g) (CollisionComponent_* collisionComponent));
 	private:
 		typedef void(*FuncPointer) (CollisionComponent_* collisionComponent);
@@ -149,7 +153,7 @@ public:
 	CollisionComponent_* collisionComponent=NULL; // object의 collision Component
 	ObjectWithComponent(Transform* object = NULL, CollisionComponent_* collisionComponent = NULL);
 	~ObjectWithComponent();
-	void AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, int width, int height, GLdouble rotation, Node<ObjectWithComponent*, string>* parentObject);
+	void AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, GLdouble xlen, GLdouble ylen, GLdouble zlen, GLdouble rotation, Node<ObjectWithComponent*, string>* parentObject);
 	void AddCollisionComponentAsItself(Node<ObjectWithComponent*, string>* parentObject);
 };
 typedef ObjectWithComponent::CollisionComponent_ CollisionComponent;

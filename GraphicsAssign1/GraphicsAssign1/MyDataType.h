@@ -59,6 +59,63 @@ public:
 		return os;
 	}
 };
+
+struct Vector3 {
+public:
+	GLdouble x;
+	GLdouble y;
+	GLdouble z;
+	Vector3(GLdouble _x, GLdouble _y, GLdouble _z) {
+		x = _x;
+		y = _y;
+		z = _z;
+	}
+
+	Vector3() {
+		x = 0;
+		y = 0;
+		z = 0;
+	}
+	Vector3 operator+(const Vector3& rhs) {
+		return Vector3(x + rhs.x, y + rhs.y, z + rhs.z);
+	}
+	Vector3 operator-(const Vector3& rhs) {
+		return Vector3(x - rhs.x, y - rhs.y, z - rhs.z);
+	}
+	Vector3 operator*(const GLdouble d) {
+		return Vector3((*this).x * d, (*this).y * d, (*this).z*d);
+	}
+	Vector3 operator/(const GLdouble d) {
+		return Vector3((*this).x / d, (*this).y / d, (*this).z / d);
+	}
+	Vector3 operator-() const {
+		Vector3 v;
+		v.x = -x;
+		v.y = -y;
+		v.z = -z;
+		return v;
+	}
+	Vector3& operator+=(const Vector3& rhs) {
+		(*this).x += rhs.x;
+		(*this).y += rhs.y;
+		(*this).z += rhs.z;
+		return *this;
+	}
+
+	inline static GLdouble abs(const Vector3 & a)
+	{
+		return sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
+	}
+
+	inline static Vector3 normalize(const Vector3& a) {
+		GLdouble veclen = sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
+		return Vector3(a.x / veclen, a.y / veclen, a.z / veclen);
+	}
+	friend ostream& operator<<(ostream& os, const Vector2& dt) {
+		os << '(' << dt.x << ',' << dt.y << ',' << dt.z << ')';
+		return os;
+	}
+};
 struct MyColor {
 public:
 	int r;
