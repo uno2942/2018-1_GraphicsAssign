@@ -19,10 +19,13 @@ const Vector2 INITIAL_LEFT_WALL_POSITION = Vector2(-10, 0);
 const Vector2 INITIAL_RIGHT_WALL_POSITION = Vector2(WORLDCOORDWINDOWWIDTH, 0);
 const Vector2 INITIAL_TOP_WALL_POSITION = Vector2(0, WORLDCOORDWINDOWHEIGHT);
 
-static GameObjectTree* GetPlayer();
+GameObjectTree* GetPlayer();
+GameObjectTree* GetEnemy();
+GameObjectTree* GetBall();
+GameObjectTree* GetWall();
 
-static GameObjectTree* GetEnemy();
+void SetplayerBoxVelocity(bool playerBoxMoveRightFlag, bool playerBoxMoveLeftFlag);
 
-static GameObjectTree* GetBall();
+void SetenemyBoxVelocity(int enemyMoveTime, Object* ball);
 
-static GameObjectTree* GetWall();
+void InitBallVelocity(int BALL_VELOCITY);

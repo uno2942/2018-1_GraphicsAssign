@@ -1,6 +1,6 @@
 #include"Units.h"
 
-static GameObjectTree* GetPlayer() {
+GameObjectTree* GetPlayer() {
 	static GameObjectTree* playerTree;
 	if (playerTree == NULL)
 	{
@@ -12,4 +12,13 @@ static GameObjectTree* GetPlayer() {
 		playerTree->insert_back(playerNode);
 	}
 	return playerTree;
+}
+
+void SetplayerBoxVelocity(bool playerBoxMoveRightFlag, bool playerBoxMoveLeftFlag) {
+	if (playerBoxMoveRightFlag)
+		GetPlayer()->root->data->object->SetVelocity(BOXVELOCITYTORIGHT);
+	else if (playerBoxMoveLeftFlag)
+		GetPlayer()->root->data->object->SetVelocity(BOXVELOCITYTOLEFT);
+	else
+		GetPlayer()->root->data->object->SetVelocity(BOXVELOCITYZERO);
 }

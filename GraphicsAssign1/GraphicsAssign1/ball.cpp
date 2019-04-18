@@ -1,6 +1,6 @@
 #include"Units.h"
 
-static GameObjectTree* GetBall() {
+GameObjectTree* GetBall() {
 	static GameObjectTree* ballTree = NULL;
 	if (ballTree == NULL)
 	{
@@ -12,4 +12,17 @@ static GameObjectTree* GetBall() {
 		ballTree->insert_back(ballNode);
 	}
 	return ballTree;
+}
+
+void InitBallVelocity(int BALL_VELOCITY) {
+	int x = 0;
+	int y = 0;
+
+	while (0 == x)
+		x = rand() % 101 - 50;
+
+	while (-20 < y && y < 20)
+		y = rand() % 101 - 50;
+
+	GetBall()->root->data->object->SetVelocity((Vector2::normalize(Vector2(x, y)))*BALL_VELOCITY);
 }

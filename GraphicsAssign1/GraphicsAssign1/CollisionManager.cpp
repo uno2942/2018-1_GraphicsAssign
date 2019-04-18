@@ -66,8 +66,6 @@ void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObject
 			collisionPairvector->pop_back();
 			continue;
 		}
-		if (o1->shape == Object::Shape::OVAL && o2->name == "playerBox")
-			GameManager::getInstance().SetShakeTime();
 		o1->velocity += collisionPairvector->back().second;
 
 		collisionPairvector->pop_back();
@@ -232,12 +230,12 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* GameManager::Coll
 
 	if (GameManager::getInstance().ball->GetCurrentPosition().y <= YBORDER)
 	{
-		if (GameManager::getInstance().ball->GetCurrentPosition().x + (GameManager::getInstance().ball->width / 2) <= GameManager::getInstance().net->GetCurrentPosition().x)
+		if (true)//I need to fix it
 		{
 			GameManager::getInstance().OneGameEnd(false);
 			return collisionPairvector;
 		}
-		else if (GameManager::getInstance().ball->GetCurrentPosition().x + (GameManager::getInstance().ball->GetSize().x / 2) >= GameManager::getInstance().net->GetCurrentPosition().x + GameManager::getInstance().net->width)
+		else if (true)//I need to fix it
 		{
 			GameManager::getInstance().OneGameEnd(true);
 			return collisionPairvector;

@@ -1,6 +1,6 @@
 #include"Units.h"
 
-static GameObjectTree* GetWall() {
+GameObjectTree* GetWall() {
 	static GameObjectTree* wallTree;
 	if (wallTree == NULL)
 	{

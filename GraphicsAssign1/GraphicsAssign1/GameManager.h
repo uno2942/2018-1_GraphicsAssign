@@ -97,18 +97,13 @@ private:
 	bool playerBoxMoveRightFlag = false;
 	bool playerBoxMoveLeftFlag = false;
 	
-	bool enemyBoxMoveRightFlag = false;
-	bool enemyBoxMoveLeftFlag = false;
 	bool ballLeftCollisionFlag = false;
 	bool ballRightCollisionFlag = false;
 	bool ballUpCollisionFlag = false;
 	bool ballDownCollisionFlag = false;
 
 	void InitializeGame();
-	void InitBallVelocity();
 	void InitObjectsPosition();
-	void SetplayerBoxVelocity();
-	void SetenemyBoxVelocity();
 	void SetObjectPosition();
 	void OneGameEnd(bool whoWin);
 };

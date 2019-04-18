@@ -26,8 +26,9 @@ GameManager::GameManager() {
 	player = GetPlayer()->root->data->object;
 	enemy = GetEnemy()->root->data->object;
 	ball = GetBall()->root->data->object;
+	BALL_VELOCITY = 300;
 
-	objectsTreeVectorForDraw.push_back(*GetPlayer());
+	objectsTreeVectorForDraw.push_back(*(GetPlayer()));
 	objectsTreeVectorForDraw.push_back(*GetEnemy());
 	objectsTreeVectorForDraw.push_back(*GetBall());
 	objectsTreeVectorForDraw.push_back(*GetWall());
@@ -44,8 +45,10 @@ GameManager::~GameManager() {
 
 void GameManager::OneFramePipeline() {
 	timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
-	SetplayerBoxVelocity();
-	SetenemyBoxVelocity();
+	SetplayerBoxVelocity(playerBoxMoveRightFlag, playerBoxMoveLeftFlag);
+	playerBoxMoveRightFlag = false;
+	playerBoxMoveLeftFlag = false;
+	SetenemyBoxVelocity(enemyMoveTime += DeltaTime(), ball);
 	collisionManager.CollisionHandler(collisionManager.RestoreBallPosition(collisionManager.CollisionCheck()));
 	SetObjectPosition();
 	prevTime = timeSinceStart;
@@ -69,7 +72,7 @@ void GameManager::InitializeGame() {
 	oneGameEnd = false;
 	enemyMoveTime = 0;
 	InitObjectsPosition();
-	InitBallVelocity();
+	InitBallVelocity(BALL_VELOCITY);
 	timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 	prevTime = glutGet(GLUT_ELAPSED_TIME);
 }
@@ -85,60 +88,9 @@ void GameManager::InitObjectsPosition() {
 게임 시작 시 공의 초기 속도를 결정해주는 함수
 **/
 
-void GameManager::InitBallVelocity() {
-	BALL_VELOCITY = 300;
-	int x = 0;
-	int y = 0;
-	
-	while(0==x)
-		x = rand()%101-50;
-
-	while (-20 < y && y < 20)
-		y = rand() % 101 - 50;
-
-	ball->SetVelocity((Vector2::normalize(Vector2(x, y)))*BALL_VELOCITY);
-}
 
 
-void GameManager::SetplayerBoxVelocity() {
-	if (playerBoxMoveRightFlag)
-		player->SetVelocity(BOXVELOCITYTORIGHT);
-	else if (playerBoxMoveLeftFlag)
-		player->SetVelocity(BOXVELOCITYTOLEFT);
-	else
-		player->SetVelocity(BOXVELOCITYZERO);
-	playerBoxMoveRightFlag = false;
-	playerBoxMoveLeftFlag = false;
-}
-
-void GameManager::SetenemyBoxVelocity() {
-	if (enemyMoveTime > 3000)
-		enemyMoveTime = -5000;
-	enemyMoveTime += DeltaTime();
-	if (enemyMoveTime > 0)
-	{
-		if (ball->position.x + ball->width / 2 > enemy->position.x + enemy->width / 2)
-			enemyBoxMoveRightFlag = true;
-		else if (ball->position.x + ball->width / 2 < enemy->position.x + enemy->width / 2)
-			enemyBoxMoveLeftFlag = true;
-		if (enemyBoxMoveRightFlag)
-			enemy->SetVelocity(BOXVELOCITYTORIGHT);
-		else if (enemyBoxMoveLeftFlag)
-			enemy->SetVelocity(BOXVELOCITYTOLEFT);
-		else
-			enemy->SetVelocity(BOXVELOCITYZERO);
-		enemyBoxMoveRightFlag = false;
-		enemyBoxMoveLeftFlag = false;
-	}
-	else
-	{
-		enemy->SetVelocity(BOXVELOCITYZERO);
-		enemyBoxMoveRightFlag = false;
-		enemyBoxMoveLeftFlag = false;
-	}
-}
 void GameManager::SetObjectPosition() {
-	
 	player->position += player->velocity*PLAYER_BOX_VELOCITY;
 	enemy->position += enemy->velocity*ENEMY_BOX_VELOCITY;
 	ball->position += ball->velocity*(((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
@@ -157,5 +109,3 @@ void GameManager::OneGameEnd(bool whoWin) {
 		WhoFinallyWin = 2;
 	InitializeGame();
 }
-
-
