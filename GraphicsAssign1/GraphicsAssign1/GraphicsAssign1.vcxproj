@@ -135,12 +135,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ball.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="CommonBetweenGameAndDraw.cpp" />
     <ClCompile Include="draw.cpp" />
+    <ClCompile Include="enemy.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Objects.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonBetweenGameAndDraw.h" />
@@ -148,6 +152,7 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="MyDataType.h" />
     <ClInclude Include="Objects.h" />
+    <ClInclude Include="Units.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,13 +3,9 @@
 #include<map>
 #include<utility>
 #include"Objects.h"
+#include"Units.h"
 #include"CommonBetweenGameAndDraw.h"
-
 #define THRESHOLDSCORE 13
-#define WORLDCOORDWINDOWWIDTH 1600
-#define WORLDCOORDWINDOWHEIGHT 900
-#define PLAYER_BOX_VELOCITY 10
-#define ENEMY_BOX_VELOCITY 0.5
 #define YBORDER 0
 using namespace std;
 
@@ -50,9 +46,6 @@ public:
 		return instance;
 	}
 
-	/**
-	Velocity¸¦ ¹Ù²ÜÁö positionÀ» ¹Ù²ÜÁö »ý°¢
-	**/
 	void OneFramePipeline();
 
 	void SpecialKeyboardInputHandler(int key);
@@ -70,45 +63,9 @@ public:
 	GameManager(GameManager const&) = delete;
 	void operator=(GameManager const&) = delete;
 
-	GameObjectTree playerTree = GameObjectTree("player");
 	Object* player;
-	GameObjectTree tailTree = GameObjectTree("tail");
-	Object* tail1;
-	Object* tail2;
-	Object* ear;
-	void SetShakeTime();
-	int shakeTime = 0;
-	bool tail1upflag = true;
-	bool tail1downflag = false;
-	bool tail2upflag = false;
-	bool tail2downflag = true;
-	bool earleftflag = true;
-	bool earrightflag = false;
-	GameObjectTree enemyTree = GameObjectTree("enemyBox");
 	Object* enemy;
-	GameObjectTree netTree = GameObjectTree("net");
-	Object* net;
-	GameObjectTree wallTree = GameObjectTree("wall");
-	
-	GameObjectTree ballTree = GameObjectTree("ball");
 	Object* ball;
-	GameObjectTree electricity = GameObjectTree("electricity");
-	Object* eleroot;
-
-	GameObjectTree cloudTree1 = GameObjectTree("cloud1");
-	Object* cloud1root;
-	Object* cloud1left;
-	Object* cloud1right;
-	bool cloudLeftUp = true;
-	bool cloudRightUp = false;
-	GameObjectTree cloudTree2 = GameObjectTree("cloud2");
-	Object* cloud2root;
-	Object* cloud2left;
-	Object* cloud2right;
-	GameObjectTree cloudTree3 = GameObjectTree("cloud3");
-	Object* cloud3root;
-	Object* cloud3left;
-	Object* cloud3right;
 
 	static GLdouble BALL_VELOCITY;
 	int myScore = 0;
@@ -135,24 +92,11 @@ private:
 	int timeSinceStart = 0;
 	int prevTime = 0;
 	int enemyMoveTime = 0;
-	const Vector2 BOXVELOCITYTORIGHT = Vector2(1, 0);
-	const Vector2 BOXVELOCITYTOLEFT = Vector2(-1, 0);
-	const Vector2 BOXVELOCITYZERO = Vector2(0, 0);
-
 	/* need to set(dummy data)*/
-	const Vector2 INITIAL_PLAYER_BOX_POSITION = Vector2(0, 0); //WORLDCOORDWINDOWWIDTH/16(100, 0)
-	const Vector2 INITIAL_ENEMY_BOX_POSITION = Vector2((7* WORLDCOORDWINDOWWIDTH)/8, 0);
-	const Vector2 INITIAL_BALL_POSITION = Vector2((15* WORLDCOORDWINDOWWIDTH)/32, (WORLDCOORDWINDOWHEIGHT*7)/10);
-	const Vector2 INITIAL_NET_POSITION = Vector2((31 * WORLDCOORDWINDOWWIDTH) / 64, 0); //(31*WORLDCOORDWINDOWWIDTH)/64(775, 0)
-	const Vector2 INITIAL_LEFT_WALL_POSITION = Vector2(-10, 0);
-	const Vector2 INITIAL_RIGHT_WALL_POSITION = Vector2(WORLDCOORDWINDOWWIDTH, 0);
-	const Vector2 INITIAL_TOP_WALL_POSITION = Vector2(0, WORLDCOORDWINDOWHEIGHT);
-	const Vector2 INITIAL_CLOUD1_POSITION = Vector2(-400, 800);
-	const Vector2 INITIAL_CLOUD2_POSITION = Vector2(400, 600);
-	const Vector2 INITIAL_CLOUD3_POSITION = Vector2(1200, 700);
-
+	
 	bool playerBoxMoveRightFlag = false;
 	bool playerBoxMoveLeftFlag = false;
+	
 	bool enemyBoxMoveRightFlag = false;
 	bool enemyBoxMoveLeftFlag = false;
 	bool ballLeftCollisionFlag = false;

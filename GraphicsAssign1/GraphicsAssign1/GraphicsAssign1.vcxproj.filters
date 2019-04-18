@@ -33,6 +33,18 @@
     <ClCompile Include="CommonBetweenGameAndDraw.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ball.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="wall.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -48,6 +60,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="CommonBetweenGameAndDraw.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Units.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
