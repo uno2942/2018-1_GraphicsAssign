@@ -15,8 +15,8 @@ GameObjectTree* GetBall() {
 }
 
 void InitBallVelocity(int BALL_VELOCITY) {
-	double x = 0;
-	double y = 0;
+	int x = 0;
+	int y = 0;
 
 	while (0 == x)
 		x = rand() % 101 - 50;

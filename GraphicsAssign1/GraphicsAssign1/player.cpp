@@ -1,11 +1,12 @@
 #include"Units.h"
 
+static Object* player;
 GameObjectTree* GetPlayer() {
 	static GameObjectTree* playerTree;
 	if (playerTree == NULL)
 	{
 		playerTree = new GameObjectTree("player");
-		Object* player = new Box("playerBox", WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_YLEN / 18, MY_YELLOW);
+		player = new Box("playerBox", WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_YLEN / 18, MY_YELLOW);
 		GameObject* playerObject = new GameObject(player);
 		GameObjectNode* playerNode = new GameObjectNode(playerObject, "player");
 		playerObject->AddCollisionComponentAsItself(playerNode);
@@ -14,11 +15,19 @@ GameObjectTree* GetPlayer() {
 	return playerTree;
 }
 
-void SetplayerBoxVelocity(bool playerBoxMoveRightFlag, bool playerBoxMoveLeftFlag) {
-	if (playerBoxMoveRightFlag)
-		GetPlayer()->root->data->object->SetVelocity(BOXVELOCITYTORIGHT);
-	else if (playerBoxMoveLeftFlag)
-		GetPlayer()->root->data->object->SetVelocity(BOXVELOCITYTOLEFT);
+void SetplayerBoxVelocity(bool playerBoxMoveFrontFlag, bool playerBoxMoveBackFlag) {
+	GLdouble theta = player->GetCurrentRotation();
+	if (playerBoxMoveFrontFlag)
+		player->SetVelocity(Vector3(sin(theta), cos(theta), 0));
+	else if (playerBoxMoveBackFlag)
+		player->SetVelocity(-Vector3(sin(theta), cos(theta), 0));
 	else
-		GetPlayer()->root->data->object->SetVelocity(BOXVELOCITYZERO);
+		player->SetVelocity(BOXVELOCITYZERO);
+}
+
+void SetplayerBoxRotation(bool playerBoxRotateCounterClockwiseFlag, bool playerBoxRotateClockwiseFlag) {
+	if (playerBoxRotateCounterClockwiseFlag == true)
+		player->rotation += 0.1;
+	else if (playerBoxRotateClockwiseFlag == true)
+		player->rotation -= 0.1;
 }

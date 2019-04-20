@@ -56,7 +56,7 @@ public:
 	}
 
 	void StartGame();
-	GLdouble DeltaTime() {
+	int DeltaTime() {
 		return timeSinceStart - prevTime;
 	}
 
@@ -91,11 +91,13 @@ private:
 	
 	int timeSinceStart = 0;
 	int prevTime = 0;
-	int enemyMoveTime = 0;
+	GLdouble enemyMoveTime = 0;
 	/* need to set(dummy data)*/
 	
-	bool playerBoxMoveRightFlag = false;
-	bool playerBoxMoveLeftFlag = false;
+	bool playerBoxMoveFrontFlag = false;
+	bool playerBoxMoveBackFlag = false;
+	bool playerBoxRotateCounterClockwiseFlag = false;
+	bool playerBoxRotateClockwiseFlag = false;
 	
 	bool ballLeftCollisionFlag = false;
 	bool ballRightCollisionFlag = false;

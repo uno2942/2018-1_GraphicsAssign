@@ -111,7 +111,7 @@ public:
 		GLdouble veclen = sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
 		return Vector3(a.x / veclen,a.z / veclen,  a.y / veclen);
 	}
-	friend ostream& operator<<(ostream& os, const Vector2& dt) {
+	friend ostream& operator<<(ostream& os, const Vector3& dt) {
 		os << '(' << dt.x << ',' << dt.z << ',' << dt.y << ')';
 		return os;
 	}
@@ -121,8 +121,8 @@ public:
 	int r;
 	int g;
 	int b;
-	double a;
-	MyColor(int _r, int _g, int _b, double _a = 1) {
+	GLdouble a;
+	MyColor(int _r, int _g, int _b, GLdouble _a = 1) {
 		r = _r;
 		g = _g;
 		b = _b;

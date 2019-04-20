@@ -136,13 +136,13 @@ public:
 		CollisionComponent_(Transform* collisionObject, Node<ObjectWithComponent*, string>* parentObject);
 		~CollisionComponent_();
 		const Vector3 GetWorldPos() const;
-		inline const int Getxlen() const {
+		inline const GLdouble Getxlen() const {
 			return collisionObject->xlen;
 		}
-		inline const int Getzlen() const {
+		inline const GLdouble Getzlen() const {
 			return collisionObject->zlen;
 		}
-		inline const int Getylen() const {
+		inline const GLdouble Getylen() const {
 			return collisionObject->ylen;
 		}
 		inline const Object::Shape GetShape() const {

@@ -45,9 +45,10 @@ GameManager::~GameManager() {
 
 void GameManager::OneFramePipeline() {
 	timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
-	SetplayerBoxVelocity(playerBoxMoveRightFlag, playerBoxMoveLeftFlag);
-	playerBoxMoveRightFlag = false;
-	playerBoxMoveLeftFlag = false;
+	SetplayerBoxRotation(playerBoxRotateCounterClockwiseFlag, playerBoxRotateClockwiseFlag);
+	SetplayerBoxVelocity(playerBoxMoveFrontFlag, playerBoxMoveBackFlag);
+	playerBoxMoveFrontFlag = false;
+	playerBoxMoveBackFlag = false;
 	SetenemyBoxVelocity(enemyMoveTime += DeltaTime(), ball);
 	collisionManager.CollisionHandler(collisionManager.RestoreBallPosition(collisionManager.CollisionCheck()));
 	SetObjectPosition();
@@ -56,8 +57,10 @@ void GameManager::OneFramePipeline() {
 
 void GameManager::SpecialKeyboardInputHandler(int key) {
 	switch (key) {
-	case GLUT_KEY_RIGHT: playerBoxMoveRightFlag = true; break;
-	case GLUT_KEY_LEFT: playerBoxMoveLeftFlag = true;
+	case GLUT_KEY_RIGHT: playerBoxRotateCounterClockwiseFlag = true; break;
+	case GLUT_KEY_LEFT: playerBoxRotateClockwiseFlag = true; break;
+	case GLUT_KEY_UP: playerBoxMoveFrontFlag = true; break;
+	case GLUT_KEY_DOWN: playerBoxMoveBackFlag = true; break;
 	}
 }
 
@@ -93,7 +96,7 @@ void GameManager::InitObjectsPosition() {
 void GameManager::SetObjectPosition() {
 	player->position += player->velocity*PLAYER_BOX_VELOCITY;
 	enemy->position += enemy->velocity*ENEMY_BOX_VELOCITY;
-	ball->position += ball->velocity*(((timeSinceStart - prevTime) / 1000.) + collisionManager.ballDeltaTime);
+	ball->position += ball->velocity*((((int)timeSinceStart - (int)prevTime) / 1000.) + collisionManager.ballDeltaTime);
 	
 }
 

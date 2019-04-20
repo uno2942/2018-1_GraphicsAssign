@@ -9,19 +9,17 @@ public:
 	static bool isCameraGen;
 	Vector3 position;
 	Vector3 viewingVector;
-	GLdouble left;
-	GLdouble right;
-	GLdouble bottom;
-	GLdouble top;
+	Vector3 upVector;
+	GLdouble fovy;
+	GLdouble aspect;
 	GLdouble mynear;
 	GLdouble myfar;
 	
-	static void SetCamera(Vector3 _position, Vector3 _viewingVector, GLdouble _left, GLdouble _right, GLdouble _bottom
-		, GLdouble _top, GLdouble _mynear, GLdouble _myfar) {
+	static void SetCamera(Vector3 _position, Vector3 _viewingVector, Vector3 _upVector, GLdouble _fovy, GLdouble _aspect, GLdouble _mynear, GLdouble _myfar) {
 		if (mCamera != NULL)
 		{
 			delete mCamera;
-			myCamera::mCamera = new myCamera(_position, _viewingVector, _left, _right, _bottom, _top, _mynear, _myfar);
+			myCamera::mCamera = new myCamera(_position, _viewingVector, _upVector, _fovy, _aspect, _mynear, _myfar);
 		}
 	}
 
@@ -29,14 +27,12 @@ public:
 		return myCamera::mCamera;
 	}
 private:
-	myCamera(Vector3 _position, Vector3 _viewingVector, GLdouble _left, GLdouble _right, GLdouble _bottom
-		, GLdouble _top, GLdouble _mynear, GLdouble _myfar) {
+	myCamera(Vector3 _position, Vector3 _viewingVector, Vector3 _upVector, GLdouble _fovy, GLdouble _aspect, GLdouble _mynear, GLdouble _myfar) {
 		position = _position;
 		viewingVector = _viewingVector;
-		left = _left;
-		right = _right;
-		bottom = _bottom;
-		top = _top;
+		upVector = _upVector;
+		fovy = _fovy;
+		aspect = _aspect;
 		mynear = _mynear;
 		myfar = _myfar;
 		isCameraGen = true;
