@@ -13,7 +13,7 @@ void GameManager::CollisionManager::PutCollisionObject(CollisionComponent* colli
 
 vector<CollisionComponent*>* GameManager::CollisionManager::collisionList = new vector<CollisionComponent*>();
 GameManager::CollisionManager::CollisionManager() {
-	collisionPairvector = new vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>();
+	collisionPairvector = new vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>();
 	collisionwithballmap["player"] = 0;
 	collisionwithballmap["enemy"] = 0;
 	collisionwithballmap["net"] = 0;
@@ -34,7 +34,7 @@ GameManager::CollisionManager::~CollisionManager() {
 	}
 }
 //공의 경우 vector normalization 체크
-void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector)
+void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector)
 {
 	while (collisionPairvector != NULL && !(collisionPairvector->empty())) {
 		Object* o1 = collisionPairvector->back().first.first->data->object;
@@ -54,8 +54,8 @@ void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObject
 		}
 		else if (collisionPairvector->back().first.first->data->object->shape == Object::Shape::OVAL)
 		{
-			if (!(Vector2::abs(o1->velocity + collisionPairvector->back().second) > GameManager::BALL_VELOCITY - 1 &&
-				Vector2::abs(o1->velocity + collisionPairvector->back().second) < GameManager::BALL_VELOCITY + 1))
+			if (!(Vector3::abs(o1->velocity + collisionPairvector->back().second) > GameManager::BALL_VELOCITY - 1 &&
+				Vector3::abs(o1->velocity + collisionPairvector->back().second) < GameManager::BALL_VELOCITY + 1))
 			{
 				collisionPairvector->pop_back();
 				continue;
@@ -76,12 +76,13 @@ void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObject
 /**
 return t...
 **/
-vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>*  GameManager::CollisionManager::RestoreBallPosition(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector) {
+vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>*  GameManager::CollisionManager::RestoreBallPosition(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector) {
+	/*
 	ballDeltaTime = 0;
 	if (!collisionPairvector->empty()) {
 		GLdouble ballCollideWithCorner = -1;
 		GLdouble deltaTime = GameManager::getInstance().DeltaTime();
-		vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>::reverse_iterator iter = collisionPairvector->rbegin();
+		vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>::reverse_iterator iter = collisionPairvector->rbegin();
 		int l = collisionPairvector->size();
 		for (int i = 0; i < l; i++)
 		{
@@ -105,15 +106,15 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>*  GameManager::Col
 
 						}
 						else {
-							Vector2 center = Vector2(o1->position.x + o1->width / 2, o1->position.y + o1->height / 2);
-							Vector2 leftcorner = Vector2(o2->position.x, o2->position.y + o2->height);
+							Vector3 center = Vector3(o1->position.x + o1->width / 2, o1->position.y + o1->height / 2);
+							Vector3 leftcorner = Vector3(o2->position.x, o2->position.y + o2->height);
 							GLdouble r = o1->width / 2;
-							Vector2 centertocorner = Vector2(center - leftcorner);
-							GLdouble distance = Vector2::abs(centertocorner);
+							Vector3 centertocorner = Vector3(center - leftcorner);
+							GLdouble distance = Vector3::abs(centertocorner);
 							if (r >= distance)
 							{
 								GLdouble innerprod = (o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y);
-								GLdouble t = (innerprod + sqrt(innerprod*innerprod - (Vector2::abs(o1->velocity)*Vector2::abs(o1->velocity)*(distance*distance - r * r)))) / (Vector2::abs(o1->velocity)*Vector2::abs(o1->velocity));
+								GLdouble t = (innerprod + sqrt(innerprod*innerprod - (Vector3::abs(o1->velocity)*Vector3::abs(o1->velocity)*(distance*distance - r * r)))) / (Vector3::abs(o1->velocity)*Vector3::abs(o1->velocity));
 								if (t < 0)
 									t = 0;
 								GLdouble prevBallDeltaTime = ballDeltaTime;
@@ -146,15 +147,15 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>*  GameManager::Col
 
 					}
 					else {
-						Vector2 center = Vector2(o1->position.x + o1->width / 2, o1->position.y + o1->height / 2);
-						Vector2 rightcorner = Vector2(o2->position.x + o2->width, o2->position.y + o2->height);
+						Vector3 center = Vector3(o1->position.x + o1->width / 2, o1->position.y + o1->height / 2);
+						Vector3 rightcorner = Vector3(o2->position.x + o2->width, o2->position.y + o2->height);
 						GLdouble r = o1->width / 2;
-						Vector2 centertocorner = Vector2(center - rightcorner);
-						GLdouble distance = Vector2::abs(centertocorner);
+						Vector3 centertocorner = Vector3(center - rightcorner);
+						GLdouble distance = Vector3::abs(centertocorner);
 						if (r >= distance)
 						{
 							GLdouble innerprod = (o1->velocity.x*centertocorner.x + o1->velocity.y*centertocorner.y);
-							GLdouble t = (innerprod + sqrt(innerprod*innerprod - (Vector2::abs(o1->velocity)*Vector2::abs(o1->velocity)*(distance*distance - r * r)))) / (Vector2::abs(o1->velocity)*Vector2::abs(o1->velocity));
+							GLdouble t = (innerprod + sqrt(innerprod*innerprod - (Vector3::abs(o1->velocity)*Vector3::abs(o1->velocity)*(distance*distance - r * r)))) / (Vector3::abs(o1->velocity)*Vector3::abs(o1->velocity));
 							if (t < 0)
 								t = 0;
 							GLdouble prevBallDeltaTime = ballDeltaTime;
@@ -204,6 +205,7 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>*  GameManager::Col
 			}
 		}
 	}
+	*/
 	return collisionPairvector;
 }
 
@@ -219,7 +221,7 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>*  GameManager::Col
 
 
 //collisionList에 있는 CollisionComponent 사이에 Collision을 체크함
-vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* GameManager::CollisionManager::CollisionCheck() {
+vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* GameManager::CollisionManager::CollisionCheck() {
 	collisionwithballmap["player"] = 0;
 	collisionwithballmap["enemy"] = 0;
 	collisionwithballmap["net"] = 0;
@@ -228,34 +230,21 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* GameManager::Coll
 	collisionwithballmap["topwall"] = 0;
 
 
-	if (GameManager::getInstance().ball->GetCurrentPosition().y <= YBORDER)
+	if (GameManager::getInstance().ball->GetCurrentPosition().z - GameManager::getInstance().ball->zlen / 2 <= ZBORDER_FOR_PLAYER)
 	{
-		if (true)//I need to fix it
-		{
-			GameManager::getInstance().OneGameEnd(false);
-			return collisionPairvector;
-		}
-		else if (true)//I need to fix it
-		{
-			GameManager::getInstance().OneGameEnd(true);
-			return collisionPairvector;
-		}
-		else
-			throw;
+		GameManager::getInstance().OneGameEnd(true);
+		return collisionPairvector;
 	}
-	else
+	else if (GameManager::getInstance().ball->GetCurrentPosition().z + GameManager::getInstance().ball->zlen / 2 >= ZBORDER_FOR_ENEMY)
 	{
-		for (int i = 0; i < collisionList->size(); i++) {
-			for (int j = i + 1; j < collisionList->size(); j++)
-				CheckCollision4side(*(*collisionList)[i], *(*collisionList)[j], collisionPairvector);
-		}
+		GameManager::getInstance().OneGameEnd(false);
 		return collisionPairvector;
 	}
 }
 
 
 //두 오브젝트 사이에 Collision을 체크함
-void GameManager::CollisionManager::CheckCollision4side(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector) {
+void GameManager::CollisionManager::CheckCollision4side(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector) {
 	if (!CheckCollisionAtRightSide(o1, o2, collisionPairvector))
 	{
 		if (!CheckCollisionAtLeftSide(o1, o2, collisionPairvector))
@@ -274,13 +263,13 @@ void GameManager::CollisionManager::CheckCollision4side(const CollisionComponent
 /**
 o1이 o2를 오른쪽에서 충돌
 **/
-bool GameManager::CollisionManager::CheckCollisionAtRightSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector) {
-
+bool GameManager::CollisionManager::CheckCollisionAtRightSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector) {
+	/*
 	if (Object::Shape::BOX == o1.GetShape() && Object::Shape::BOX == o2.GetShape())
 	{
 		if (o1.GetWorldPos().x < o2.GetWorldPos().x && o1.GetWorldPos().x + o1.GetWidth() >= o2.GetWorldPos().x)
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(-1, 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector3(-1, 0)));
 			return true;
 		}
 		return false;
@@ -289,39 +278,41 @@ bool GameManager::CollisionManager::CheckCollisionAtRightSide(const CollisionCom
 		if (o1.GetWorldPos().x < o2.GetWorldPos().x &&  o1.GetWorldPos().x + o1.GetWidth() >= o2.GetWorldPos().x &&
 			(o1.GetWorldPos().y + (o1.GetHeight() / 2) >= o2.GetWorldPos().y && o1.GetWorldPos().y + (o1.GetHeight() / 2) <= o2.GetWorldPos().y + o2.GetHeight()))
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(-2 * (o1.GetVelocity().x), 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector3(-2 * (o1.GetVelocity().x), 0)));
 			collisionwithballmap[o2.gameObjectNode->data->object->name] = 1;
 			return true;
 		}
 		else {
-			Vector2 center = Vector2(o1.GetWorldPos().x + o1.GetWidth() / 2, o1.GetWorldPos().y + o1.GetHeight() / 2);
-			Vector2 leftcorner = Vector2(o2.GetWorldPos().x, o2.GetWorldPos().y + o2.GetHeight());
+			Vector3 center = Vector3(o1.GetWorldPos().x + o1.GetWidth() / 2, o1.GetWorldPos().y + o1.GetHeight() / 2);
+			Vector3 leftcorner = Vector3(o2.GetWorldPos().x, o2.GetWorldPos().y + o2.GetHeight());
 			GLdouble r = o1.GetWidth() / 2;
-			Vector2 centertocorner = Vector2(center - leftcorner);
-			GLdouble distance = Vector2::abs(centertocorner);
+			Vector3 centertocorner = Vector3(center - leftcorner);
+			GLdouble distance = Vector3::abs(centertocorner);
 			if (r >= distance)
 			{
 				collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode),
-					Vector2::normalize(centertocorner)*
+					Vector3::normalize(centertocorner)*
 					(2 * BALL_VELOCITY*abs(o1.GetVelocity().x*centertocorner.x + o1.GetVelocity().y*centertocorner.y) /
-					(Vector2::abs(o1.GetVelocity())*Vector2::abs(centertocorner)))));
+					(Vector3::abs(o1.GetVelocity())*Vector3::abs(centertocorner)))));
 				collisionwithballmap[o2.gameObjectNode->data->object->name] = 1;
 				return true;
 			}
 		}
 	}
+	*/
 	return false;
 }
 
 /**
 o1이 o2를 왼쪽에서 충돌
 **/
-bool GameManager::CollisionManager::CheckCollisionAtLeftSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector) {
+bool GameManager::CollisionManager::CheckCollisionAtLeftSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector) {
+	/*
 	if (Object::Shape::BOX == o1.GetShape() && Object::Shape::BOX == o2.GetShape())
 	{
 		if (o1.GetWorldPos().x + o1.GetWidth() > o2.GetWorldPos().x + o2.GetWidth() && o1.GetWorldPos().x <= o2.GetWorldPos().x + o2.GetWidth())
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(1, 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector3(1, 0)));
 			return true;
 		}
 		return false;
@@ -330,27 +321,28 @@ bool GameManager::CollisionManager::CheckCollisionAtLeftSide(const CollisionComp
 		if (o1.GetWorldPos().x + o1.GetWidth() > o2.GetWorldPos().x + o2.GetWidth() && o1.GetWorldPos().x <= o2.GetWorldPos().x + o2.GetWidth() &&
 			(o1.GetWorldPos().y + (o1.GetHeight() / 2) >= o2.GetWorldPos().y && o1.GetWorldPos().y + (o1.GetHeight() / 2) <= o2.GetWorldPos().y + o2.GetHeight()))
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(-2 * (o1.GetVelocity().x), 0)));
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector3(-2 * (o1.GetVelocity().x), 0)));
 			collisionwithballmap[o2.gameObjectNode->data->object->name] = 2;
 			return true;
 		}
 		else {
-			Vector2 center = Vector2(o1.GetWorldPos().x + o1.GetWidth() / 2, o1.GetWorldPos().y + o1.GetHeight() / 2);
-			Vector2 rightcorner = Vector2(o2.GetWorldPos().x + o2.GetWidth(), o2.GetWorldPos().y + o2.GetHeight());
+			Vector3 center = Vector3(o1.GetWorldPos().x + o1.GetWidth() / 2, o1.GetWorldPos().y + o1.GetHeight() / 2);
+			Vector3 rightcorner = Vector3(o2.GetWorldPos().x + o2.GetWidth(), o2.GetWorldPos().y + o2.GetHeight());
 			GLdouble r = o1.GetWidth() / 2;
-			Vector2 centertocorner = Vector2(center - rightcorner);
-			GLdouble distance = Vector2::abs(centertocorner);
+			Vector3 centertocorner = Vector3(center - rightcorner);
+			GLdouble distance = Vector3::abs(centertocorner);
 			if (r >= distance)
 			{
 				collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode),
-					Vector2::normalize(centertocorner)*
+					Vector3::normalize(centertocorner)*
 					(2 * BALL_VELOCITY*abs(o1.GetVelocity().x*centertocorner.x + o1.GetVelocity().y*centertocorner.y) /
-					(Vector2::abs(o1.GetVelocity())*distance))));
+					(Vector3::abs(o1.GetVelocity())*distance))));
 				collisionwithballmap[o2.gameObjectNode->data->object->name] = 2;
 				return true;
 			}
 		}
 	}
+	*/
 	return false;
 }
 
@@ -358,12 +350,13 @@ bool GameManager::CollisionManager::CheckCollisionAtLeftSide(const CollisionComp
 
 /**
 **/
-bool GameManager::CollisionManager::CheckCollisionAtUpSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector) {
+bool GameManager::CollisionManager::CheckCollisionAtUpSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector) {
+	/*
 	if (Object::Shape::OVAL == o1.GetShape() && Object::Shape::BOX == o2.GetShape())
 	{
 		if (o1.GetWorldPos().y < o2.GetWorldPos().y && o1.GetWorldPos().y + o1.GetHeight() >= o2.GetWorldPos().y)
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(0, -2 * (o1.GetVelocity().y))));
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector3(0, -2 * (o1.GetVelocity().y))));
 			collisionwithballmap[o2.gameObjectNode->data->object->name] = 3;
 			return true;
 		}
@@ -371,6 +364,7 @@ bool GameManager::CollisionManager::CheckCollisionAtUpSide(const CollisionCompon
 	else {
 		return true;
 	}
+	*/
 	return false;
 }
 
@@ -378,18 +372,20 @@ bool GameManager::CollisionManager::CheckCollisionAtUpSide(const CollisionCompon
 
 /**
 **/
-bool GameManager::CollisionManager::CheckCollisionAtDownSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector2>>* collisionPairvector) {
+bool GameManager::CollisionManager::CheckCollisionAtDownSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector) {
+	/*
 	if (Object::Shape::OVAL == o1.GetShape() && Object::Shape::BOX == o2.GetShape())
 	{
 		if (o1.GetWorldPos().y < o2.GetWorldPos().y + o2.GetHeight() && o1.GetWorldPos().y + o1.GetHeight() >= o2.GetWorldPos().y + o2.GetHeight() &&
 			(o1.GetWorldPos().x + (o1.GetWidth() / 2) >= o2.GetWorldPos().x && o1.GetWorldPos().x + (o1.GetWidth() / 2) <= o2.GetWorldPos().x + o2.GetWidth()))
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector2(0, -2 * (o1.GetVelocity().y))));			collisionwithballmap[o2.gameObjectNode->data->object->name] = 4;
+			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector3(0, -2 * (o1.GetVelocity().y))));			collisionwithballmap[o2.gameObjectNode->data->object->name] = 4;
 			return true;
 		}
 	}
 	else {
 		return true;
 	}
+	*/
 	return false;
 }

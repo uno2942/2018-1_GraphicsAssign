@@ -64,9 +64,9 @@ ObjectWithComponent::~ObjectWithComponent() {
 	}
 }
 
-void ObjectWithComponent::AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, GLdouble xlen, GLdouble ylen, GLdouble zlen, GLdouble rotation, Node<ObjectWithComponent*, string>* parentObject) {
-	collisionComponent = new CollisionComponent_(new Transform(xlen, ylen, zlen, rotation, shape, x, y), parentObject);
+void ObjectWithComponent::AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble z, GLdouble y, GLdouble xlen, GLdouble zlen, GLdouble ylen, GLdouble rotation, Node<ObjectWithComponent*, string>* parentObject) {
+	collisionComponent = new CollisionComponent_(new Transform(xlen, zlen, ylen, rotation, shape, x, z, y), parentObject);
 }
 void ObjectWithComponent::AddCollisionComponentAsItself(Node<ObjectWithComponent*, string>* parentObject) {
-	collisionComponent = new CollisionComponent_(new Transform(object->xlen, object->ylen, object->zlen, object->rotation, object->shape, 0, 0), parentObject);
+	collisionComponent = new CollisionComponent_(new Transform(object->xlen,object->zlen, object->ylen, object->rotation, object->shape, 0, 0, 0), parentObject);
 }

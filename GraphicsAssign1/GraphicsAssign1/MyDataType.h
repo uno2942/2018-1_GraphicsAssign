@@ -63,42 +63,42 @@ public:
 struct Vector3 {
 public:
 	GLdouble x;
-	GLdouble y;
 	GLdouble z;
-	Vector3(GLdouble _x, GLdouble _y, GLdouble _z) {
+	GLdouble y;
+	Vector3(GLdouble _x, GLdouble _z, GLdouble _y) {
 		x = _x;
-		y = _y;
 		z = _z;
+		y = _y;
 	}
 
 	Vector3() {
 		x = 0;
-		y = 0;
 		z = 0;
+		y = 0;
 	}
 	Vector3 operator+(const Vector3& rhs) {
-		return Vector3(x + rhs.x, y + rhs.y, z + rhs.z);
+		return Vector3(x + rhs.x, z + rhs.z, y + rhs.y);
 	}
 	Vector3 operator-(const Vector3& rhs) {
-		return Vector3(x - rhs.x, y - rhs.y, z - rhs.z);
+		return Vector3(x - rhs.x, z - rhs.z, y - rhs.y);
 	}
 	Vector3 operator*(const GLdouble d) {
-		return Vector3((*this).x * d, (*this).y * d, (*this).z*d);
+		return Vector3((*this).x * d, (*this).z * d,(*this).y * d);
 	}
 	Vector3 operator/(const GLdouble d) {
-		return Vector3((*this).x / d, (*this).y / d, (*this).z / d);
+		return Vector3((*this).x / d, (*this).z / d,(*this).y / d);
 	}
 	Vector3 operator-() const {
 		Vector3 v;
 		v.x = -x;
-		v.y = -y;
 		v.z = -z;
+		v.y = -y;
 		return v;
 	}
 	Vector3& operator+=(const Vector3& rhs) {
 		(*this).x += rhs.x;
-		(*this).y += rhs.y;
 		(*this).z += rhs.z;
+		(*this).y += rhs.y;
 		return *this;
 	}
 
@@ -109,10 +109,10 @@ public:
 
 	inline static Vector3 normalize(const Vector3& a) {
 		GLdouble veclen = sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
-		return Vector3(a.x / veclen, a.y / veclen, a.z / veclen);
+		return Vector3(a.x / veclen,a.z / veclen,  a.y / veclen);
 	}
 	friend ostream& operator<<(ostream& os, const Vector2& dt) {
-		os << '(' << dt.x << ',' << dt.y << ',' << dt.z << ')';
+		os << '(' << dt.x << ',' << dt.z << ',' << dt.y << ')';
 		return os;
 	}
 };

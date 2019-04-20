@@ -6,7 +6,8 @@
 #include"Units.h"
 #include"CommonBetweenGameAndDraw.h"
 #define THRESHOLDSCORE 13
-#define YBORDER 0
+#define ZBORDER_FOR_PLAYER 0
+#define ZBORDER_FOR_ENEMY WORLD_COORD_MAP_ZLEN
 using namespace std;
 
 class GameManager {

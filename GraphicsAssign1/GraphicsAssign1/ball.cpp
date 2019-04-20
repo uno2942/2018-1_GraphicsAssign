@@ -5,7 +5,7 @@ GameObjectTree* GetBall() {
 	if (ballTree == NULL)
 	{
 		ballTree = new GameObjectTree("ball");
-		Object* ball = new Oval("ball", 100, 100, MY_RED);
+		Object* ball = new Oval("ball", 100, 100, 100, MY_RED);
 		GameObject* ballObject = new GameObject(ball);
 		GameObjectNode* ballNode = new GameObjectNode(ballObject, "ball");
 		ballObject->AddCollisionComponentAsItself(ballNode);
@@ -15,8 +15,8 @@ GameObjectTree* GetBall() {
 }
 
 void InitBallVelocity(int BALL_VELOCITY) {
-	int x = 0;
-	int y = 0;
+	double x = 0;
+	double y = 0;
 
 	while (0 == x)
 		x = rand() % 101 - 50;
@@ -24,5 +24,5 @@ void InitBallVelocity(int BALL_VELOCITY) {
 	while (-20 < y && y < 20)
 		y = rand() % 101 - 50;
 
-	GetBall()->root->data->object->SetVelocity((Vector2::normalize(Vector2(x, y)))*BALL_VELOCITY);
+	GetBall()->root->data->object->SetVelocity((Vector3::normalize(Vector3(x, y, 0)))*BALL_VELOCITY);
 }

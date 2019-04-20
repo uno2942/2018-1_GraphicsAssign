@@ -18,19 +18,21 @@ public:
 	enum Shape { OVAL, BOX, TRIANGLE };
 	Shape shape;
 	Object();
-	Object(GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, GLdouble _rotation, Shape _shape, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble x = 0, GLdouble y = 0, GLdouble z = 0, GLdouble vecx = 0, GLdouble vecy = 0, GLdouble vecz = 0) : xlen(_xlen), ylen(_ylen), zlen(_zlen), rotation(_rotation), shape(_shape), myColor(r, g, b, a) {
+	Object(GLdouble _xlen,  GLdouble _zlen, GLdouble _ylen, GLdouble _rotation, Shape _shape, int r = 0, int g = 0, int b = 0, 
+		GLdouble a = 1, GLdouble x = 0, GLdouble z = 0, GLdouble y = 0, GLdouble vecx = 0, GLdouble vecz = 0, GLdouble vecy = 0) : xlen(_xlen), ylen(_ylen), zlen(_zlen), rotation(_rotation), shape(_shape), myColor(r, g, b, a) {
 		position = Vector3(x, y, z);
-		velocity = Vector3(vecx, vecy, vecz);
+		velocity = Vector3(vecx, vecz, vecy);
 
 	}
-	Object(GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, GLdouble _rotation, Shape _shape, MyColor mColor, GLdouble x = 0, GLdouble y = 0, GLdouble z = 0,GLdouble vecx = 0, GLdouble vecy = 0, GLdouble vecz=0) : xlen(_xlen), ylen(_ylen), zlen(_zlen), rotation(_rotation), shape(_shape), myColor(mColor) {
-		position = Vector3(x, y, z);
-		velocity = Vector3(vecx, vecy, vecz);
+	Object(GLdouble _xlen, GLdouble _zlen, GLdouble _ylen, GLdouble _rotation, Shape _shape, MyColor mColor, 
+		GLdouble x = 0,  GLdouble z = 0, GLdouble y = 0, GLdouble vecx = 0, GLdouble vecz = 0, GLdouble vecy=0) : xlen(_xlen), ylen(_ylen), zlen(_zlen), rotation(_rotation), shape(_shape), myColor(mColor) {
+		position = Vector3(x, z, y);
+		velocity = Vector3(vecx, vecz, vecy);
 
 	}
 	GLdouble xlen;
-	GLdouble ylen;
 	GLdouble zlen;
+	GLdouble ylen;
 
 	string name;
 
@@ -49,10 +51,10 @@ public:
 		position = _position;
 		return position;
 	}
-	inline const Vector3& SetPosition(GLdouble x, GLdouble y, GLdouble z) {
+	inline const Vector3& SetPosition(GLdouble x, GLdouble z, GLdouble y) {
 		position.x = x;
-		position.y = y;
 		position.z = z;
+		position.y = y;
 		return position;
 	}
 	inline const GLdouble& SetRotation(GLdouble _rotation) {
@@ -63,20 +65,20 @@ public:
 		velocity = _velocity;
 		return velocity;
 	}
-	inline const Vector3& SetVelocity(GLdouble x, GLdouble y, GLdouble z) {
+	inline const Vector3& SetVelocity(GLdouble x, GLdouble z, GLdouble y) {
 		velocity.x = x;
-		velocity.y = y;
 		velocity.z = z;
+		velocity.y = y;
 		return velocity;
 	}
-	inline const Vector3& SetRotationAxis(GLdouble x, GLdouble y, GLdouble z) {
+	inline const Vector3& SetRotationAxis(GLdouble x, GLdouble z, GLdouble y) {
 		rotationAxis.x = x;
-		rotationAxis.y = y;
 		rotationAxis.z = z;
+		rotationAxis.y = y;
 		return rotationAxis;
 	}
 	inline const Vector3 GetSize() const {
-		return Vector3(zlen, ylen, zlen);
+		return Vector3(xlen, zlen, ylen);
 	}
 };
 typedef Object Transform;
@@ -86,11 +88,11 @@ public:
 	Oval() {
 		shape = OVAL;
 	}
-	Oval(string name, GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(_xlen, _ylen, _zlen, _rotation, OVAL, r, g, b, a) {
+	Oval(string name, GLdouble _xlen,GLdouble _zlen, GLdouble _ylen, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(_xlen,_zlen, _ylen, _rotation, OVAL, r, g, b, a) {
 		shape = OVAL;
 		this->name = name;
 	}
-	Oval(string name, GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, MyColor mColor, GLdouble _rotation = 0) : Object(_xlen, _ylen, _zlen, _rotation, OVAL, mColor) {
+	Oval(string name, GLdouble _xlen,  GLdouble _zlen, GLdouble _ylen, MyColor mColor, GLdouble _rotation = 0) : Object(_xlen, _zlen, _ylen, _rotation, OVAL, mColor) {
 		shape = OVAL;
 		this->name = name;
 	}
@@ -100,11 +102,11 @@ public:
 	Box() {
 		shape = BOX;
 	}
-	Box(string name, GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(_xlen, _ylen, _zlen, _rotation, BOX, r, g, b, a) {
+	Box(string name, GLdouble _xlen, GLdouble _zlen, GLdouble _ylen, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(_xlen, _zlen, _ylen, _rotation, BOX, r, g, b, a) {
 		shape = BOX;
 		this->name = name;
 	}
-	Box(string name, GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, MyColor mColor, GLdouble _rotation = 0) : Object(_xlen, _ylen, _zlen, _rotation, BOX, mColor) {
+	Box(string name, GLdouble _xlen, GLdouble _zlen, GLdouble _ylen, MyColor mColor, GLdouble _rotation = 0) : Object(_xlen, _zlen, _ylen, _rotation, BOX, mColor) {
 		shape = BOX;
 		this->name = name;
 	}
@@ -114,11 +116,11 @@ public:
 	Triangle() {
 		shape = TRIANGLE;
 	}
-	Triangle(string _name, GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(xlen, ylen, zlen, _rotation, TRIANGLE, r,g, b, a) {
+	Triangle(string _name, GLdouble _xlen, GLdouble _zlen, GLdouble _ylen, int r = 0, int g = 0, int b = 0, GLdouble a = 1, GLdouble _rotation = 0) : Object(xlen,zlen, ylen, _rotation, TRIANGLE, r,g, b, a) {
 		shape = TRIANGLE;
 		name = _name;
 	}
-	Triangle(string _name, GLdouble _xlen, GLdouble _ylen, GLdouble _zlen, MyColor mColor, GLdouble _rotation = 0) : Object(xlen, ylen, zlen, _rotation, TRIANGLE, mColor) {
+	Triangle(string _name, GLdouble _xlen, GLdouble _zlen, GLdouble _ylen, MyColor mColor, GLdouble _rotation = 0) : Object(xlen,zlen, ylen, _rotation, TRIANGLE, mColor) {
 		shape = TRIANGLE;
 		name = _name;
 	}
@@ -137,6 +139,9 @@ public:
 		inline const int Getxlen() const {
 			return collisionObject->xlen;
 		}
+		inline const int Getzlen() const {
+			return collisionObject->zlen;
+		}
 		inline const int Getylen() const {
 			return collisionObject->ylen;
 		}
@@ -153,7 +158,7 @@ public:
 	CollisionComponent_* collisionComponent=NULL; // object¿« collision Component
 	ObjectWithComponent(Transform* object = NULL, CollisionComponent_* collisionComponent = NULL);
 	~ObjectWithComponent();
-	void AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble y, GLdouble xlen, GLdouble ylen, GLdouble zlen, GLdouble rotation, Node<ObjectWithComponent*, string>* parentObject);
+	void AddCollisionComponent(Object::Shape shape, GLdouble x, GLdouble z, GLdouble y, GLdouble xlen, GLdouble zlen, GLdouble ylen, GLdouble rotation, Node<ObjectWithComponent*, string>* parentObject);
 	void AddCollisionComponentAsItself(Node<ObjectWithComponent*, string>* parentObject);
 };
 typedef ObjectWithComponent::CollisionComponent_ CollisionComponent;

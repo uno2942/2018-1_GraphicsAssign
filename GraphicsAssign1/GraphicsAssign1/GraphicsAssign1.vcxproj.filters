@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="소스 파일\unitsFolder">
+      <UniqueIdentifier>{75d010a3-a398-46c0-a474-b0af06fad672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\DrawPart">
+      <UniqueIdentifier>{a4099244-3086-4b32-ab16-ec5919c3420c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameManager.cpp">
@@ -21,32 +27,32 @@
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="draw.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="CollisionManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CommonBetweenGameAndDraw.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="player.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="enemy.cpp">
+    <ClCompile Include="Camera.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ball.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\unitsFolder</Filter>
+    </ClCompile>
+    <ClCompile Include="enemy.cpp">
+      <Filter>소스 파일\unitsFolder</Filter>
+    </ClCompile>
+    <ClCompile Include="player.cpp">
+      <Filter>소스 파일\unitsFolder</Filter>
     </ClCompile>
     <ClCompile Include="wall.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\unitsFolder</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="Objects.cpp">
+      <Filter>소스 파일\unitsFolder</Filter>
+    </ClCompile>
+    <ClCompile Include="draw.cpp">
+      <Filter>소스 파일\DrawPart</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
