@@ -28,6 +28,6 @@ GameObjectTree* GetWall();
 void SetplayerBoxVelocity(bool playerBoxMoveRightFlag, bool playerBoxMoveLeftFlag);
 void SetplayerBoxRotation(bool playerBoxRotateCounterClockwiseFlag, bool playerBoxRotateClockwiseFlag);
 
-void SetenemyBoxVelocity(int enemyMoveTime, Object* ball);
+void SetenemyBoxVelocity(GLint enemyMoveTime, Object* ball);
 
-void InitBallVelocity(int BALL_VELOCITY);
+void InitBallVelocity(GLint BALL_VELOCITY);

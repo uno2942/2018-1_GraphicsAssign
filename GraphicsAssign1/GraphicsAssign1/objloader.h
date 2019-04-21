@@ -4,8 +4,9 @@
 #include <string>
 #include <cstring>
 
-
-#include <glm/glm.hpp>
+#include<glew.h>
+#include<freeglut.h>
+#include "glm/glm.hpp"
 #include "ObjData.h"
 
 

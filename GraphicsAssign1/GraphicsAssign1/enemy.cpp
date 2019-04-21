@@ -14,7 +14,7 @@ GameObjectTree* GetEnemy() {
 	return enemyTree;
 }
 
-void SetenemyBoxVelocity(int enemyMoveTime, Object* ball) {
+void SetenemyBoxVelocity(GLint enemyMoveTime, Object* ball) {
 	static bool enemyBoxMoveRightFlag = false;
 	static bool enemyBoxMoveLeftFlag = false;
 	Object* enemy = GetEnemy()->root->data->object;

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include <freeglut.h>
-#include <glew.h>
+#include<glew.h>
+#include<freeglut.h>
 #include <glm/glm.hpp>
 
 

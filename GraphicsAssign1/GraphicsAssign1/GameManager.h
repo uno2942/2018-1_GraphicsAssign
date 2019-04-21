@@ -49,14 +49,14 @@ public:
 
 	void OneFramePipeline();
 
-	void SpecialKeyboardInputHandler(int key);
+	void SpecialKeyboardInputHandler(GLint key);
 	void FreshTime() {
 		timeSinceStart = glutGet(GLUT_ELAPSED_TIME);
 		prevTime = glutGet(GLUT_ELAPSED_TIME);;
 	}
 
 	void StartGame();
-	int DeltaTime() {
+	GLint DeltaTime() {
 		return timeSinceStart - prevTime;
 	}
 
@@ -67,10 +67,10 @@ public:
 	Object* enemy;
 	Object* ball;
 
-	static GLdouble BALL_VELOCITY;
-	int myScore = 0;
-	int enemyScore = 0;
-	int WhoFinallyWin = 0;
+	static GLint BALL_VELOCITY;
+	GLint myScore = 0;
+	GLint enemyScore = 0;
+	GLint WhoFinallyWin = 0;
 
 private:
 	GameManager();
@@ -89,9 +89,9 @@ private:
 	bool oneGameEnd = false;
 	bool wholeGameEnd = false;
 	
-	int timeSinceStart = 0;
-	int prevTime = 0;
-	GLdouble enemyMoveTime = 0;
+	GLint timeSinceStart = 0;
+	GLint prevTime = 0;
+	GLint enemyMoveTime = 0;
 	/* need to set(dummy data)*/
 	
 	bool playerBoxMoveFrontFlag = false;

@@ -1,13 +1,12 @@
-#define BVIEW_HALF_W 400
-#define BVIEW_HALF_H 225
-
-
-#include<glew.h>
-#include<freeglut.h>
-#define PI 3.1415926535
 #include <cmath>
 #include "Draw.h"
 #include "objloader.h"
+
+
+#define PI 3.1415926535
+
+#define BVIEW_HALF_W 400
+#define BVIEW_HALF_H 225
 
 void myReshape(int width, int height)
 {	
@@ -90,16 +89,16 @@ void drawObjectRecursive(GameObjectNode* root)
 {
 	glPushMatrix();
 	//위치이동
-	glTranslatef(root->data->object->position.x, root->data->object->position.y, 0.0f);
+	glTranslated(root->data->object->position.x, root->data->object->position.y, 0.0);
 
 	//회전축으로 이동한 후 회젼, 되돌리기
-	glTranslatef(root->data->object->rotationAxis.x, root->data->object->rotationAxis.y, 0.0f);
-	glRotatef(root->data->object->rotation, 0, 0, 1);
-	glTranslatef(- root->data->object->rotationAxis.x, - root->data->object->rotationAxis.y, 0.0f);
+	glTranslated(root->data->object->rotationAxis.x, root->data->object->rotationAxis.y, 0.0);
+	glRotated(root->data->object->rotation, 0., 0., 1.);
+	glTranslated(- root->data->object->rotationAxis.x, - root->data->object->rotationAxis.y, 0.0);
 
 	representComponent(*(root->data->object));
 
-	GameObjectNode *tmp;
+//	GameObjectNode *tmp;
 	if (root->successor != NULL) drawObjectRecursive(root->successor);
 	glPopMatrix();
 
@@ -297,10 +296,10 @@ void representTriangle(const Transform & triangle)
 void lookAtBall(const Object& ball) // to be modified
 {
 
-	GLfloat lookAtX = ball.GetCurrentPosition().x + ball.GetSize().x / 2;
-	GLfloat lookAtY = ball.GetCurrentPosition().y + ball.GetSize().y / 2;
-	GLfloat screenX = WORLDCOORDWINDOWWIDTH;
-	GLfloat screenY = WORLDCOORDWINDOWHEIGHT;
+	GLdouble lookAtX = ball.GetCurrentPosition().x + ball.GetSize().x / 2;
+	GLdouble lookAtY = ball.GetCurrentPosition().y + ball.GetSize().y / 2;
+	GLdouble screenX = WORLDCOORDWINDOWWIDTH;
+	GLdouble screenY = WORLDCOORDWINDOWHEIGHT;
 	
 	if (lookAtX > screenX - BVIEW_HALF_W)
 		lookAtX = screenX - BVIEW_HALF_W;

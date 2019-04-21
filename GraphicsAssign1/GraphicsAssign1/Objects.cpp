@@ -1,7 +1,6 @@
 #include "Objects.h"
 
-Object::Object() : myColor(0, 0, 0) {
-
+Object::Object() : shape(Shape::BOX), rotation(0), xlen(0), ylen(0), zlen(0), myColor(0, 0, 0) {
 }
 
 ObjectWithComponent::CollisionComponent_::CollisionComponent_(Transform* collisionObject, Node<ObjectWithComponent*, string>* parentObject) {

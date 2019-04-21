@@ -18,7 +18,7 @@ void GameManager::deleteTree_aux(GameObjectNode* root) {
 		deleteTree_aux(temp2);
 }
 
-GLdouble GameManager::BALL_VELOCITY = 300;
+GLint GameManager::BALL_VELOCITY = 300;
 GameManager::GameManager() {
 	srand((unsigned int)time(0));
 	CollisionComponent::ConnectCollisionManagerAddFunction(CollisionManager::PutCollisionObject);
@@ -55,7 +55,7 @@ void GameManager::OneFramePipeline() {
 	prevTime = timeSinceStart;
 }
 
-void GameManager::SpecialKeyboardInputHandler(int key) {
+void GameManager::SpecialKeyboardInputHandler(GLint key) {
 	switch (key) {
 	case GLUT_KEY_RIGHT: playerBoxRotateCounterClockwiseFlag = true; break;
 	case GLUT_KEY_LEFT: playerBoxRotateClockwiseFlag = true; break;
@@ -96,7 +96,7 @@ void GameManager::InitObjectsPosition() {
 void GameManager::SetObjectPosition() {
 	player->position += player->velocity*PLAYER_BOX_VELOCITY;
 	enemy->position += enemy->velocity*ENEMY_BOX_VELOCITY;
-	ball->position += ball->velocity*((((int)timeSinceStart - (int)prevTime) / 1000.) + collisionManager.ballDeltaTime);
+	ball->position += ball->velocity*((((GLdouble)timeSinceStart - (GLdouble)prevTime) / 1000.) + collisionManager.ballDeltaTime);
 	
 }
 
