@@ -1,11 +1,13 @@
 #define BVIEW_HALF_W 400
 #define BVIEW_HALF_H 225
 
-#include "Draw.h"
+
 #include<glew.h>
 #include<freeglut.h>
 #define PI 3.1415926535
 #include <cmath>
+#include "Draw.h"
+#include "objloader.h"
 
 void myReshape(int width, int height)
 {	
@@ -109,16 +111,117 @@ void drawObjectRecursive(GameObjectNode* root)
 
 void representComponent(const Transform &object)
 {
-	if (object.shape == Object::OVAL)
-		representCircle(object);
-	else if (object.shape == Object::BOX)
-		representBox(object);
+	if (object.shape == Object::BOX)
+		representWall(object);
 	else
-		representTriangle(object);
+		representPolygon(object);
+		
+}
+
+const char *vertexShaderSource = "#version 460 core\n"
+"layout (location = 0) in vec3 aPos;\n"
+"void main()\n"
+"{\n"
+"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"}\0";
+
+const char *fragmentShaderSource = "#version 460 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"}\n\0";
+
+
+void representPolygon(const Transform &object)
+{
+	ObjData* drawingObjData;
+	
+	//load image
+	drawingObjData = GetObj(object.shape );
+
+	//shader drawing
+
+	//code copy from here
+	
+	/* make shaders */
+	//compile vertex shader
+	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+	
+	//compile fragment shader
+	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+	
+	//debug compile completed
+	{
+		int success;
+		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+		assert(success == 0);
+		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+		assert(success == 0);
+	}
+	//shader link
+	unsigned int shaderProgram;
+	shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+
+	// starts to use
+
+	// make buffers
+	unsigned int VBO, VAO, EBO; //each vertex buffer, vertex array, Elemental buffer
+
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
+	
+	glBindVertexArray(VAO);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(drawingObjData->vertices), drawingObjData->vertexArray, GL_STATIC_DRAW);
+	
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(drawingObjData->triangleArray), drawingObjData->triangleArray, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	//copy end
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glUseProgram(shaderProgram);
+	glBindVertexArray(VAO); 
+	glDrawElements(GL_TRIANGLES, sizeof(drawingObjData->triangleArray)/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+
+}
+
+void representWall(const Transform &object)
+{
+
+}
+
+
+ObjData* GetObj(Object::Shape shape) {
+	static ObjData* objData[5]; // size of objcet shape flags
+	if (objData[shape] == NULL)
+	{
+		objData[shape] = new ObjData;
+		loadOBJ("path", objData[shape]);
+	}
+	return objData[shape];
 }
 
 
 
+/*
 void representBox(const Transform& box)
 {
 	GLfloat x = 0;
@@ -190,7 +293,7 @@ void representTriangle(const Transform & triangle)
 	glVertex2f(x + w / 2, y + h);
 	glEnd();
 }
-
+*/
 void lookAtBall(const Object& ball) // to be modified
 {
 

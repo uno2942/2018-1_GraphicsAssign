@@ -54,6 +54,9 @@
     <ClCompile Include="draw.cpp">
       <Filter>소스 파일\DrawPart</Filter>
     </ClCompile>
+    <ClCompile Include="objloader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -75,6 +78,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjData.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="objloader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
