@@ -4,6 +4,9 @@
 #include "Objects.h"
 #include"CommonBetweenGameAndDraw.h"
 #include "ObjData.h"
+#include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 void myReshape(int width, int height);
 
 void display();
@@ -24,6 +27,7 @@ void representPolygon(const Transform& polygon);
 
 ObjData* GetObj(Object::Shape shape);
 
+void setWorldWindow();
 void lookAtBall(const Object& circle);
 
 void representScore(int score, GLfloat x, GLfloat y);

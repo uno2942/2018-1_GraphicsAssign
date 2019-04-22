@@ -35,7 +35,7 @@ GameManager::CollisionManager::~CollisionManager() {
 }
 //공의 경우 vector normalization 체크
 void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector)
-{
+{/*
 	while (collisionPairvector != NULL && !(collisionPairvector->empty())) {
 		Object* o1 = collisionPairvector->back().first.first->data->object;
 		Object* o2 = collisionPairvector->back().first.second->data->object;
@@ -70,6 +70,7 @@ void GameManager::CollisionManager::CollisionHandler(vector<pair<pair<GameObject
 
 		collisionPairvector->pop_back();
 	}
+	*/
 }
 
 
@@ -240,6 +241,27 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* GameManager::Coll
 		GameManager::getInstance().OneGameEnd(false);
 		return collisionPairvector;
 	}
+	
+	if (GameManager::getInstance().player->GetCurrentPosition().x - GameManager::getInstance().player->xlen < 0)
+		GameManager::getInstance().player->SetVelocity(0, 0, 0);
+	else if(GameManager::getInstance().player->GetCurrentPosition().x + GameManager::getInstance().player->xlen > WORLD_COORD_MAP_XLEN)
+		GameManager::getInstance().player->SetVelocity(0, 0, 0);
+
+	if (GameManager::getInstance().player->GetCurrentPosition().z - GameManager::getInstance().player->zlen < 0)
+		GameManager::getInstance().player->SetVelocity(0, 0, 0);
+	else if (GameManager::getInstance().player->GetCurrentPosition().z + GameManager::getInstance().player->zlen > WORLD_COORD_MAP_ZLEN / 2)
+		GameManager::getInstance().player->SetVelocity(0, 0, 0);
+
+	if (GameManager::getInstance().enemy->GetCurrentPosition().x - GameManager::getInstance().enemy->xlen < 0)
+		GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
+	else if (GameManager::getInstance().enemy->GetCurrentPosition().x + GameManager::getInstance().enemy->xlen > WORLD_COORD_MAP_XLEN)
+		GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
+
+	if (GameManager::getInstance().enemy->GetCurrentPosition().z - GameManager::getInstance().enemy->zlen < WORLD_COORD_MAP_ZLEN/2)
+		GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
+	else if (GameManager::getInstance().enemy->GetCurrentPosition().z + GameManager::getInstance().enemy->zlen > WORLD_COORD_MAP_ZLEN)
+		GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
+
 }
 
 
@@ -265,16 +287,7 @@ o1이 o2를 오른쪽에서 충돌
 **/
 bool GameManager::CollisionManager::CheckCollisionAtRightSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector) {
 	/*
-	if (Object::Shape::BOX == o1.GetShape() && Object::Shape::BOX == o2.GetShape())
-	{
-		if (o1.GetWorldPos().x < o2.GetWorldPos().x && o1.GetWorldPos().x + o1.GetWidth() >= o2.GetWorldPos().x)
-		{
-			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector3(-1, 0)));
-			return true;
-		}
-		return false;
-	}
-	else if (Object::Shape::OVAL == o1.GetShape() && Object::Shape::BOX == o2.GetShape()) {
+	if (Object::Shape::OVAL == o1.GetShape() && Object::Shape::BOX == o2.GetShape()) {
 		if (o1.GetWorldPos().x < o2.GetWorldPos().x &&  o1.GetWorldPos().x + o1.GetWidth() >= o2.GetWorldPos().x &&
 			(o1.GetWorldPos().y + (o1.GetHeight() / 2) >= o2.GetWorldPos().y && o1.GetWorldPos().y + (o1.GetHeight() / 2) <= o2.GetWorldPos().y + o2.GetHeight()))
 		{

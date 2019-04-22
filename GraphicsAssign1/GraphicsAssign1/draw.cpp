@@ -2,7 +2,6 @@
 #include "Draw.h"
 #include "objloader.h"
 
-
 #define PI 3.1415926535
 
 #define BVIEW_HALF_W 400
@@ -293,6 +292,22 @@ void representTriangle(const Transform & triangle)
 	glEnd();
 }
 */
+
+void setWorldWindow() { //reference: https://heinleinsgame.tistory.com/12
+
+	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+
+	glm::mat4 view = glm::lookAt(cameraPos, cameraTarget, up);
+	
+	// 프로젝션 매트릭스 : 45도 시야각, 4:3 비율, 시야 범위 : 0.1 유닛 <--> 100 유닛
+	glm::mat4 Projection = glm::perspective<float>(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
+
+	//혹은 ortho(직교) 카메라에선 :
+	//glm::mat4 Projection = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f); // 월드 좌표로 표현
+	   
+}
 void lookAtBall(const Object& ball) // to be modified
 {
 
