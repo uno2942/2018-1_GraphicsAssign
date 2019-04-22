@@ -3,7 +3,7 @@
 #include"Objects.h"
 #include"MyDataType.h"
 
-enum CamMode { WHOLE, FOLLOWBALL };
+enum CamMode { CHARACTER, BEHIND, HANGING };
 extern CamMode camMode;
 extern bool ReshapeFlag;
 

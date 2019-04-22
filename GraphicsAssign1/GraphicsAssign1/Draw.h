@@ -5,7 +5,6 @@
 #include"CommonBetweenGameAndDraw.h"
 #include "ObjData.h"
 #include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 void myReshape(int width, int height);
 

@@ -1,7 +1,7 @@
 #include"Units.h"
 
 GameObjectTree* GetEnemy() {
-	static GameObjectTree* enemyTree;
+	static GameObjectTree* enemyTree = NULL;
 	if (enemyTree == NULL)
 	{
 		enemyTree = new GameObjectTree("enemyBox");

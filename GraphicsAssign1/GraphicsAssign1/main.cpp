@@ -30,8 +30,9 @@ void myKeyboard(unsigned char c, int x, int y) {
 		GameManager::getInstance().StartGame();
 	if (GameManager::getInstance().WhoFinallyWin == 0) {
 		switch (c) {
-		case '1': camMode = WHOLE; break;
-		case '2': camMode = FOLLOWBALL;
+		case '1': camMode = CHARACTER; break;
+		case '2': camMode = BEHIND; break;
+		case '3': camMode = HANGING;
 		}
 	}
 }

@@ -2,7 +2,7 @@
 
 static Object* player;
 GameObjectTree* GetPlayer() {
-	static GameObjectTree* playerTree;
+	static GameObjectTree* playerTree = NULL;
 	if (playerTree == NULL)
 	{
 		playerTree = new GameObjectTree("player");

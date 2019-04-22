@@ -7,6 +7,23 @@
 #define BVIEW_HALF_W 400
 #define BVIEW_HALF_H 225
 
+const char* vertexShaderSource = "#version 460 core\n"
+"layout (location = 0) in vec3 aPos;\n"
+"uniform mat4 View;\n"
+"uniform mat4 Projection;\n"
+"uniform mat4 Model;\n"
+"void main()\n"
+"{\n"
+"   gl_Position = (Projection * View * Model) * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"}\0";
+
+const char* fragmentShaderSource = "#version 460 core\n"
+"out vec4 FragColor;\n"
+"void main()\n"
+"{\n"
+"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+"}\n\0";
+
 void myReshape(int width, int height)
 {	
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
@@ -116,19 +133,6 @@ void representComponent(const Transform &object)
 		
 }
 
-const char *vertexShaderSource = "#version 460 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-"}\0";
-
-const char *fragmentShaderSource = "#version 460 core\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"}\n\0";
 
 
 void representPolygon(const Transform &object)
@@ -228,120 +232,41 @@ ObjData* GetObj(Object::Shape shape) {
 }
 
 
-
-/*
-void representBox(const Transform& box)
-{
-	GLfloat x = 0;
-	GLfloat y = 0;
-	GLfloat w = box.GetSize().x;
-	GLfloat h = box.GetSize().y;
-	
-	
-	glColor4f(box.myColor.r / 255.0, box.myColor.g / 255.0, box.myColor.b / 255.0, box.myColor.a);
-	glBegin(GL_QUADS);
-
-	glVertex2f(x, y);
-	glVertex2f(x, y + h);
-	glVertex2f(x + w, y + h);
-	glVertex2f(x + w, y);
-	glEnd();
-}
-
-void representCircle(const Transform &circle)
-{
-	int lineNum = 100; // lineNum각형 으로 근사
-
-	GLfloat x = 0;
-	GLfloat y = 0;
-	GLfloat r_x = circle.GetSize().x / 2;
-	GLfloat r_y = circle.GetSize().y / 2;
-
-	
-	glColor4f(circle.myColor.r / 255.0, circle.myColor.g / 255.0, circle.myColor.b / 255.0, circle.myColor.a);
-	glBegin(GL_POLYGON);
-
-	for (int i = 0; i < lineNum/2; i++)
-	{
-		glVertex2f(x + r_x + r_x * sinf(i * PI * 2 / lineNum), y + r_y + r_y * cosf(i * PI * 2 / lineNum));
-		
-		float colR = (circle.myColor.r * (lineNum / 2 - i) + 1 * i) / (float)(lineNum / 2);
-		float colG = (circle.myColor.g * (lineNum / 2 - i) + 1 * i) / (float)(lineNum / 2);
-		float colB = (circle.myColor.b * (lineNum / 2 - i) + 1 * i) / (float)(lineNum / 2);
-		glColor4f(colR, colG, colB, 1);
-	}
-	for (int i = lineNum/2; i < lineNum; i++)
-	{
-		glVertex2f(x + r_x + r_x * sinf(i * PI * 2 / lineNum), y + r_y + r_y * cosf(i * PI * 2 / lineNum));
-		
-		float colR = (circle.myColor.r * (i - lineNum / 2 ) + 1 * (lineNum - i)) / (float)(lineNum / 2);
-		float colG = (circle.myColor.g * (i - lineNum / 2) + 1 * (lineNum - i)) / (float)(lineNum / 2);
-		float colB = (circle.myColor.b * (i - lineNum / 2) + 1 * (lineNum - i)) / (float)(lineNum / 2);
-		glColor4f(colR, colG, colB, 1);
+void SetModelAndViewMatrix(CamMode camMode) { //reference: https://heinleinsgame.tistory.com/12
+	Transform* player = GameManager::getInstance().player;
+	glm::vec3 cameraPos;
+	glm::vec3 cameraTarget;
+	glm::vec3 up; // 수정 필요
+	glm::mat4 view;
+	glm::mat4 Projection; // 월드 좌표로 표현 수정 필요
+	switch(camMode){
+	case CHARACTER: 
+		cameraPos = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z);
+		cameraTarget = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z + 1);
+		up = glm::vec3(0.0f, 1.0f, 0.0f);
+		view = glm::lookAt(cameraPos, cameraTarget, up);
+		Projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 100.0f); // 월드 좌표로 표현 수정 필요
+		break;
+	case BEHIND:
+		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN/2, 10, 0);
+		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN / 2, 10, 1);
+		up = glm::vec3(0.0f, 1.0f, 0.0f);
+		view = glm::lookAt(cameraPos, cameraTarget, up);
+		Projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 100.0f); // 월드 좌표로 표현 수정 필요
+		break;
+	case HANGING:
+		cameraPos = glm::vec3(10, WORLD_COORD_MAP_YLEN, 10);
+		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN/2 ,0, WORLD_COORD_MAP_ZLEN/2);
+		up = glm::vec3(0.0f, 1.0f, 0.0f); // 수정 필요
+		view = glm::lookAt(cameraPos, cameraTarget, up);
+		Projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 100.0f); // 월드 좌표로 표현 수정 필요
+		break;
 	}
 
-
-
-	glEnd();
+	glUniformMatrix4fv(glGetUniformLocation(Putshader, "View"), 1, GL_FALSE, &view[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(Putshader, "Projection"), 1, GL_FALSE, &Projection[0][0]);
 }
 
-void representTriangle(const Transform & triangle)
-{
-	GLfloat x = 0;
-	GLfloat y = 0;
-	GLfloat w = triangle.GetSize().x;
-	GLfloat h = triangle.GetSize().y;
-
-	
-	glColor4f(triangle.myColor.r / 255.0, triangle.myColor.g / 255.0, triangle.myColor.b / 255.0, triangle.myColor.a);
-	glBegin(GL_TRIANGLES);
-
-	glVertex2f(x, y);
-	glVertex2f(x + w, y);
-	glVertex2f(x + w / 2, y + h);
-	glEnd();
-}
-*/
-void setWorldWindow() { //reference: https://heinleinsgame.tistory.com/12
-
-	glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-	glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-
-	glm::mat4 view = glm::lookAt(cameraPos, cameraTarget, up);
-	
-	// 프로젝션 매트릭스 : 45도 시야각, 4:3 비율, 시야 범위 : 0.1 유닛 <--> 100 유닛
-	glm::mat4 Projection = glm::perspective<float>(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
-
-	//혹은 ortho(직교) 카메라에선 :
-	//glm::mat4 Projection = glm::ortho(-10.0f,10.0f,-10.0f,10.0f,0.0f,100.0f); // 월드 좌표로 표현
-	   
-}
-
-/*void lookAtBall(const Object& ball) // to be modified
-{
-
-	GLdouble lookAtX = ball.GetCurrentPosition().x + ball.GetSize().x / 2;
-	GLdouble lookAtY = ball.GetCurrentPosition().y + ball.GetSize().y / 2;
-	GLdouble screenX = WORLDCOORDWINDOWWIDTH;
-	GLdouble screenY = WORLDCOORDWINDOWHEIGHT;
-	
-	if (lookAtX > screenX - BVIEW_HALF_W)
-		lookAtX = screenX - BVIEW_HALF_W;
-	else if (lookAtX < BVIEW_HALF_W)
-		lookAtX = BVIEW_HALF_W;
-	
-	if (lookAtY > screenY - BVIEW_HALF_H)
-		lookAtY = screenY - BVIEW_HALF_H;
-	else if (lookAtY < BVIEW_HALF_H)
-		lookAtY = BVIEW_HALF_H;
-		
-
-	gluLookAt(lookAtX, lookAtY, 0.0f,
-		lookAtX, lookAtY, -100.0f,
-		0.0f, 1.0f, 0.0f);
-	printf("%f\n", lookAtX);
-}*/
 
 void representScore(int score, GLfloat x, GLfloat y)
 {
@@ -381,3 +306,103 @@ void representResult(void)
 		glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&loseMessage);
 		
 }
+
+
+/*
+void representBox(const Transform& box)
+{
+	GLfloat x = 0;
+	GLfloat y = 0;
+	GLfloat w = box.GetSize().x;
+	GLfloat h = box.GetSize().y;
+
+
+	glColor4f(box.myColor.r / 255.0, box.myColor.g / 255.0, box.myColor.b / 255.0, box.myColor.a);
+	glBegin(GL_QUADS);
+
+	glVertex2f(x, y);
+	glVertex2f(x, y + h);
+	glVertex2f(x + w, y + h);
+	glVertex2f(x + w, y);
+	glEnd();
+}
+
+void representCircle(const Transform &circle)
+{
+	int lineNum = 100; // lineNum각형 으로 근사
+
+	GLfloat x = 0;
+	GLfloat y = 0;
+	GLfloat r_x = circle.GetSize().x / 2;
+	GLfloat r_y = circle.GetSize().y / 2;
+
+
+	glColor4f(circle.myColor.r / 255.0, circle.myColor.g / 255.0, circle.myColor.b / 255.0, circle.myColor.a);
+	glBegin(GL_POLYGON);
+
+	for (int i = 0; i < lineNum/2; i++)
+	{
+		glVertex2f(x + r_x + r_x * sinf(i * PI * 2 / lineNum), y + r_y + r_y * cosf(i * PI * 2 / lineNum));
+
+		float colR = (circle.myColor.r * (lineNum / 2 - i) + 1 * i) / (float)(lineNum / 2);
+		float colG = (circle.myColor.g * (lineNum / 2 - i) + 1 * i) / (float)(lineNum / 2);
+		float colB = (circle.myColor.b * (lineNum / 2 - i) + 1 * i) / (float)(lineNum / 2);
+		glColor4f(colR, colG, colB, 1);
+	}
+	for (int i = lineNum/2; i < lineNum; i++)
+	{
+		glVertex2f(x + r_x + r_x * sinf(i * PI * 2 / lineNum), y + r_y + r_y * cosf(i * PI * 2 / lineNum));
+
+		float colR = (circle.myColor.r * (i - lineNum / 2 ) + 1 * (lineNum - i)) / (float)(lineNum / 2);
+		float colG = (circle.myColor.g * (i - lineNum / 2) + 1 * (lineNum - i)) / (float)(lineNum / 2);
+		float colB = (circle.myColor.b * (i - lineNum / 2) + 1 * (lineNum - i)) / (float)(lineNum / 2);
+		glColor4f(colR, colG, colB, 1);
+	}
+
+
+
+	glEnd();
+}
+
+void representTriangle(const Transform & triangle)
+{
+	GLfloat x = 0;
+	GLfloat y = 0;
+	GLfloat w = triangle.GetSize().x;
+	GLfloat h = triangle.GetSize().y;
+
+
+	glColor4f(triangle.myColor.r / 255.0, triangle.myColor.g / 255.0, triangle.myColor.b / 255.0, triangle.myColor.a);
+	glBegin(GL_TRIANGLES);
+
+	glVertex2f(x, y);
+	glVertex2f(x + w, y);
+	glVertex2f(x + w / 2, y + h);
+	glEnd();
+}
+*/
+
+/*void lookAtBall(const Object& ball) // to be modified
+{
+
+	GLdouble lookAtX = ball.GetCurrentPosition().x + ball.GetSize().x / 2;
+	GLdouble lookAtY = ball.GetCurrentPosition().y + ball.GetSize().y / 2;
+	GLdouble screenX = WORLDCOORDWINDOWWIDTH;
+	GLdouble screenY = WORLDCOORDWINDOWHEIGHT;
+
+	if (lookAtX > screenX - BVIEW_HALF_W)
+		lookAtX = screenX - BVIEW_HALF_W;
+	else if (lookAtX < BVIEW_HALF_W)
+		lookAtX = BVIEW_HALF_W;
+
+	if (lookAtY > screenY - BVIEW_HALF_H)
+		lookAtY = screenY - BVIEW_HALF_H;
+	else if (lookAtY < BVIEW_HALF_H)
+		lookAtY = BVIEW_HALF_H;
+
+
+	gluLookAt(lookAtX, lookAtY, 0.0f,
+		lookAtX, lookAtY, -100.0f,
+		0.0f, 1.0f, 0.0f);
+	printf("%f\n", lookAtX);
+}*/

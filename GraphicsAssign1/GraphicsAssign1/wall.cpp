@@ -1,7 +1,7 @@
 #include"Units.h"
 
 GameObjectTree* GetWall() {
-	static GameObjectTree* wallTree;
+	static GameObjectTree* wallTree = NULL;
 	if (wallTree == NULL)
 	{
 		GameObject* temp = new GameObject(new Box("leftwall", 10, WORLD_COORD_MAP_ZLEN, WORLD_COORD_MAP_YLEN, MY_WALL_COLOR));
