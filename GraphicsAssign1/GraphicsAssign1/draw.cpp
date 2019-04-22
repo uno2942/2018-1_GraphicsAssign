@@ -50,8 +50,8 @@ void display()
 	
 	if (camMode == WHOLE)
 		gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -100.0f, 0.0f, 1.0f, 0.0f);
-	else
-		lookAtBall(*GameManager::getInstance().ball);
+	//else
+		//lookAtBall(*GameManager::getInstance().ball);
 	
 	
 
@@ -140,7 +140,17 @@ void representPolygon(const Transform &object)
 	drawingObjData = GetObj(object.shape );
 
 	//shader drawing
+	float* scaledVertexArray = (float*)malloc(sizeof(float) * drawingObjData->vertexSize);
 
+	for (int i = 0; i < drawingObjData->vertexSize; i++) {
+		switch (i % 3) {
+		case 0: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object.GetSize().x + object.position.x;
+		case 1: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object.GetSize().y + object.position.y;
+		case 2: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object.GetSize().z + object.position.z;
+		}
+		
+		assert(1 && "not implemented yet: scaling and moving");
+	}
 	//code copy from here
 	
 	/* make shaders */
@@ -293,7 +303,7 @@ void representTriangle(const Transform & triangle)
 	glEnd();
 }
 */
-void lookAtBall(const Object& ball) // to be modified
+/*void lookAtBall(const Object& ball) // to be modified
 {
 
 	GLdouble lookAtX = ball.GetCurrentPosition().x + ball.GetSize().x / 2;
@@ -316,7 +326,7 @@ void lookAtBall(const Object& ball) // to be modified
 		lookAtX, lookAtY, -100.0f,
 		0.0f, 1.0f, 0.0f);
 	printf("%f\n", lookAtX);
-}
+}*/
 
 void representScore(int score, GLfloat x, GLfloat y)
 {

@@ -24,7 +24,7 @@ void representPolygon(const Transform& polygon);
 
 ObjData* GetObj(Object::Shape shape);
 
-void lookAtBall(const Object& circle);
+//void lookAtBall(const Object& circle); //deleted in Assign#3
 
 void representScore(int score, GLfloat x, GLfloat y);
 
