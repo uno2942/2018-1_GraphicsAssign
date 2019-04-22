@@ -27,6 +27,7 @@ bool loadOBJ(
 	std::vector<glm::vec2> temp_uvs;
 	std::vector<glm::vec3> temp_normals;
 	std::vector<glm::vec3> temp_triangles;
+	std::vector<glm::vec2> range;// 3 vec2 for x, y, z, vec2.x is min, vec2.y is max
 
 
 	FILE * file = fopen(path, "r");
@@ -101,6 +102,42 @@ bool loadOBJ(
 		objData->vertexArray[3*i+1] = temp_vertices[i][1];
 		objData->vertexArray[3*i+2] = temp_vertices[i][2];
 	}
+	glm::vec2 tempV;
+	tempV.x = tempV.y = temp_vertices[0][0];
+	range.push_back(tempV);
+	tempV.x = tempV.y = temp_vertices[0][1];
+	range.push_back(tempV);
+	tempV.x = tempV.y = temp_vertices[0][2];
+	range.push_back(tempV);
+
+
+
+	for (unsigned int i = 0; i < temp_vertices.size(); i++) {
+
+		for (int j = 0; j < 3; j++) {
+			if (range[j].x > temp_vertices[i][j]) range[j].x = temp_vertices[i][j];
+			if (range[j].y < temp_vertices[i][j]) range[j].y = temp_vertices[i][j];
+		}
+	}
+
+	glm::vec3 center;
+	for (int i = 0; i < 3; i++)
+	{
+		//objData->vertexRange.push_back(range[i]);
+		center[i] = (range[i].x + range[i].y) / 2;
+		objData->width3D[i] = range[i].y - range[i].x;
+	}
+
+	for (unsigned int i = 0; i < temp_vertices.size(); i++) {
+
+		for (int j = 0; j < 3; j++) {
+			objData->vertexArray[3 * i + j] = temp_vertices[i][j] - center[j];
+		}
+	}
+
+
+	objData->vertexSize = temp_vertices.size();
+	objData->triangleSize = vertexIndices.size();
 
 
 	// For each vertex of each triangle
