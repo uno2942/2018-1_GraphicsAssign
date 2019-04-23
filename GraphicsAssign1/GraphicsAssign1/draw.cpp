@@ -71,7 +71,7 @@ void display()
 			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, 100, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case BALL:
@@ -107,7 +107,7 @@ void display()
 			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, 100, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case BALL:
@@ -265,9 +265,19 @@ void representPolygon(const Transform &object)
 	glDrawElements(GL_TRIANGLES, sizeof(drawingObjData->triangleArray) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
 }
 
-void representWall(const Transform &object)
+void genWallVAO(const Transform &object) // (1, 1) size , 100 vertics, 162 triangles, 사실 이 함수는 1번만 호출해도 괜찮을듯
 {
-	for (int i = 0; i < 5; i++) {
+	float wallStartPoint[5][3] = 
+	{ 
+		WORLD_COORD_MAP_XLEN, 0, 0,
+		0, 0, 0,
+		0, 0, WORLD_COORD_MAP_ZLEN,
+		0, 0, 0,
+		0, 0, 0,
+	}; // each for start point of Walls
+
+	for (int i = 0; i < 5; i++) {  //each LEFTWALL, RIGHTWALL, FRONTWALL, BACKWALL, BOTTOMWALL
+
 		GLuint VBO, VAO, EBO;
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
@@ -276,19 +286,61 @@ void representWall(const Transform &object)
 		vector<float> vertices;
 		vector<unsigned int> indices;
 
-		for (int j = 0; j < 10; i++)
+		for (int j = 0; j < 10; j++)
+		{
 			for (int k = 0; k < 10; k++) {
-				vertices.push_back()
+				if (object.xlen == 0) {
+					vertices.push_back(wallStartPoint[i][0]);
+					vertices.push_back(wallStartPoint[i][1] + object.ylen * j / 9.0);
+					vertices.push_back(wallStartPoint[i][2] + object.zlen * k / 9.0);
+				}
+				else if (object.ylen == 0) {
+					vertices.push_back(wallStartPoint[i][0] + object.xlen * j / 9.0);
+					vertices.push_back(wallStartPoint[i][1]);
+					vertices.push_back(wallStartPoint[i][2] + object.zlen * k / 9.0);
+				}
+				else if (object.zlen == 0) {
+					vertices.push_back(wallStartPoint[i][0] + object.xlen * j / 9.0);
+					vertices.push_back(wallStartPoint[i][1] + object.ylen * k / 9.0);
+					vertices.push_back(wallStartPoint[i][2]);
+				}
 			}
-		
+		}
+
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
+		for (int j = 0; j < 9; j++)
+		{
+			for (int k = 0; k < 9; k++) {
+				indices.push_back(10 * j + k);
+				indices.push_back(10 * j + k + 1);
+				indices.push_back(10 * j + k + 10);
+
+				indices.push_back(10 * j + k + 1);
+				indices.push_back(10 * j + k + 10);
+				indices.push_back(10 * j + k + 11);
+
+			}
+		}
+
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-		
+
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
+
+		string wallName;
+		switch (i)
+		{	
+		case 0: wallName = "LEFTWALL"; break;
+		case 1: wallName = "RIGHTWALL"; break;
+		case 2: wallName = "FRONTWALL"; break;
+		case 3: wallName = "BACKWALL"; break;
+		case 4: wallName = "BOTTOMWALL"; break;
+		}
+
+		VAO_map.insert(map<string, GLuint>::value_type(wallName, VAO));
 	}
 }
 
