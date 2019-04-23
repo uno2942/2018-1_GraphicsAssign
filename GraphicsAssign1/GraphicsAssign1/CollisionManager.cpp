@@ -242,24 +242,24 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* GameManager::Coll
 		return collisionPairvector;
 	}
 	
-	if (GameManager::getInstance().player->GetCurrentPosition().x - GameManager::getInstance().player->xlen < 0)
+	if (GameManager::getInstance().player->GetCurrentPosition().x - GameManager::getInstance().player->xlen / 2 < 0)
 		GameManager::getInstance().player->SetVelocity(0, 0, 0);
-	else if(GameManager::getInstance().player->GetCurrentPosition().x + GameManager::getInstance().player->xlen > WORLD_COORD_MAP_XLEN)
-		GameManager::getInstance().player->SetVelocity(0, 0, 0);
-
-	if (GameManager::getInstance().player->GetCurrentPosition().z - GameManager::getInstance().player->zlen < 0)
-		GameManager::getInstance().player->SetVelocity(0, 0, 0);
-	else if (GameManager::getInstance().player->GetCurrentPosition().z + GameManager::getInstance().player->zlen > WORLD_COORD_MAP_ZLEN / 2)
+	else if(GameManager::getInstance().player->GetCurrentPosition().x + GameManager::getInstance().player->xlen / 2 > WORLD_COORD_MAP_XLEN)
 		GameManager::getInstance().player->SetVelocity(0, 0, 0);
 
-	if (GameManager::getInstance().enemy->GetCurrentPosition().x - GameManager::getInstance().enemy->xlen < 0)
+	if (GameManager::getInstance().player->GetCurrentPosition().z - GameManager::getInstance().player->zlen / 2 < 0)
+		GameManager::getInstance().player->SetVelocity(0, 0, 0);
+	else if (GameManager::getInstance().player->GetCurrentPosition().z + GameManager::getInstance().player->zlen / 2 > WORLD_COORD_MAP_ZLEN / 2)
+		GameManager::getInstance().player->SetVelocity(0, 0, 0);
+
+	if (GameManager::getInstance().enemy->GetCurrentPosition().x - GameManager::getInstance().enemy->xlen / 2 < 0)
 		GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
-	else if (GameManager::getInstance().enemy->GetCurrentPosition().x + GameManager::getInstance().enemy->xlen > WORLD_COORD_MAP_XLEN)
+	else if (GameManager::getInstance().enemy->GetCurrentPosition().x + GameManager::getInstance().enemy->xlen / 2 > WORLD_COORD_MAP_XLEN)
 		GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
 
-	if (GameManager::getInstance().enemy->GetCurrentPosition().z - GameManager::getInstance().enemy->zlen < WORLD_COORD_MAP_ZLEN/2)
+	if (GameManager::getInstance().enemy->GetCurrentPosition().z - GameManager::getInstance().enemy->zlen / 2 < WORLD_COORD_MAP_ZLEN/2)
 		GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
-	else if (GameManager::getInstance().enemy->GetCurrentPosition().z + GameManager::getInstance().enemy->zlen > WORLD_COORD_MAP_ZLEN)
+	else if (GameManager::getInstance().enemy->GetCurrentPosition().z + GameManager::getInstance().enemy->zlen / 2 > WORLD_COORD_MAP_ZLEN)
 		GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
 
 }
@@ -267,7 +267,39 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* GameManager::Coll
 
 //두 오브젝트 사이에 Collision을 체크함
 void GameManager::CollisionManager::CheckCollision4side(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector) {
-	if (!CheckCollisionAtRightSide(o1, o2, collisionPairvector))
+
+	if (GameManager::getInstance().ball->GetCurrentPosition().x - GameManager::getInstance().ball->xlen / 2 < 0)
+	{
+		Vector3 ballPos = GameManager::getInstance().ball->GetCurrentPosition();
+		Vector3 ballVel = GameManager::getInstance().ball->velocity;
+		GameManager::getInstance().ball->SetPosition(GameManager::getInstance().ball->xlen / 2, ballPos.y, ballPos.z);
+		GameManager::getInstance().ball->SetVelocity(-ballVel.x, ballVel.y, ballVel.z);
+	}
+	else if (GameManager::getInstance().ball->GetCurrentPosition().x + GameManager::getInstance().ball->xlen / 2 > WORLD_COORD_MAP_XLEN)
+	{
+		Vector3 ballPos = GameManager::getInstance().ball->GetCurrentPosition();
+		Vector3 ballVel = GameManager::getInstance().ball->velocity;
+		GameManager::getInstance().ball->SetPosition(WORLD_COORD_MAP_XLEN - GameManager::getInstance().ball->xlen / 2, ballPos.y, ballPos.z);
+		GameManager::getInstance().ball->SetVelocity(-ballVel.x, ballVel.y, ballVel.z);
+	}
+
+	if (GameManager::getInstance().ball->GetCurrentPosition().z - GameManager::getInstance().ball->zlen / 2 < 0)
+	{
+		Vector3 ballPos = GameManager::getInstance().ball->GetCurrentPosition();
+		Vector3 ballVel = GameManager::getInstance().ball->velocity;
+		GameManager::getInstance().ball->SetPosition(ballPos.x, ballPos.y, GameManager::getInstance().ball->zlen / 2);
+		GameManager::getInstance().ball->SetVelocity(ballVel.x, ballVel.y, -ballVel.z);
+	}
+	else if (GameManager::getInstance().ball->GetCurrentPosition().z + GameManager::getInstance().ball->zlen / 2 > WORLD_COORD_MAP_ZLEN / 2)
+	{
+		Vector3 ballPos = GameManager::getInstance().ball->GetCurrentPosition();
+		Vector3 ballVel = GameManager::getInstance().ball->velocity;
+		GameManager::getInstance().ball->SetPosition(ballPos.x, ballPos.y, WORLD_COORD_MAP_ZLEN-GameManager::getInstance().ball->zlen / 2);
+		GameManager::getInstance().ball->SetVelocity(ballVel.x, ballVel.y, -ballVel.z);
+	}
+
+	
+	/*	if (!CheckCollisionAtRightSide(o1, o2, collisionPairvector))
 	{
 		if (!CheckCollisionAtLeftSide(o1, o2, collisionPairvector))
 		{
@@ -280,6 +312,7 @@ void GameManager::CollisionManager::CheckCollision4side(const CollisionComponent
 			}
 		}
 	}
+	*/
 }
 
 /**

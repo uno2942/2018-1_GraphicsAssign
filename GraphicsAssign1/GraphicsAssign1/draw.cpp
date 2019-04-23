@@ -39,21 +39,7 @@ void display()
 		GameManager::getInstance().FreshTime();
 		ReshapeFlag = !ReshapeFlag;
 	}
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
 
-	//
-	
-	if(camMode == WHOLE || GameManager::getInstance().WhoFinallyWin != 0)
-		gluOrtho2D(-100, 1700, -100, 1000);
-	else
-		gluOrtho2D(-BVIEW_HALF_W - 100, BVIEW_HALF_W + 100, -BVIEW_HALF_H - 100, BVIEW_HALF_H + 100);
-		
-
-	
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	
 	if (GameManager::getInstance().WhoFinallyWin != 0) {
 
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -63,13 +49,7 @@ void display()
 		glutSwapBuffers();
 		return;
 	}
-	
-	if (camMode == WHOLE)
-		gluLookAt(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -100.0f, 0.0f, 1.0f, 0.0f);
-	//else
-		//lookAtBall(*GameManager::getInstance().ball);
-	
-	
+		
 
 	//glClearColor(224/255.0, 1, 1, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -255,6 +235,8 @@ void SetModelAndViewMatrix(CamMode camMode) { //reference: https://heinleinsgame
 		Projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 100.0f); // 월드 좌표로 표현 수정 필요
 		break;
 	case HANGING:
+		float x, y, z;
+
 		cameraPos = glm::vec3(10, WORLD_COORD_MAP_YLEN, 10);
 		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN/2 ,0, WORLD_COORD_MAP_ZLEN/2);
 		up = glm::vec3(0.0f, 1.0f, 0.0f); // 수정 필요
