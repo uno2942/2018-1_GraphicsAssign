@@ -79,7 +79,7 @@ void display()
 				
 				glm::mat4 trans = glm::identity<glm::mat4>();
 				glm::vec3 unitpos = glm::vec3(ball->GetCurrentPosition().x, ball->GetCurrentPosition().y, ball->GetCurrentPosition().z);
-				trans = glm::translate(trans, unitpos); // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Â³ï¿½?
+				trans = glm::translate(trans, unitpos); // Á¦´ë·Î ¾´°Å ¸Â³ª?
 				
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
@@ -356,7 +356,12 @@ ObjData* GetObj(Object::Shape shape) {
 	if (objData[shape] == NULL)
 	{
 		objData[shape] = new ObjData;
-		loadOBJ("path", objData[shape]);
+		switch (shape)
+		{
+		case BALL: loadOBJ("sphere.obj", objData[shape]); break;
+		default: printf("That shape's object file path is not defined\n"); break;
+		}
+		
 	}
 	return objData[shape];
 }
