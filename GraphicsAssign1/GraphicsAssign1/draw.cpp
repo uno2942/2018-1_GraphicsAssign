@@ -29,6 +29,7 @@ void display()
 	static glm::vec4 lineColor = glm::vec4(1, 1, 1, 1);
 	Transform* player = GameManager::getInstance().player;
 	Transform* enemy = GameManager::getInstance().enemy;
+	Transform* ball = GameManager::getInstance().ball;
 
 
 	if (ReshapeFlag) {
@@ -75,9 +76,14 @@ void display()
 				glBindVertexArray(0);
 				break;
 			case BALL:
+				
+				glm::mat4 trans = glm::identity<glm::mat4>();
+				glm::vec3 unitpos = glm::vec3(ball->GetCurrentPosition().x, ball->GetCurrentPosition().y, ball->GetCurrentPosition().z);
+				trans = glm::translate(trans, unitpos); // ����� ���� �³�?
+				
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(ball->shape)->vertexSize , GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case PLAYER: case ENEMY:
