@@ -222,7 +222,7 @@ void representComponent(const Transform &object)
 
 
 
-void representPolygon(const Transform &object)
+void genPolygonVAO(const Transform &object)
 {
 	ObjData* drawingObjData;
 	
@@ -234,12 +234,10 @@ void representPolygon(const Transform &object)
 
 	for (int i = 0; i < drawingObjData->vertexSize; i++) {
 		switch (i % 3) {
-		case 0: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object.GetSize().x + object.position.x;
-		case 1: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object.GetSize().y + object.position.y;
-		case 2: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object.GetSize().z + object.position.z;
+		case 0: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object.GetSize().x;
+		case 1: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object.GetSize().y;
+		case 2: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object.GetSize().z;
 		}
-		
-		assert(1 && "not implemented yet: scaling and moving");
 	}
 
 	// starts to use
@@ -254,7 +252,7 @@ void representPolygon(const Transform &object)
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(drawingObjData->vertices), drawingObjData->vertexArray, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(drawingObjData->vertices), scaledVertexArray, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(drawingObjData->triangleArray), drawingObjData->triangleArray, GL_STATIC_DRAW);
@@ -265,10 +263,17 @@ void representPolygon(const Transform &object)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	//copy end
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, sizeof(drawingObjData->triangleArray) / sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+	string polygonName;
+	switch (object.shape)
+	{
+	case BALL: polygonName = "BALL"; break;
+	case PLAYER: polygonName = "PLAYER"; break;
+	case ENEMY: polygonName = "ENEMY"; break;
+	default: printf("I think this obj is wall But genPolygonVAO is called"); break;
+	}
+
+	VAO_map.insert(map<string, GLuint>::value_type(polygonName, VAO));
+	free(scaledVertexArray);
 }
 
 void genWallVAO(const Transform &object) // (1, 1) size , 100 vertics, 162 triangles, 사실 이 함수는 1번만 호출해도 괜찮을듯
