@@ -29,8 +29,8 @@ void display()
 	static glm::vec4 lineColor = glm::vec4(1, 1, 1, 1);
 	Transform* player = GameManager::getInstance().player;
 	Transform* enemy = GameManager::getInstance().enemy;
-	
-	
+
+
 	if (ReshapeFlag) {
 		GameManager::getInstance().FreshTime();
 		ReshapeFlag = !ReshapeFlag;
@@ -49,11 +49,11 @@ void display()
 	*/
 
 	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT ||GL_DEPTH_BUFFER_BIT); //Depth도 넣어야 하는 건지 확인 필요
-	
+	glClear(GL_COLOR_BUFFER_BIT || GL_DEPTH_BUFFER_BIT); //Depth도 넣어야 하는 건지 확인 필요
+
 	glUseProgram(MyShader::GetShader());
 
-	
+
 	if (camMode == CamMode::CHARACTER) {
 		glm::vec3 camerapos = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z);
 		glm::vec3 cameradirection = camerapos + glm::vec3(0, 0, 1);
@@ -90,7 +90,7 @@ void display()
 				glm::mat4 trans = glm::identity<glm::mat4>();
 				glm::vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
 				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
-				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, (float)unit->rotation, rotationAxis), unitpos));
+				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
@@ -126,7 +126,7 @@ void display()
 				glm::mat4 trans = glm::identity<glm::mat4>();
 				glm::vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
 				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
-				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, (float)unit->rotation, rotationAxis), unitpos));
+				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
@@ -163,7 +163,7 @@ void display()
 				glm::mat4 trans = glm::identity<glm::mat4>();
 				glm::vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
 				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
-				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, (float)unit->rotation, rotationAxis), unitpos));
+				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
@@ -304,7 +304,7 @@ ObjData* GetObj(Object::Shape shape) {
 }
 
 
-void SetModelAndViewMatrix(CamMode camMode) { //reference: https://heinleinsgame.tistory.com/12
+void SetModelAndViewMatrix(CamMode camMode, GLfloat a, GLfloat b) { //reference: https://heinleinsgame.tistory.com/12
 	Transform* player = GameManager::getInstance().player;
 	glm::vec3 cameraPos;
 	glm::vec3 cameraTarget;
@@ -328,17 +328,20 @@ void SetModelAndViewMatrix(CamMode camMode) { //reference: https://heinleinsgame
 		break;
 	case HANGING:
 		float x, y, z;
-
-		cameraPos = glm::vec3(10, WORLD_COORD_MAP_YLEN, 10);
+		cameraPos = glm::vec3(a, WORLD_COORD_MAP_YLEN, b);
 		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN/2 ,0, WORLD_COORD_MAP_ZLEN/2);
-		up = glm::vec3(0.0f, 1.0f, 0.0f); // 수정 필요
+		glm::vec3 temp1 = glm::normalize(cameraTarget - cameraPos);
+		glm::vec3 temp2 = glm::normalize(glm::vec3(a, 0, b));
+		glm::mat4 temp3 = glm::identity<glm::mat4>();
+		temp3 = glm::rotate(temp3, glm::radians(90.0f), glm::cross(temp1, temp2));
+		up = temp3 * glm::vec4(temp1.x, temp1.y, temp1.z, 1);
 		view = glm::lookAt(cameraPos, cameraTarget, up);
 		Projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 100.0f); // 월드 좌표로 표현 수정 필요
 		break;
 	}
 
-	glUniformMatrix4fv(glGetUniformLocation(Putshader, "View"), 1, GL_FALSE, &view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(Putshader, "Projection"), 1, GL_FALSE, &Projection[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(MyShader::myshader, "View"), 1, GL_FALSE, &view[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(MyShader::myshader, "Projection"), 1, GL_FALSE, &Projection[0][0]);
 }
 
 

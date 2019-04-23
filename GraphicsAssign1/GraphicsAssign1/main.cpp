@@ -26,6 +26,8 @@ void idlefunction(int value) {
 }
 
 void myKeyboard(unsigned char c, int x, int y) {
+	GLfloat a = 0;
+	GLfloat b = 0;
 	if (c == 'r')
 		GameManager::getInstance().StartGame();
 	if (GameManager::getInstance().WhoFinallyWin == 0) {
@@ -33,8 +35,10 @@ void myKeyboard(unsigned char c, int x, int y) {
 		case '1': camMode = CHARACTER; break;
 		case '2': camMode = BEHIND; break;
 		case '3': camMode = HANGING;
+			cin >> a >> b;
 		}
 	}
+	SetModelAndViewMatrix(camMode, a, b);
 }
 
 void specialKeyboard(int key, int x, int y) {
