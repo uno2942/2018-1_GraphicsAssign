@@ -2,6 +2,7 @@
 #include "Draw.h"
 #include<algorithm>
 #include "objloader.h"
+#include"myShader.h"
 #define PI 3.1415926535
 
 #define BVIEW_HALF_W 400
@@ -10,7 +11,8 @@
 using namespace std;
 
 map<string, GLuint> VAO_map;
-
+enum stringToInt {LEFTWALL, RIGHTWALL, FRONTWALL, BACKWALL, BOTTOMWALL, BALL, PLAYER, ENEMY};
+static map< string, int > mappingFromStringToInt;
 void myReshape(int width, int height)
 {	
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
@@ -22,11 +24,19 @@ void myReshape(int width, int height)
 
 void display()
 {
+	static glm::vec4 backgroundColor = glm::vec4(0, 0, 0, 1);
+	static glm::vec4 polygonInnerColor = glm::vec4(0.5, 0.5, 0.5, 1);
+	static glm::vec4 lineColor = glm::vec4(1, 1, 1, 1);
+	Transform* player = GameManager::getInstance().player;
+	Transform* enemy = GameManager::getInstance().enemy;
+	
+	
 	if (ReshapeFlag) {
 		GameManager::getInstance().FreshTime();
 		ReshapeFlag = !ReshapeFlag;
 	}
 
+	/* 여긴 좀 해주세요.
 	if (GameManager::getInstance().WhoFinallyWin != 0) {
 
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -36,38 +46,145 @@ void display()
 		glutSwapBuffers();
 		return;
 	}
-		
-
-	//glClearColor(224/255.0, 1, 1, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-	
-	vector<GameObjectTree>::iterator iter; 
-	
-	for (iter = objectsTreeVectorForDraw.begin(); iter != objectsTreeVectorForDraw.end(); iter++)
-	{
-		
-		drawObjectRecursive(iter->root);
-	}
-	
-
-
-	/*
-	representBox(GameManager::getInstance().screen, 255, 255, 255);
-	representBox(GameManager::getInstance().enemyBox, 255, 255, 0); //yellow
-	representBox(GameManager::getInstance().playerBox, 255, 255, 0); //yellow
-	representBox(GameManager::getInstance().net, 204, 204, 204); //grey
-	representCircle(GameManager::getInstance().ball);
 	*/
+
+	glClearColor(0, 0, 0, 1);
+	glClear(GL_COLOR_BUFFER_BIT ||GL_DEPTH_BUFFER_BIT); //Depth도 넣어야 하는 건지 확인 필요
+	
+	glUseProgram(MyShader::GetShader());
+
+	
+	if (camMode == CamMode::CHARACTER) {
+		glm::vec3 camerapos = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z);
+		glm::vec3 cameradirection = camerapos + glm::vec3(0, 0, 1);
+		glm::vec3 up = glm::vec3(0, 1, 0);
+		MyShader::setMat4("View", glm::lookAt(camerapos, cameradirection, up));
+	}
+	switch (renMode) {
+	case NO_HIDDEN_LINE_REMOVAL:
+
+		glEnable(GL_DEPTH_TEST);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		MyShader::setVec4("myColor", lineColor);
+		for (map<string, GLuint>::iterator iter = VAO_map.begin(); iter != VAO_map.end(); ++iter) {
+			switch (mappingFromStringToInt[(*iter).first]) {
+			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
+				MyShader::setMat4("Model", glm::identity<glm::mat4>());
+				glBindVertexArray((*iter).second);
+				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glBindVertexArray(0);
+				break;
+			case BALL:
+				MyShader::setMat4("Model", glm::identity<glm::mat4>());
+				glBindVertexArray((*iter).second);
+				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glBindVertexArray(0);
+				break;
+			case PLAYER: case ENEMY:
+				Transform* unit;
+				if (mappingFromStringToInt[(*iter).first] == PLAYER)
+					unit = player;
+				else
+					unit = enemy;
+
+				glm::mat4 trans = glm::identity<glm::mat4>();
+				glm::vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
+				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
+				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, (float)unit->rotation, rotationAxis), unitpos));
+				glBindVertexArray((*iter).second);
+				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glBindVertexArray(0);
+			}
+		}
+		break;
+	case HIDDEN_LINE_REMOVAL:
+		glEnable(GL_DEPTH_TEST);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		MyShader::setVec4("myColor", lineColor);
+
+		for (map<string, GLuint>::iterator iter = VAO_map.begin(); iter != VAO_map.end(); ++iter) {
+			switch (mappingFromStringToInt[(*iter).first]) {
+			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
+				MyShader::setMat4("Model", glm::identity<glm::mat4>());
+				glBindVertexArray((*iter).second);
+				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glBindVertexArray(0);
+				break;
+			case BALL:
+				MyShader::setMat4("Model", glm::identity<glm::mat4>());
+				glBindVertexArray((*iter).second);
+				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glBindVertexArray(0);
+				break;
+			case PLAYER: case ENEMY:
+				Transform* unit;
+				if (mappingFromStringToInt[(*iter).first] == PLAYER)
+					unit = player;
+				else
+					unit = enemy;
+
+				glm::mat4 trans = glm::identity<glm::mat4>();
+				glm::vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
+				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
+				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, (float)unit->rotation, rotationAxis), unitpos));
+				glBindVertexArray((*iter).second);
+				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glBindVertexArray(0);
+			}
+		}
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(1.0, 1.0);
+
+		MyShader::setVec4("myColor", polygonInnerColor);
+
+		for (map<string, GLuint>::iterator iter = VAO_map.begin(); iter != VAO_map.end(); ++iter) {
+			switch (mappingFromStringToInt[(*iter).first]) {
+			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
+				MyShader::setMat4("Model", glm::identity<glm::mat4>());
+				glBindVertexArray((*iter).second);
+				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glBindVertexArray(0);
+				break;
+			case BALL:
+				MyShader::setMat4("Model", glm::identity<glm::mat4>());
+				glBindVertexArray((*iter).second);
+				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glBindVertexArray(0);
+				break;
+			case PLAYER: case ENEMY:
+				Transform* unit;
+				if (mappingFromStringToInt[(*iter).first] == PLAYER)
+					unit = player;
+				else
+					unit = enemy;
+
+				glm::mat4 trans = glm::identity<glm::mat4>();
+				glm::vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
+				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
+				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, (float)unit->rotation, rotationAxis), unitpos));
+				glBindVertexArray((*iter).second);
+				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glBindVertexArray(0);
+			}
+		}
+		glDisable(GL_POLYGON_OFFSET_FILL);
+
+		//이게 맞는 순서인지는 잘 모르겠습니다.
+	}
+	/* 스코어는 해주세요.
 	glLoadIdentity();
 	representScore(GameManager::getInstance().myScore, 100.0, 800.0);
 	glLoadIdentity();
 	representScore(GameManager::getInstance().enemyScore, 1400.0, 800.0);
-	
+	*/
 
 	glutSwapBuffers();
 
 }
 
+/*
 void drawObjectRecursive(GameObjectNode* root)
 {
 	glPushMatrix();
@@ -86,11 +203,8 @@ void drawObjectRecursive(GameObjectNode* root)
 	glPopMatrix();
 
 	if (root->sibling != NULL) drawObjectRecursive(root->sibling);
-	
-	
-	
 }
-
+*/
 void representComponent(const Transform &object)
 {
 	if (object.shape == Object::BOX)

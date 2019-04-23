@@ -1,4 +1,4 @@
-
+#pragma once
 #include<vector>
 #include "GameManager.h"
 #include "Objects.h"
@@ -8,10 +8,10 @@
 #include <glm/gtc/type_ptr.hpp>
 
 class MyShader {
-	
+public:
+	static GLuint myshader;
 	static GLuint GetShader() {
 		static bool isShaderGenerated = false;
-		static GLuint myshader = 0;
 		if (!isShaderGenerated)
 		{
 			const char* vertexShaderSource = "#version 460 core\n"
@@ -26,9 +26,10 @@ class MyShader {
 
 			const char* fragmentShaderSource = "#version 460 core\n"
 				"out vec4 FragColor;\n"
+				"uniform vec4 myColor;\n"
 				"void main()\n"
 				"{\n"
-				"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+				"   FragColor = myColor;\n"
 				"}\n\0";
 			//code copy from here
 
@@ -58,7 +59,35 @@ class MyShader {
 			glLinkProgram(myshader);
 			glDeleteShader(vertexShader);
 			glDeleteShader(fragmentShader);
+			isShaderGenerated = true;
 		}
 		return myshader;
+	}
+
+	static void setVec3(const std::string& name, const glm::vec3& value) //https://learnopengl.com/code_viewer_gh.php?code=includes/learnopengl/shader.h
+	{
+		glUniform3fv(glGetUniformLocation(myshader, name.c_str()), 1, &value[0]);
+	}
+	static void setVec3(const std::string& name, float x, float y, float z)
+	{
+		glUniform3f(glGetUniformLocation(myshader, name.c_str()), x, y, z);
+	}
+	// ------------------------------------------------------------------------
+	static void setVec4(const std::string& name, const glm::vec4& value)
+	{
+		glUniform4fv(glGetUniformLocation(myshader, name.c_str()), 1, &value[0]);
+	}
+	static void setVec4(const std::string& name, float x, float y, float z, float w)
+	{
+		glUniform4f(glGetUniformLocation(myshader, name.c_str()), x, y, z, w);
+	}
+	static void setMat3(const std::string& name, const glm::mat3& mat)
+	{
+		glUniformMatrix3fv(glGetUniformLocation(myshader, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+	}
+	// ------------------------------------------------------------------------
+	static void setMat4(const std::string& name, const glm::mat4& mat)
+	{
+		glUniformMatrix4fv(glGetUniformLocation(myshader, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 	}
 };

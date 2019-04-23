@@ -155,6 +155,7 @@
     <ClInclude Include="Draw.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="MyDataType.h" />
+    <ClInclude Include="myShader.h" />
     <ClInclude Include="ObjData.h" />
     <ClInclude Include="Objects.h" />
     <ClInclude Include="objloader.h" />
