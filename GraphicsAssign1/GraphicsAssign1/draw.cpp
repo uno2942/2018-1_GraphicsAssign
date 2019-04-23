@@ -98,7 +98,7 @@ void display()
 				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
 				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(unit->shape)->vertexSize, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
 		}
