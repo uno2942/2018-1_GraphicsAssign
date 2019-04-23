@@ -12,6 +12,7 @@ void GameManager::CollisionManager::PutCollisionObject(CollisionComponent* colli
 }*/
 
 vector<CollisionComponent*>* GameManager::CollisionManager::collisionList = new vector<CollisionComponent*>();
+
 GameManager::CollisionManager::CollisionManager() {
 	collisionPairvector = new vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>();
 	collisionwithballmap["player"] = 0;
@@ -230,43 +231,45 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* GameManager::Coll
 	collisionwithballmap["rightwall"] = 0;
 	collisionwithballmap["topwall"] = 0;
 
-
-	if (GameManager::getInstance().ball->GetCurrentPosition().z - GameManager::getInstance().ball->zlen / 2 <= ZBORDER_FOR_PLAYER)
 	{
-		GameManager::getInstance().OneGameEnd(true);
-		return collisionPairvector;
+		if (GameManager::getInstance().ball->GetCurrentPosition().z - GameManager::getInstance().ball->zlen / 2 <= ZBORDER_FOR_PLAYER)
+		{
+			GameManager::getInstance().OneGameEnd(true);
+			return collisionPairvector;
+		}
+		else if (GameManager::getInstance().ball->GetCurrentPosition().z + GameManager::getInstance().ball->zlen / 2 >= ZBORDER_FOR_ENEMY)
+		{
+			GameManager::getInstance().OneGameEnd(false);
+			return collisionPairvector;
+		}
+
+		if (GameManager::getInstance().player->GetCurrentPosition().x - GameManager::getInstance().player->xlen < 0)
+			GameManager::getInstance().player->SetVelocity(0, 0, 0);
+		else if (GameManager::getInstance().player->GetCurrentPosition().x + GameManager::getInstance().player->xlen > WORLD_COORD_MAP_XLEN)
+			GameManager::getInstance().player->SetVelocity(0, 0, 0);
+
+		if (GameManager::getInstance().player->GetCurrentPosition().z - GameManager::getInstance().player->zlen < 0)
+			GameManager::getInstance().player->SetVelocity(0, 0, 0);
+		else if (GameManager::getInstance().player->GetCurrentPosition().z + GameManager::getInstance().player->zlen > WORLD_COORD_MAP_ZLEN / 2)
+			GameManager::getInstance().player->SetVelocity(0, 0, 0);
+
+		if (GameManager::getInstance().enemy->GetCurrentPosition().x - GameManager::getInstance().enemy->xlen < 0)
+			GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
+		else if (GameManager::getInstance().enemy->GetCurrentPosition().x + GameManager::getInstance().enemy->xlen > WORLD_COORD_MAP_XLEN)
+			GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
+
+		if (GameManager::getInstance().enemy->GetCurrentPosition().z - GameManager::getInstance().enemy->zlen < WORLD_COORD_MAP_ZLEN / 2)
+			GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
+		else if (GameManager::getInstance().enemy->GetCurrentPosition().z + GameManager::getInstance().enemy->zlen > WORLD_COORD_MAP_ZLEN)
+			GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
 	}
-	else if (GameManager::getInstance().ball->GetCurrentPosition().z + GameManager::getInstance().ball->zlen / 2 >= ZBORDER_FOR_ENEMY)
-	{
-		GameManager::getInstance().OneGameEnd(false);
-		return collisionPairvector;
-	}
-	
-	if (GameManager::getInstance().player->GetCurrentPosition().x - GameManager::getInstance().player->xlen < 0)
-		GameManager::getInstance().player->SetVelocity(0, 0, 0);
-	else if(GameManager::getInstance().player->GetCurrentPosition().x + GameManager::getInstance().player->xlen > WORLD_COORD_MAP_XLEN)
-		GameManager::getInstance().player->SetVelocity(0, 0, 0);
 
-	if (GameManager::getInstance().player->GetCurrentPosition().z - GameManager::getInstance().player->zlen < 0)
-		GameManager::getInstance().player->SetVelocity(0, 0, 0);
-	else if (GameManager::getInstance().player->GetCurrentPosition().z + GameManager::getInstance().player->zlen > WORLD_COORD_MAP_ZLEN / 2)
-		GameManager::getInstance().player->SetVelocity(0, 0, 0);
-
-	if (GameManager::getInstance().enemy->GetCurrentPosition().x - GameManager::getInstance().enemy->xlen < 0)
-		GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
-	else if (GameManager::getInstance().enemy->GetCurrentPosition().x + GameManager::getInstance().enemy->xlen > WORLD_COORD_MAP_XLEN)
-		GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
-
-	if (GameManager::getInstance().enemy->GetCurrentPosition().z - GameManager::getInstance().enemy->zlen < WORLD_COORD_MAP_ZLEN/2)
-		GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
-	else if (GameManager::getInstance().enemy->GetCurrentPosition().z + GameManager::getInstance().enemy->zlen > WORLD_COORD_MAP_ZLEN)
-		GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
 
 }
 
 
 //두 오브젝트 사이에 Collision을 체크함
-void GameManager::CollisionManager::CheckCollision4side(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector) {
+void GameManager::CollisionManager::CheckCollision4side(CollisionComponent& o1, CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector) {
 	if (!CheckCollisionAtRightSide(o1, o2, collisionPairvector))
 	{
 		if (!CheckCollisionAtLeftSide(o1, o2, collisionPairvector))
@@ -285,34 +288,45 @@ void GameManager::CollisionManager::CheckCollision4side(const CollisionComponent
 /**
 o1이 o2를 오른쪽에서 충돌
 **/
-bool GameManager::CollisionManager::CheckCollisionAtRightSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector) {
-	/*
+bool GameManager::CollisionManager::CheckCollisionAtRightSide(CollisionComponent& o1, CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector) {
+	
+	if (Object::Shape::BOX == o1.GetShape() && Object::Shape::OVAL == o2.GetShape())
+	{
+		return CheckCollisionAtRightSide(o2, o1, collisionPairvector);
+	}
+	
+	Vector2 center = Vector2(o1.GetWorldPos().x, o1.GetWorldPos().z);
+	Vector2 leftupcorner = Vector2(o2.GetWorldPos().x - o2.Getxlen() / 2, o2.GetWorldPos().z + o2.Getzlen() / 2);
+	Vector2 leftdowncorner = Vector2(o2.GetWorldPos().x - o2.Getxlen() / 2, o2.GetWorldPos().z - o2.Getzlen() / 2);
+	GLdouble r = o1.Getxlen() / 2;
+
 	if (Object::Shape::OVAL == o1.GetShape() && Object::Shape::BOX == o2.GetShape()) {
-		if (o1.GetWorldPos().x < o2.GetWorldPos().x &&  o1.GetWorldPos().x + o1.GetWidth() >= o2.GetWorldPos().x &&
-			(o1.GetWorldPos().y + (o1.GetHeight() / 2) >= o2.GetWorldPos().y && o1.GetWorldPos().y + (o1.GetHeight() / 2) <= o2.GetWorldPos().y + o2.GetHeight()))
+		if (o1.GetWorldPos().x + o1.Getxlen() / 2 > o2.GetWorldPos().x - o2.Getxlen()/2 && o1.GetWorldPos().x< o2.GetWorldPos().x - o2.Getxlen() / 2 &&
+			(o1.GetWorldPos().z >= o2.GetWorldPos().z - o2.Getzlen()/2 && o1.GetWorldPos().z <= o2.GetWorldPos().z + o2.Getzlen() / 2))
 		{
-			collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode), Vector3(-2 * (o1.GetVelocity().x), 0)));
-			collisionwithballmap[o2.gameObjectNode->data->object->name] = 1;
+			o1.gameObjectNode->data->object->velocity += Vector3(-2 * o1.GetVelocity().x, 0, 0);
+			o1.gameObjectNode->data->object->position += Vector3((o2.GetWorldPos().x - o2.Getxlen() / 2) - (o1.GetWorldPos().x + o1.Getxlen() / 2)
+				, 0, 0);
+			o1.gameObjectNode->data->object->position += o1.gameObjectNode->data->object->velocity * 0.0001;
 			return true;
 		}
-		else {
-			Vector3 center = Vector3(o1.GetWorldPos().x + o1.GetWidth() / 2, o1.GetWorldPos().y + o1.GetHeight() / 2);
-			Vector3 leftcorner = Vector3(o2.GetWorldPos().x, o2.GetWorldPos().y + o2.GetHeight());
-			GLdouble r = o1.GetWidth() / 2;
-			Vector3 centertocorner = Vector3(center - leftcorner);
-			GLdouble distance = Vector3::abs(centertocorner);
+		else if (o1.GetWorldPos().x + o1.Getxlen() / 2 > o2.GetWorldPos().x - o2.Getxlen() / 2 && o1.GetWorldPos().x < o2.GetWorldPos().x - o2.Getxlen() / 2 &&
+			(o1.GetWorldPos().z >= o2.GetWorldPos().z + o2.Getzlen() / 2) && Vector2::abs(center-leftupcorner) < r){
+			Vector2 centertocorner = Vector2(center - leftupcorner);
+			GLdouble distance = Vector2::abs(centertocorner);
 			if (r >= distance)
 			{
-				collisionPairvector->push_back(make_pair(make_pair(o1.gameObjectNode, o2.gameObjectNode),
-					Vector3::normalize(centertocorner)*
-					(2 * BALL_VELOCITY*abs(o1.GetVelocity().x*centertocorner.x + o1.GetVelocity().y*centertocorner.y) /
-					(Vector3::abs(o1.GetVelocity())*Vector3::abs(centertocorner)))));
+				o1.gameObjectNode->data->object->position += o1.gameObjectNode->data->object->velocity * (-0.0015);
+				Vector2 normalvec =	Vector2::normalize(centertocorner) *
+					(BALL_VELOCITY * abs(o1.GetVelocity().x * centertocorner.x + o1.GetVelocity().z * centertocorner.y) /
+					(Vector3::abs(o1.GetVelocity()) * Vector2::abs(centertocorner)));
+				o1.gameObjectNode->data->object->velocity = -o1.gameObjectNode->data->object->velocity + (Vector3(normalvec.x + o1.gameObjectNode->data->object->velocity.x, 0 ,normalvec.y + o1.gameObjectNode->data->object->velocity.z)) * 2;
 				collisionwithballmap[o2.gameObjectNode->data->object->name] = 1;
 				return true;
 			}
 		}
 	}
-	*/
+	
 	return false;
 }
 
