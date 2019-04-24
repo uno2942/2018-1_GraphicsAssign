@@ -234,21 +234,21 @@ void representComponent(const Transform &object)
 
 
 
-void genPolygonVAO(const Transform &object)
+void genPolygonVAO(const Transform *object, string objPath) // size normalized, 1 * 1 * 1
 {
 	ObjData* drawingObjData;
 	
 	//load image
-	drawingObjData = GetObj(object.shape );
+	drawingObjData = GetObj(objPath);
 
 	//shader drawing
 	float* scaledVertexArray = (float*)malloc(sizeof(float) * drawingObjData->vertexSize);
 
 	for (int i = 0; i < drawingObjData->vertexSize; i++) {
 		switch (i % 3) {
-		case 0: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object.GetSize().x;
-		case 1: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object.GetSize().y;
-		case 2: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object.GetSize().z;
+		case 0: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().x;
+		case 1: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().y;
+		case 2: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().z;
 		}
 	}
 
@@ -275,20 +275,17 @@ void genPolygonVAO(const Transform &object)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 
-	string polygonName;
-	switch (object.shape)
-	{
-	case BALL: polygonName = "BALL"; break;
-	case PLAYER: polygonName = "PLAYER"; break;
-	case ENEMY: polygonName = "ENEMY"; break;
-	default: printf("I think this obj is wall But genPolygonVAO is called"); break;
+	string polygonName = object->name;
+	for(int i = 0; i < polygonName.size(); i++) {
+		polygonName[i] = toupper(polygonName[i]);
 	}
+	
 
 	VAO_map.insert(map<string, GLuint>::value_type(polygonName, VAO));
 	free(scaledVertexArray);
 }
 
-void genVAO() {
+void genVAO() { // bind .obj path for each object
 	for (int i = 0; i < objectsTreeVectorForDraw.size(); i++) {
 		switch (VAO_map[objectsTreeVectorForDraw[i].name])
 		{
@@ -296,16 +293,15 @@ void genVAO() {
 		case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 			genWallVAO(objectsTreeVectorForDraw[i].root->data->object);
 				break;
-		case BALL: case PLAYER: case ENEMY:
-			...;
-			break;
-			...
-		default:
+		case BALL: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, ballObjPath); break;
+		case PLAYER: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, playerObjPath); break;
+		case ENEMY: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, enemyObjPath); break;
+		default: break;
 		}
 	}
 }
 
-void genWallVAO(Transform* object) // 121 vertics, 200 triangles,
+void genWallVAO(const Transform* object) // 121 vertics, 200 triangles,
 {
 	
 
@@ -369,19 +365,16 @@ void genWallVAO(Transform* object) // 121 vertics, 200 triangles,
 }
 
 
-ObjData* GetObj(Object::Shape shape) {
-	static ObjData* objData[5]; // size of objcet shape flags
-	if (objData[shape] == NULL)
+ObjData* GetObj(string path) {
+	static map<string, ObjData*> objDataMap; // size of objcet shape flags
+	if (objDataMap.find(path) == objDataMap.end() )
 	{
-		objData[shape] = new ObjData;
-		switch (shape)
-		{
-		case BALL: loadOBJ("sphere.obj", objData[shape]); break;
-		default: printf("That shape's object file path is not defined\n"); break;
-		}
+		ObjData* objData = new ObjData;
+		loadOBJ(path.c_str(), objData);
+		objDataMap.insert(pair<string, ObjData*>(path, objData));
 		
 	}
-	return objData[shape];
+	return objDataMap.find(path)->second;
 }
 
 
