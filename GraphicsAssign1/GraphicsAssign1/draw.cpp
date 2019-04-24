@@ -131,22 +131,26 @@ void display()
 			case BALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->vertexSize, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case PLAYER: case ENEMY:
 				Transform* unit;
-				if (mappingFromStringToInt[(*iter).first] == PLAYER)
+				string objPath;
+				if (mappingFromStringToInt[(*iter).first] == PLAYER) {
 					unit = player;
-				else
+					objPath = playerObjPath;
+				}
+				else {
 					unit = enemy;
-
+					objPath = enemyObjPath;
+				}
 				glm::mat4 trans = glm::identity<glm::mat4>();
 				glm::vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
 				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
 				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(objPath)->vertexSize, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
 		}
@@ -162,28 +166,32 @@ void display()
 			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, WALL_VERTEX_NUM, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case BALL:
-				MyShader::setMat4("Model", glm::translate(ball->position.x, ball->position.y, ball->position.z...));
+				MyShader::setMat4("Model", glm::translate(glm::mat4(), glm::vec3(ball->position.x, ball->position.y, ball->position.z)));
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->vertexSize, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case PLAYER: case ENEMY:
 				Transform* unit;
-				if (mappingFromStringToInt[(*iter).first] == PLAYER)
+				string objPath;
+				if (mappingFromStringToInt[(*iter).first] == PLAYER) {
 					unit = player;
-				else
+					objPath = playerObjPath;
+				}
+				else {
 					unit = enemy;
-
+					objPath = enemyObjPath;
+				}
 				glm::mat4 trans = glm::identity<glm::mat4>();
 				glm::vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
 				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
 				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(objPath)->vertexSize, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
 		}
