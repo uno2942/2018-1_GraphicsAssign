@@ -14,6 +14,11 @@ using namespace std;
 map<string, GLuint> VAO_map;
 enum stringToInt {LEFTWALL, RIGHTWALL, FRONTWALL, BACKWALL, BOTTOMWALL, BALL, PLAYER, ENEMY};
 static map< string, int > mappingFromStringToInt;
+
+static string ballObjPath = "sphere.obj";
+static string playerObjPath = "";
+static string enemyObjPath = "";
+
 void myReshape(int width, int height)
 {	
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
@@ -84,22 +89,28 @@ void display()
 				
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(ball->shape)->vertexSize , GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->vertexSize , GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case PLAYER: case ENEMY:
 				Transform* unit;
-				if (mappingFromStringToInt[(*iter).first] == PLAYER)
+				string objPath;
+				if (mappingFromStringToInt[(*iter).first] == PLAYER) {
 					unit = player;
-				else
+					objPath = playerObjPath;
+				}
+				else {
 					unit = enemy;
+					objPath = enemyObjPath;
+				}
+					
 
 				glm::mat4 trans = glm::identity<glm::mat4>();
 				glm::vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
 				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
 				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(unit->shape)->vertexSize, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(objPath)->vertexSize, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
 		}
