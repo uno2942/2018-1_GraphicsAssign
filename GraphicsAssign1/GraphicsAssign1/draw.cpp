@@ -154,7 +154,7 @@ void display()
 				glBindVertexArray(0);
 				break;
 			case BALL:
-				MyShader::setMat4("Model", glm::identity<glm::mat4>());
+				MyShader::setMat4("Model", glm::translate(ball->position.x, ball->position.y, ball->position.z...));
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, , GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
@@ -276,7 +276,24 @@ void genPolygonVAO(const Transform &object)
 	free(scaledVertexArray);
 }
 
-void genWallVAO(const Transform &object) // (1, 1) size , 100 vertics, 162 triangles, 사실 이 함수는 1번만 호출해도 괜찮을듯
+void genVAO() {
+	for (int i = 0; i < objectsTreeVectorForDraw.size(); i++) {
+		switch (VAO_map[objectsTreeVectorForDraw[i].name])
+		{
+			objectsTreeVectorForDraw[i].root->data;
+		case LEFTWALL:
+			genWallVAO();
+				break;
+		case PLAYER:
+			...;
+			break;
+			...
+		default:
+		}
+	}
+}
+
+void genWallVAO() // (1, 1) size , 100 vertics, 162 triangles, 사실 이 함수는 1번만 호출해도 괜찮을듯
 {
 	float wallStartPoint[5][3] = 
 	{ 
@@ -286,8 +303,6 @@ void genWallVAO(const Transform &object) // (1, 1) size , 100 vertics, 162 trian
 		0, 0, 0,
 		0, 0, 0,
 	}; // each for start point of Walls
-
-	for (int i = 0; i < 5; i++) {  //each LEFTWALL, RIGHTWALL, FRONTWALL, BACKWALL, BOTTOMWALL
 
 		GLuint VBO, VAO, EBO;
 		glGenVertexArrays(1, &VAO);
@@ -352,7 +367,7 @@ void genWallVAO(const Transform &object) // (1, 1) size , 100 vertics, 162 trian
 		}
 
 		VAO_map.insert(map<string, GLuint>::value_type(wallName, VAO));
-	}
+	
 }
 
 
