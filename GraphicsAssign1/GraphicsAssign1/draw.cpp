@@ -231,14 +231,7 @@ void drawObjectRecursive(GameObjectNode* root)
 	if (root->sibling != NULL) drawObjectRecursive(root->sibling);
 }
 */
-void representComponent(const Transform &object)
-{
-	if (object.shape == Object::BOX)
-		representWall(object);
-	else
-		representPolygon(object);
-		
-}
+
 
 
 

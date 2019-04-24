@@ -10,9 +10,9 @@ void myReshape(int width, int height);
 
 void display();
 
-void drawObjectRecursive(GameObjectNode* root);
+//void drawObjectRecursive(GameObjectNode* root);
 
-void representComponent(const Transform &object);
+//void representComponent(const Transform &object);
 
 //void representBox(const Transform& box);
 
@@ -20,11 +20,11 @@ void representComponent(const Transform &object);
 
 //void representTriangle(const Transform& triangle);
 
-void representWall(const Transform& wall);
+void genWallVAO(const Transform* wall);
 
-void representPolygon(const Transform& polygon);
+void genPolygonVAO(const Transform* object, string objPath);
 
-ObjData* GetObj(Object::Shape shape);
+ObjData* GetObj(string path);
 
 //void lookAtBall(const Object& circle); //deleted in Assign#3
 
