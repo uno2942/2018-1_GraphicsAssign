@@ -7,6 +7,7 @@
 
 #define BVIEW_HALF_W 400
 #define BVIEW_HALF_H 225
+#define WALL_VERTEX_NUM 121 //= 11* 11
 
 using namespace std;
 
@@ -72,7 +73,7 @@ void display()
 			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, 100, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, WALL_VERTEX_NUM, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case BALL:
@@ -113,7 +114,7 @@ void display()
 			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, 100, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, WALL_VERTEX_NUM, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case BALL:
@@ -281,10 +282,10 @@ void genVAO() {
 		switch (VAO_map[objectsTreeVectorForDraw[i].name])
 		{
 			objectsTreeVectorForDraw[i].root->data;
-		case LEFTWALL:
-			genWallVAO();
+		case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
+			genWallVAO(objectsTreeVectorForDraw[i].root->data->object);
 				break;
-		case PLAYER:
+		case BALL: case PLAYER: case ENEMY:
 			...;
 			break;
 			...
@@ -293,16 +294,9 @@ void genVAO() {
 	}
 }
 
-void genWallVAO() // (1, 1) size , 100 vertics, 162 triangles, »ç½Ç ÀÌ ÇÔ¼ö´Â 1¹ø¸¸ È£ÃâÇØµµ ±¦ÂúÀ»µí
+void genWallVAO(Transform* object) // 121 vertics, 200 triangles,
 {
-	float wallStartPoint[5][3] = 
-	{ 
-		WORLD_COORD_MAP_XLEN, 0, 0,
-		0, 0, 0,
-		0, 0, WORLD_COORD_MAP_ZLEN,
-		0, 0, 0,
-		0, 0, 0,
-	}; // each for start point of Walls
+	
 
 		GLuint VBO, VAO, EBO;
 		glGenVertexArrays(1, &VAO);
@@ -311,24 +305,25 @@ void genWallVAO() // (1, 1) size , 100 vertics, 162 triangles, »ç½Ç ÀÌ ÇÔ¼ö´Â 1¹
 
 		vector<float> vertices;
 		vector<unsigned int> indices;
+		
 
-		for (int j = 0; j < 10; j++)
+		for (int j = -5; j <= 5; j++)
 		{
-			for (int k = 0; k < 10; k++) {
-				if (object.xlen == 0) {
-					vertices.push_back(wallStartPoint[i][0]);
-					vertices.push_back(wallStartPoint[i][1] + object.ylen * j / 9.0);
-					vertices.push_back(wallStartPoint[i][2] + object.zlen * k / 9.0);
+			for (int k = -5; k < 5; k++) {
+				if (object->xlen == 0) {
+					vertices.push_back(object->GetCurrentPosition().x);
+					vertices.push_back(object->GetCurrentPosition().y + object->ylen * j / 9.0);
+					vertices.push_back(object->GetCurrentPosition().z + object->zlen * k / 9.0);
 				}
-				else if (object.ylen == 0) {
-					vertices.push_back(wallStartPoint[i][0] + object.xlen * j / 9.0);
-					vertices.push_back(wallStartPoint[i][1]);
-					vertices.push_back(wallStartPoint[i][2] + object.zlen * k / 9.0);
+				else if (object->ylen == 0) {
+					vertices.push_back(object->GetCurrentPosition().x + object->xlen * j / 9.0);
+					vertices.push_back(object->GetCurrentPosition().y);
+					vertices.push_back(object->GetCurrentPosition().z + object->zlen * k / 9.0);
 				}
-				else if (object.zlen == 0) {
-					vertices.push_back(wallStartPoint[i][0] + object.xlen * j / 9.0);
-					vertices.push_back(wallStartPoint[i][1] + object.ylen * k / 9.0);
-					vertices.push_back(wallStartPoint[i][2]);
+				else if (object->zlen == 0) {
+					vertices.push_back(object->GetCurrentPosition().x + object->xlen * j / 9.0);
+					vertices.push_back(object->GetCurrentPosition().y + object->ylen * k / 9.0);
+					vertices.push_back(object->GetCurrentPosition().z);
 				}
 			}
 		}
@@ -336,9 +331,9 @@ void genWallVAO() // (1, 1) size , 100 vertics, 162 triangles, »ç½Ç ÀÌ ÇÔ¼ö´Â 1¹
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
-		for (int j = 0; j < 9; j++)
+		for (int j = 0; j < 10; j++)
 		{
-			for (int k = 0; k < 9; k++) {
+			for (int k = 0; k < 10; k++) {
 				indices.push_back(10 * j + k);
 				indices.push_back(10 * j + k + 1);
 				indices.push_back(10 * j + k + 10);
@@ -356,16 +351,8 @@ void genWallVAO() // (1, 1) size , 100 vertics, 162 triangles, »ç½Ç ÀÌ ÇÔ¼ö´Â 1¹
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
 
-		string wallName;
-		switch (i)
-		{	
-		case 0: wallName = "LEFTWALL"; break;
-		case 1: wallName = "RIGHTWALL"; break;
-		case 2: wallName = "FRONTWALL"; break;
-		case 3: wallName = "BACKWALL"; break;
-		case 4: wallName = "BOTTOMWALL"; break;
-		}
-
+		string wallName = object->name;
+		
 		VAO_map.insert(map<string, GLuint>::value_type(wallName, VAO));
 	
 }
