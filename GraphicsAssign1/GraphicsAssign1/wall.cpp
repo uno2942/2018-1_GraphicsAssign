@@ -1,35 +1,65 @@
 #include"Units.h"
 
-GameObjectTree* GetWall() {
-	static GameObjectTree* wallTree = NULL;
-	if (wallTree == NULL)
+GameObjectTree* GetLeftWall() {
+	static GameObjectTree* LeftwallTree = NULL;
+	if (LeftwallTree == NULL)
 	{
-		GameObject* temp = new GameObject(new Box("leftwall", 10, WORLD_COORD_MAP_ZLEN, WORLD_COORD_MAP_YLEN, MY_WALL_COLOR));
+		GameObject* temp = new GameObject(new Box("leftwall", 0, WORLD_COORD_MAP_ZLEN, WORLD_COORD_MAP_YLEN, MY_WALL_COLOR));
+		temp->object->SetPosition(0, WORLD_COORD_MAP_ZLEN / 2, WORLD_COORD_MAP_YLEN / 2);
 		GameObjectNode* tempNode = new GameObjectNode(temp, "leftwall");
-//		temp->AddCollisionComponentAsItself(tempNode);
-		wallTree->insert_back(temp, "leftwall");
-
-		temp = new GameObject(new Box("rightwall", 10, WORLD_COORD_MAP_ZLEN, WORLD_COORD_MAP_YLEN, MY_WALL_COLOR));
-		tempNode = new GameObjectNode(temp, "rightwall");
-//		temp->AddCollisionComponentAsItself(tempNode);
-		wallTree->insertAsSibling(temp, "rightwall", "leftwall");
-
-		temp = new GameObject(new Box("topwall", WORLD_COORD_MAP_XLEN, WORLD_COORD_MAP_ZLEN, 10, MY_WALL_COLOR));
-		tempNode = new GameObjectNode(temp, "topwall");
-//		temp->AddCollisionComponentAsItself(tempNode);
-		wallTree->insertAsSibling(temp, "topwall", "leftwall");
-
-		/*
-		temp = new GameObject(new Box("leftwallofleft", 300, WORLDCOORDWINDOWHEIGHT));
-		temp->object->SetPosition(-300, 0);
-		tempNode = new GameObjectNode(temp, "leftwallofleft");
-		wallTree->insertAsChildren(temp, "leftwallofleft", "leftwall");
-
-		temp = new GameObject(new Box("rightwallofright", 300, WORLDCOORDWINDOWHEIGHT));
-		temp->object->SetPosition(10, 0);
-		tempNode = new GameObjectNode(temp, "rightwallofright");
-		wallTree->insertAsChildren(temp, "rightwallofright", "rightwall");
-		*/
+		//		temp->AddCollisionComponentAsItself(tempNode);
+		LeftwallTree->insert_back(temp, "leftwall");
 	}
-	return wallTree;
+	return LeftwallTree;
+}
+
+GameObjectTree* GetRightWall() {
+	static GameObjectTree* RightwallTree = NULL;
+	if (RightwallTree == NULL)
+	{
+		GameObject* temp = new GameObject(new Box("rightwall", 0, WORLD_COORD_MAP_ZLEN, WORLD_COORD_MAP_YLEN, MY_WALL_COLOR));
+		temp->object->SetPosition(WORLD_COORD_MAP_XLEN, WORLD_COORD_MAP_ZLEN / 2, WORLD_COORD_MAP_YLEN / 2);
+		GameObjectNode* tempNode = new GameObjectNode(temp, "rightwall");
+//		temp->AddCollisionComponentAsItself(tempNode);
+		RightwallTree->insert_back(temp, "rightwall");
+	}
+	return RightwallTree;
+}
+
+GameObjectTree* GetFrontWall() {
+	static GameObjectTree* FrontwallTree = NULL;
+	if (FrontwallTree == NULL)
+	{
+		GameObject* temp = new GameObject(new Box("frontwall", WORLD_COORD_MAP_XLEN, 0, WORLD_COORD_MAP_YLEN, MY_WALL_COLOR));
+		temp->object->SetPosition(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_ZLEN, WORLD_COORD_MAP_YLEN / 2);
+		GameObjectNode * tempNode = new GameObjectNode(temp, "frontwall");
+		//		temp->AddCollisionComponentAsItself(tempNode);
+		FrontwallTree->insert_back(temp, "frontwall");
+	}
+	return FrontwallTree;
+}
+
+GameObjectTree* GetBackWall() {
+	static GameObjectTree* BackwallTree = NULL;
+	if (BackwallTree == NULL)
+	{
+		GameObject* temp = new GameObject(new Box("backwall", WORLD_COORD_MAP_XLEN, 0, WORLD_COORD_MAP_YLEN, MY_WALL_COLOR));
+		temp->object->SetPosition(WORLD_COORD_MAP_XLEN / 2, 0, WORLD_COORD_MAP_YLEN / 2);
+		GameObjectNode * tempNode = new GameObjectNode(temp, "backwall");
+		//		temp->AddCollisionComponentAsItself(tempNode);
+		BackwallTree->insert_back(temp, "backwall");
+	}
+	return BackwallTree;
+}
+
+GameObjectTree* GetBottomWall() {
+	static GameObjectTree* BottomwallTree = NULL;
+	if (BottomwallTree == NULL)
+	{
+		GameObject* temp = new GameObject(new Box("bottomwall", WORLD_COORD_MAP_XLEN, WORLD_COORD_MAP_ZLEN, 0, MY_WALL_COLOR));
+		GameObjectNode* tempNode = new GameObjectNode(temp, "bottomwall");
+		//		temp->AddCollisionComponentAsItself(tempNode);
+		BottomwallTree->insert_back(temp, "bottomwall");
+	}
+	return BottomwallTree;
 }

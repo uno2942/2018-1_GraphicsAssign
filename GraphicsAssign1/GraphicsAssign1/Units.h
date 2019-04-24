@@ -23,7 +23,11 @@ const Vector3 INITIAL_TOP_WALL_POSITION = Vector3(WORLD_COORD_MAP_XLEN/2, WORLD_
 GameObjectTree* GetPlayer();
 GameObjectTree* GetEnemy();
 GameObjectTree* GetBall();
-GameObjectTree* GetWall();
+GameObjectTree* GetLeftWall();
+GameObjectTree* GetRightWall();
+GameObjectTree* GetFrontWall();
+GameObjectTree* GetBackWall();
+GameObjectTree* GetBottomWall();
 
 void SetplayerBoxVelocity(bool playerBoxMoveRightFlag, bool playerBoxMoveLeftFlag);
 void SetplayerBoxRotation(bool playerBoxRotateCounterClockwiseFlag, bool playerBoxRotateClockwiseFlag);

@@ -31,8 +31,11 @@ GameManager::GameManager() {
 	objectsTreeVectorForDraw.push_back(*(GetPlayer()));
 	objectsTreeVectorForDraw.push_back(*GetEnemy());
 	objectsTreeVectorForDraw.push_back(*GetBall());
-	objectsTreeVectorForDraw.push_back(*GetWall());
-	
+	objectsTreeVectorForDraw.push_back(*GetLeftWall());
+	objectsTreeVectorForDraw.push_back(*GetRightWall());
+	objectsTreeVectorForDraw.push_back(*GetFrontWall());
+	objectsTreeVectorForDraw.push_back(*GetBackWall());
+	objectsTreeVectorForDraw.push_back(*GetBottomWall());
 	StartGame();
 }
 
@@ -40,7 +43,11 @@ GameManager::~GameManager() {
 	deleteTree(*GetPlayer());
 	deleteTree(*GetEnemy());
 	deleteTree(*GetBall());
-	deleteTree(*GetWall());
+	objectsTreeVectorForDraw.push_back(*GetLeftWall());
+	objectsTreeVectorForDraw.push_back(*GetRightWall());
+	objectsTreeVectorForDraw.push_back(*GetFrontWall());
+	objectsTreeVectorForDraw.push_back(*GetBackWall());
+	objectsTreeVectorForDraw.push_back(*GetBottomWall());
 }
 
 void GameManager::OneFramePipeline() {
@@ -84,7 +91,6 @@ void GameManager::InitObjectsPosition() {
 	(*player).SetPosition(INITIAL_PLAYER_BOX_POSITION);
 	(*enemy).SetPosition(INITIAL_ENEMY_BOX_POSITION);
 	(*ball).SetPosition(INITIAL_BALL_POSITION);
-	GetWall()->root->data->object->SetPosition(INITIAL_LEFT_WALL_POSITION);
 }
 
 /**
