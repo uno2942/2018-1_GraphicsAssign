@@ -30,6 +30,19 @@ void myReshape(int width, int height)
 
 void display()
 {
+	static bool isInited = false; //display를 하기 전에 초기화 하는 부분. VAO 만드는 거 여기서 하면 좋을 거 같아요.
+	if (!isInited) {
+		mappingFromStringToInt["leftwall"] = LEFTWALL;
+		mappingFromStringToInt["rightwall"] = RIGHTWALL;
+		mappingFromStringToInt["frontwall"] = FRONTWALL;
+		mappingFromStringToInt["backwall"] = BACKWALL;
+		mappingFromStringToInt["bottomwall"] = BOTTOMWALL;
+		mappingFromStringToInt["ball"] = BALL;
+		mappingFromStringToInt["player"] = PLAYER;
+		mappingFromStringToInt["enemy"] = ENEMY;
+		isInited = true;
+	}
+
 	static glm::vec4 backgroundColor = glm::vec4(0, 0, 0, 1);
 	static glm::vec4 polygonInnerColor = glm::vec4(0.5, 0.5, 0.5, 1);
 	static glm::vec4 lineColor = glm::vec4(1, 1, 1, 1);
