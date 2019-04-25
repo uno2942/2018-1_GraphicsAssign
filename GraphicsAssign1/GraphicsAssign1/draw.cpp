@@ -7,7 +7,7 @@
 
 #define BVIEW_HALF_W 400
 #define BVIEW_HALF_H 225
-#define WALL_VERTEX_NUM 121 //= 11* 11
+#define WALL_VERTEX_NUM 121 // wall에 사용하는 vertex의 개수, 11*11 사각형 배열로 총 121개
 
 using namespace std;
 
@@ -169,7 +169,7 @@ void display()
 				glDrawElements(GL_TRIANGLES, WALL_VERTEX_NUM, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
-			case BALL:
+			case BALL: //이미 scale된 상태의 ball을 위치만큼 평행이동만 시킴.
 				
 				trans = glm::identity<glm::mat4>();
 				unitpos = glm::vec3(ball->GetCurrentPosition().x, ball->GetCurrentPosition().y, ball->GetCurrentPosition().z);
@@ -180,7 +180,7 @@ void display()
 				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->vertexSize , GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
-			case PLAYER: case ENEMY:
+			case PLAYER: case ENEMY: // 이 둘은 roataion 평행이동 둘 다
 				if (mappingFromStringToInt[(*iter).first] == PLAYER) {
 					unit = player;
 					objPath = playerObjPath;
@@ -317,7 +317,7 @@ void drawObjectRecursive(GameObjectNode* root)
 
 
 
-void genPolygonVAO(const Transform *object, string objPath) // size normalized, 1 * 1 * 1
+void genPolygonVAO(const Transform *object, string objPath) // obj 파일 경로와 이를 사용하는 object를 입력받아 VAO_map에 (objPath, objData)의 형식으로 삽입
 {
 	ObjData* drawingObjData;
 	
@@ -325,7 +325,7 @@ void genPolygonVAO(const Transform *object, string objPath) // size normalized, 
 	drawingObjData = GetObj(objPath);
 
 	//shader drawing
-	float* scaledVertexArray = new float[drawingObjData->vertexSize];
+	float* scaledVertexArray = new float[drawingObjData->vertexSize]; // 기존 obj data를 load한 vertex 좌표를 object에 입력된 크기로 scale
 
 	for (int i = 0; i < drawingObjData->vertexSize; i++) {
 		switch (i % 3) {
@@ -360,7 +360,7 @@ void genPolygonVAO(const Transform *object, string objPath) // size normalized, 
 
 	string polygonName = object->name;
 	for(int i = 0; i < polygonName.size(); i++) {
-		polygonName[i] = toupper(polygonName[i]);
+		polygonName[i] = toupper(polygonName[i]); //enum stringToInt에 맞게 변환
 	}
 	
 
@@ -386,7 +386,7 @@ void genVAO() { // bind .obj path for each object
 	cout << "GenVAO working" << endl;
 }
 
-void genWallVAO(const Transform* object) // 121 vertics, 200 triangles,
+void genWallVAO(const Transform* object) // 121 vertics, 200 triangles를 가진 10*10 격자 형태의 벽
 {
 		GLuint VBO, VAO, EBO;
 		glGenVertexArrays(1, &VAO);
@@ -395,7 +395,8 @@ void genWallVAO(const Transform* object) // 121 vertics, 200 triangles,
 		vector<float> vertices;
 		vector<unsigned int> indices;
 		
-		for (int j = -5; j <= 5; j++)
+
+		for (int j = -5; j <= 5; j++) // 중앙을 중심으로 +- 5개 범위까지 점 찍음
 		{
 			for (int k = -5; k < 5; k++) {
 				if (object->xlen == 0) {
@@ -447,8 +448,8 @@ void genWallVAO(const Transform* object) // 121 vertics, 200 triangles,
 }
 
 
-ObjData* GetObj(string path) {
-	static map<string, ObjData*> objDataMap; // size of objcet shape flags
+ObjData* GetObj(string path) { //path를 받아 해당 path에 있는 obj 파일을 로드한 ObjData 리턴
+	static map<string, ObjData*> objDataMap; // obj 파일 상대경로 - load 한 objData를 match 하는 맵
 	if (objDataMap.find(path) == objDataMap.end() )
 	{
 		ObjData* objData = new ObjData;
