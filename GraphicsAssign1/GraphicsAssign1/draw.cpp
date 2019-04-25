@@ -18,6 +18,9 @@ static map< string, int > mappingFromStringToInt;
 static string ballObjPath = "sphere.obj";
 static string playerObjPath = "";
 static string enemyObjPath = "";
+void genVAO();
+
+//unsigned int myVAO, myVAO2;
 
 void myReshape(int width, int height)
 {	
@@ -32,6 +35,12 @@ void display()
 {
 	static bool isInited = false; //display를 하기 전에 초기화 하는 부분. VAO 만드는 거 여기서 하면 좋을 거 같아요.
 	if (!isInited) {
+		GLenum err = glewInit();
+		if (err != GLEW_OK)
+			exit(1); // or handle the error in a nicer way
+		if (!GLEW_VERSION_2_1)  // check that the machine supports the 2.1 API.
+			exit(1); // or handle the error in a nicer way
+
 		mappingFromStringToInt["leftwall"] = LEFTWALL;
 		mappingFromStringToInt["rightwall"] = RIGHTWALL;
 		mappingFromStringToInt["frontwall"] = FRONTWALL;
@@ -40,7 +49,62 @@ void display()
 		mappingFromStringToInt["ball"] = BALL;
 		mappingFromStringToInt["player"] = PLAYER;
 		mappingFromStringToInt["enemy"] = ENEMY;
+		genVAO();
+		camMode = BEHIND;
+		SetModelAndViewMatrix(BEHIND, 0, 0);
 		isInited = true;
+/*
+		{		// ------------------------------------------------------------------
+			float vertices[] = {
+				WORLD_COORD_MAP_XLEN / 2. + 400, WORLD_COORD_MAP_YLEN / 2., 400, // left  
+				WORLD_COORD_MAP_XLEN / 2 - 300., WORLD_COORD_MAP_YLEN / 2., 400, // right 
+				WORLD_COORD_MAP_XLEN / 2., WORLD_COORD_MAP_YLEN / 2. + 200 , 400// top   
+			};
+			float vertices2[] = {
+				WORLD_COORD_MAP_XLEN / 2. + 700, WORLD_COORD_MAP_YLEN / 2., 300, // left  
+				WORLD_COORD_MAP_XLEN / 2 - 200., WORLD_COORD_MAP_YLEN / 2., 300, // right 
+				WORLD_COORD_MAP_XLEN / 2., WORLD_COORD_MAP_YLEN / 2. + 200 , 700// top   
+			};
+
+			unsigned int VBO;
+			glGenVertexArrays(1, &myVAO);
+			glGenBuffers(1, &VBO);
+			// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+			glBindVertexArray(myVAO);
+
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(0);
+
+			// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+			// You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+			// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+			glBindVertexArray(0);
+
+
+			glGenVertexArrays(1, &myVAO2);
+			glGenBuffers(1, &VBO);
+			// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+			glBindVertexArray(myVAO2);
+
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
+
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(0);
+
+			// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+			// You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+			// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+			glBindVertexArray(0);
+		}
+		*/
 	}
 
 	static glm::vec4 backgroundColor = glm::vec4(0, 0, 0, 1);
@@ -68,33 +132,39 @@ void display()
 	}
 	*/
 
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT || GL_DEPTH_BUFFER_BIT); //Depth도 넣어야 하는 건지 확인 필요
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT || GL_DEPTH_BUFFER_BIT);
 
+	// draw our first triangle
 	glUseProgram(MyShader::GetShader());
 
 
 	if (camMode == CamMode::CHARACTER) {
 		glm::vec3 camerapos = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z);
-		glm::vec3 cameradirection = camerapos + glm::vec3(0, 0, 1);
+		glm::vec3 cameradirection = camerapos + glm::vec3(0, 0, -1);
 		glm::vec3 up = glm::vec3(0, 1, 0);
 		MyShader::setMat4("View", glm::lookAt(camerapos, cameradirection, up));
+		MyShader::setMat4("Projection", glm::ortho(-300.0f, 300.0f, -300.0f, 300.0f, (float)0.1, (float)WORLD_COORD_MAP_ZLEN));
+
 	}
+
 	glm::mat4 trans;
 	glm::vec3 unitpos;
 	Transform* unit;
 	string objPath;
 	glm::vec3 rotationAxis;
+
+
 	switch (renMode) {
 	case NO_HIDDEN_LINE_REMOVAL:
-
 		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_GEQUAL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		MyShader::setVec4("myColor", lineColor);
 		for (map<string, GLuint>::iterator iter = VAO_map.begin(); iter != VAO_map.end(); ++iter) {
 			switch (mappingFromStringToInt[(*iter).first]) {
-			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
+			case BACKWALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
+				MyShader::setVec4("myColor", lineColor);
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, WALL_VERTEX_NUM, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
@@ -132,6 +202,7 @@ void display()
 
 	case HIDDEN_LINE_REMOVAL:
 		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_GEQUAL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		MyShader::setVec4("myColor", lineColor);
 
@@ -300,15 +371,15 @@ void genPolygonVAO(const Transform *object, string objPath) // size normalized, 
 
 void genVAO() { // bind .obj path for each object
 	for (int i = 0; i < objectsTreeVectorForDraw.size(); i++) {
-		switch (VAO_map[objectsTreeVectorForDraw[i].name])
+		switch (mappingFromStringToInt[objectsTreeVectorForDraw[i].name])
 		{
 			objectsTreeVectorForDraw[i].root->data;
 		case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 			genWallVAO(objectsTreeVectorForDraw[i].root->data->object);
 				break;
-		case BALL: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, ballObjPath); break;
-		case PLAYER: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, playerObjPath); break;
-		case ENEMY: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, enemyObjPath); break;
+//		case BALL: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, ballObjPath); break;
+//		case PLAYER: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, playerObjPath); break;
+//		case ENEMY: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, enemyObjPath); break;
 		default: break;
 		}
 	}
@@ -321,11 +392,9 @@ void genWallVAO(const Transform* object) // 121 vertics, 200 triangles,
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
 		glGenBuffers(1, &EBO);
-
 		vector<float> vertices;
 		vector<unsigned int> indices;
 		
-
 		for (int j = -5; j <= 5; j++)
 		{
 			for (int k = -5; k < 5; k++) {
@@ -346,10 +415,6 @@ void genWallVAO(const Transform* object) // 121 vertics, 200 triangles,
 				}
 			}
 		}
-
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
-
 		for (int j = 0; j < 10; j++)
 		{
 			for (int k = 0; k < 10; k++) {
@@ -363,12 +428,17 @@ void genWallVAO(const Transform* object) // 121 vertics, 200 triangles,
 
 			}
 		}
+		glBindVertexArray(VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 		glEnableVertexAttribArray(0);
+		glBindVertexArray(0);
 
 		string wallName = object->name;
 		
@@ -400,17 +470,17 @@ void SetModelAndViewMatrix(CamMode camMode, GLfloat a, GLfloat b) { //reference:
 	switch(camMode){
 	case CHARACTER: 
 		cameraPos = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z);
-		cameraTarget = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z + 1);
+		cameraTarget = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z - 1);
 		up = glm::vec3(0.0f, 1.0f, 0.0f);
 		view = glm::lookAt(cameraPos, cameraTarget, up);
-		Projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 100.0f); // 월드 좌표로 표현 수정 필요
+		Projection = glm::ortho(-300.0f, 300.0f, -300.0f, 300.0f, (float)0.1, (float)WORLD_COORD_MAP_ZLEN); // 월드 좌표로 표현 수정 필요
 		break;
 	case BEHIND:
-		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN/2, 10, 0);
-		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN / 2, 10, 1);
+		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN/2, WORLD_COORD_MAP_ZLEN);
+		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN / 2, 0);
 		up = glm::vec3(0.0f, 1.0f, 0.0f);
 		view = glm::lookAt(cameraPos, cameraTarget, up);
-		Projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 100.0f); // 월드 좌표로 표현 수정 필요
+		Projection = glm::ortho((float)-WORLD_COORD_MAP_XLEN/2, (float)WORLD_COORD_MAP_XLEN/2, (float)-WORLD_COORD_MAP_YLEN / 2, (float)WORLD_COORD_MAP_YLEN /2, (float)0.1, (float)WORLD_COORD_MAP_ZLEN); // 월드 좌표로 표현 수정 필요
 		break;
 	case HANGING:
 		cameraPos = glm::vec3(a, WORLD_COORD_MAP_YLEN, b);
@@ -425,9 +495,8 @@ void SetModelAndViewMatrix(CamMode camMode, GLfloat a, GLfloat b) { //reference:
 		break;
 	}
 
-	glUniformMatrix4fv(glGetUniformLocation(MyShader::myshader, "View"), 1, GL_FALSE, &view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(MyShader::myshader, "Projection"), 1, GL_FALSE, &Projection[0][0]);
-	cout << "SetMovelView matrix working" << endl;
+	MyShader::setMat4("View", view);
+	MyShader::setMat4("Projection", Projection);
 }
 
 
