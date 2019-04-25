@@ -37,6 +37,7 @@ GameManager::GameManager() {
 	objectsTreeVectorForDraw.push_back(*GetBackWall());
 	objectsTreeVectorForDraw.push_back(*GetBottomWall());
 	StartGame();
+	cout << "GameManager initiated" << endl;
 }
 
 GameManager::~GameManager() {
@@ -57,9 +58,10 @@ void GameManager::OneFramePipeline() {
 	playerBoxMoveFrontFlag = false;
 	playerBoxMoveBackFlag = false;
 	SetenemyBoxVelocity(enemyMoveTime += DeltaTime(), ball);
-	collisionManager.CollisionHandler(collisionManager.RestoreBallPosition(collisionManager.CollisionCheck()));
+//	collisionManager.CollisionHandler(collisionManager.RestoreBallPosition(collisionManager.CollisionCheck()));
 	SetObjectPosition();
 	prevTime = timeSinceStart;
+	cout << "Pipeline is running";
 }
 
 void GameManager::SpecialKeyboardInputHandler(GLint key) {

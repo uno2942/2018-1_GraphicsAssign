@@ -14,6 +14,11 @@ public:
 		static bool isShaderGenerated = false;
 		if (!isShaderGenerated)
 		{
+			GLenum err = glewInit();
+			if (err != GLEW_OK)
+				exit(1); // or handle the error in a nicer way
+			if (!GLEW_VERSION_2_1)  // check that the machine supports the 2.1 API.
+				exit(1); // or handle the error in a nicer way
 			const char* vertexShaderSource = "#version 460 core\n"
 				"layout (location = 0) in vec3 aPos;\n"
 				"uniform mat4 View;\n"
@@ -47,10 +52,16 @@ public:
 			//debug compile completed
 			{
 				int success;
+				char infoLog[512];
 				glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-				assert(success == 0);
+				if (!success)
+				{
+					glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+					std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+				}
+				assert(success == GL_TRUE);
 				glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-				assert(success == 0);
+				assert(success == GL_TRUE);
 			}
 			//shader link
 			myshader = glCreateProgram();
@@ -91,3 +102,5 @@ public:
 		glUniformMatrix4fv(glGetUniformLocation(myshader, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 	}
 };
+
+GLuint MyShader::myshader = 0;

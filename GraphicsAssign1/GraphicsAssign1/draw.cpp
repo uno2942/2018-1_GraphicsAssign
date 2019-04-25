@@ -67,6 +67,11 @@ void display()
 		glm::vec3 up = glm::vec3(0, 1, 0);
 		MyShader::setMat4("View", glm::lookAt(camerapos, cameradirection, up));
 	}
+	glm::mat4 trans;
+	glm::vec3 unitpos;
+	Transform* unit;
+	string objPath;
+	glm::vec3 rotationAxis;
 	switch (renMode) {
 	case NO_HIDDEN_LINE_REMOVAL:
 
@@ -83,8 +88,8 @@ void display()
 				break;
 			case BALL:
 				
-				glm::mat4 trans = glm::identity<glm::mat4>();
-				glm::vec3 unitpos = glm::vec3(ball->GetCurrentPosition().x, ball->GetCurrentPosition().y, ball->GetCurrentPosition().z);
+				trans = glm::identity<glm::mat4>();
+				unitpos = glm::vec3(ball->GetCurrentPosition().x, ball->GetCurrentPosition().y, ball->GetCurrentPosition().z);
 				trans = glm::translate(trans, unitpos); // 제대로 쓴거 맞나?
 				
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
@@ -93,8 +98,6 @@ void display()
 				glBindVertexArray(0);
 				break;
 			case PLAYER: case ENEMY:
-				Transform* unit;
-				string objPath;
 				if (mappingFromStringToInt[(*iter).first] == PLAYER) {
 					unit = player;
 					objPath = playerObjPath;
@@ -103,11 +106,9 @@ void display()
 					unit = enemy;
 					objPath = enemyObjPath;
 				}
-					
-
-				glm::mat4 trans = glm::identity<glm::mat4>();
-				glm::vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
-				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
+				trans = glm::identity<glm::mat4>();
+				rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
+				unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
 				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, GetObj(objPath)->vertexSize, GL_UNSIGNED_INT, 0);
@@ -115,6 +116,7 @@ void display()
 			}
 		}
 		break;
+
 	case HIDDEN_LINE_REMOVAL:
 		glEnable(GL_DEPTH_TEST);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -135,8 +137,6 @@ void display()
 				glBindVertexArray(0);
 				break;
 			case PLAYER: case ENEMY:
-				Transform* unit;
-				string objPath;
 				if (mappingFromStringToInt[(*iter).first] == PLAYER) {
 					unit = player;
 					objPath = playerObjPath;
@@ -145,9 +145,9 @@ void display()
 					unit = enemy;
 					objPath = enemyObjPath;
 				}
-				glm::mat4 trans = glm::identity<glm::mat4>();
-				glm::vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
-				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
+				trans = glm::identity<glm::mat4>();
+				rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
+				unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
 				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, GetObj(objPath)->vertexSize, GL_UNSIGNED_INT, 0);
@@ -176,8 +176,6 @@ void display()
 				glBindVertexArray(0);
 				break;
 			case PLAYER: case ENEMY:
-				Transform* unit;
-				string objPath;
 				if (mappingFromStringToInt[(*iter).first] == PLAYER) {
 					unit = player;
 					objPath = playerObjPath;
@@ -186,9 +184,9 @@ void display()
 					unit = enemy;
 					objPath = enemyObjPath;
 				}
-				glm::mat4 trans = glm::identity<glm::mat4>();
-				glm::vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
-				glm::vec3 unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
+				trans = glm::identity<glm::mat4>();
+				rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
+				unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
 				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, GetObj(objPath)->vertexSize, GL_UNSIGNED_INT, 0);
@@ -243,7 +241,7 @@ void genPolygonVAO(const Transform *object, string objPath) // size normalized, 
 	drawingObjData = GetObj(objPath);
 
 	//shader drawing
-	float* scaledVertexArray = (float*)malloc(sizeof(float) * drawingObjData->vertexSize);
+	float* scaledVertexArray = new float[drawingObjData->vertexSize];
 
 	for (int i = 0; i < drawingObjData->vertexSize; i++) {
 		switch (i % 3) {
@@ -283,7 +281,8 @@ void genPolygonVAO(const Transform *object, string objPath) // size normalized, 
 	
 
 	VAO_map.insert(map<string, GLuint>::value_type(polygonName, VAO));
-	free(scaledVertexArray);
+	delete[] scaledVertexArray;
+	cout << "GenPolygon Working" << endl;
 }
 
 void genVAO() { // bind .obj path for each object
@@ -300,12 +299,11 @@ void genVAO() { // bind .obj path for each object
 		default: break;
 		}
 	}
+	cout << "GenVAO working" << endl;
 }
 
 void genWallVAO(const Transform* object) // 121 vertics, 200 triangles,
 {
-	
-
 		GLuint VBO, VAO, EBO;
 		glGenVertexArrays(1, &VAO);
 		glGenBuffers(1, &VBO);
@@ -362,7 +360,7 @@ void genWallVAO(const Transform* object) // 121 vertics, 200 triangles,
 		string wallName = object->name;
 		
 		VAO_map.insert(map<string, GLuint>::value_type(wallName, VAO));
-	
+		cout << "Gen Wall VAO working" << endl;
 }
 
 
@@ -402,7 +400,6 @@ void SetModelAndViewMatrix(CamMode camMode, GLfloat a, GLfloat b) { //reference:
 		Projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 100.0f); // 월드 좌표로 표현 수정 필요
 		break;
 	case HANGING:
-		float x, y, z;
 		cameraPos = glm::vec3(a, WORLD_COORD_MAP_YLEN, b);
 		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN/2 ,0, WORLD_COORD_MAP_ZLEN/2);
 		glm::vec3 temp1 = glm::normalize(cameraTarget - cameraPos);
@@ -417,6 +414,7 @@ void SetModelAndViewMatrix(CamMode camMode, GLfloat a, GLfloat b) { //reference:
 
 	glUniformMatrix4fv(glGetUniformLocation(MyShader::myshader, "View"), 1, GL_FALSE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(MyShader::myshader, "Projection"), 1, GL_FALSE, &Projection[0][0]);
+	cout << "SetMovelView matrix working" << endl;
 }
 
 
