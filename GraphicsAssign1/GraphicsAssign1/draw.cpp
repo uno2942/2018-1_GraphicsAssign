@@ -244,7 +244,99 @@ void drawObjectRecursive(GameObjectNode* root)
 */
 
 
+void representScore(int score, glm::vec2 pos)
+{
+	float segSize = 10;
 
+	drawNumVAO(pos, score % 10);
+	if (score / 10 > 0) {
+		pos.x += segSize * 1.5;
+		drawNumVAO(pos, score / 10);
+	}
+}
+
+void genNumVAO() //2d VAO 저장, 기준좌표: 왼쪽 아래
+{
+	vector<float> vertices;
+	vector<unsigned int> indices;
+	float segSize = 10.0; // 7-seg 에서 1개 seg의 길이
+
+						  // 7-seg를 구성하는 6개의 점들을 왼쪽 아래부터 오른쪽 위까지 6개 찍어 vertices에 저장
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 3; j++) {
+			vertices.push_back(i);
+			vertices.push_back(j);
+		}
+	}
+
+
+	for (int i = 0; i<10; i++)
+	{
+		//각 숫자별 indices 생성하여 넣기
+		switch (i)
+		{
+		case 0: indices.push_back(0); indices.push_back(1); //_
+			indices.push_back(1); indices.push_back(5); // _l
+			indices.push_back(5); indices.push_back(4); // ㅕ
+			indices.push_back(4); indices.push_back(0); break; // ㅁ
+			//case 1: ...
+		default: break;
+		}
+
+		//buffer binding
+		GLuint VBO, VAO, EBO; //each vertex buffer, vertex array, Elemental buffer
+
+		glGenVertexArrays(1, &VAO);
+		glGenBuffers(1, &VBO);
+		glGenBuffers(1, &EBO);
+
+		glBindVertexArray(VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices[0], GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices[0], GL_STATIC_DRAW);
+
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+
+		//push VAO data to VAO_map
+		VAO_map.insert(map<string, GLuint>::value_type(std::to_string(i), VAO));
+
+	}
+
+
+}
+
+void drawNumVAO(glm::vec2 pos, int num) //2d로 카메라 위치에 맞추어 그림
+{
+	int lineNum[10] = { 4, 1, 5, 4, 3, 5, 5, 3, 5, 5 };  //각 숫자를 구성하는 선의 개수
+
+
+	if (num < 0 || num > 9) {
+		cout << "drawNumVAO range error" << endl;
+		return;
+	}
+
+	//평행이동 matrix 생성
+	glm::mat4 trans;
+	glm::vec3 unitpos;
+	Transform* unit;
+
+	trans = glm::identity<glm::mat3>();
+	unitpos = glm::vec3(pos.x, pos.y, 0);
+	trans = glm::translate(trans, unitpos);
+
+	//새로 define할 2d shader 만듬
+	MyShader::setMat3("Model", glm::identity<glm::mat3>());
+	glBindVertexArray(VAO_map.find(std::to_string(num))->second);
+	glDrawElements(GL_LINES, 3 * lineNum[num], GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
 
 void genPolygonVAO(const Transform *object, string objPath) // obj 파일 경로와 이를 사용하는 object를 입력받아 VAO_map에 (objPath, objData)의 형식으로 삽입
 {
