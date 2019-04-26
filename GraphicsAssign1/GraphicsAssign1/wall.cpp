@@ -62,6 +62,7 @@ GameObjectTree* GetBottomWall() {
 	{
 		BottomwallTree = new GameObjectTree("bottomwall");
 		GameObject* temp = new GameObject(new Box("bottomwall", WORLD_COORD_MAP_XLEN, WORLD_COORD_MAP_ZLEN, 0, MY_WALL_COLOR));
+		temp->object->SetPosition(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_ZLEN / 2, 0);
 		GameObjectNode* tempNode = new GameObjectNode(temp, "bottomwall");
 		//		temp->AddCollisionComponentAsItself(tempNode);
 		BottomwallTree->insert_back(temp, "bottomwall");

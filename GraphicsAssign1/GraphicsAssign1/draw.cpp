@@ -7,7 +7,6 @@
 
 #define BVIEW_HALF_W 400
 #define BVIEW_HALF_H 225
-#define WALL_INDICES_NUM 121 // wall에 사용하는 vertex의 개수, 11*11 사각형 배열로 총 121개
 
 using namespace std;
 
@@ -19,8 +18,10 @@ static string ballObjPath = "sphere.obj";
 static string playerObjPath = "";
 static string enemyObjPath = "";
 void genVAO();
+void drawNumVAO(glm::vec2 pos, int num);
 
-//unsigned int myVAO, myVAO2;
+unsigned int myVAO, myVAO2;
+int WALL_INDICES_NUM;
 
 void myReshape(int width, int height)
 {	
@@ -41,6 +42,10 @@ void display()
 		if (!GLEW_VERSION_2_1)  // check that the machine supports the 2.1 API.
 			exit(1); // or handle the error in a nicer way
 
+		glUseProgram(MyShader::GetShader());
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+
 		mappingFromStringToInt["leftwall"] = LEFTWALL;
 		mappingFromStringToInt["rightwall"] = RIGHTWALL;
 		mappingFromStringToInt["frontwall"] = FRONTWALL;
@@ -50,20 +55,22 @@ void display()
 		mappingFromStringToInt["player"] = PLAYER;
 		mappingFromStringToInt["enemy"] = ENEMY;
 		genVAO();
-		camMode = BEHIND;
-		SetModelAndViewMatrix(BEHIND, 0, 0);
+		camMode = HANGING;
 		isInited = true;
-/*
+
 		{		// ------------------------------------------------------------------
 			float vertices[] = {
-				WORLD_COORD_MAP_XLEN / 2. + 400, WORLD_COORD_MAP_YLEN / 2., 400, // left  
-				WORLD_COORD_MAP_XLEN / 2 - 300., WORLD_COORD_MAP_YLEN / 2., 400, // right 
-				WORLD_COORD_MAP_XLEN / 2., WORLD_COORD_MAP_YLEN / 2. + 200 , 400// top   
+				10, 10, 0, // left  
+				WORLD_COORD_MAP_XLEN-10, 10, 0, // right 
+				10, WORLD_COORD_MAP_YLEN-10, 0, // top   
+				10, WORLD_COORD_MAP_YLEN-10, 0, // top   
+				WORLD_COORD_MAP_XLEN-10, WORLD_COORD_MAP_YLEN-10, 0, // right 
+				WORLD_COORD_MAP_XLEN - 10, 10, 0 // top   
 			};
 			float vertices2[] = {
-				WORLD_COORD_MAP_XLEN / 2. + 700, WORLD_COORD_MAP_YLEN / 2., 300, // left  
-				WORLD_COORD_MAP_XLEN / 2 - 200., WORLD_COORD_MAP_YLEN / 2., 300, // right 
-				WORLD_COORD_MAP_XLEN / 2., WORLD_COORD_MAP_YLEN / 2. + 200 , 700// top   
+				-1000, 500, 10, // left  
+				1000, 500, 10, // right 
+				500, 500, 700// top   
 			};
 
 			unsigned int VBO;
@@ -104,7 +111,7 @@ void display()
 			// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
 			glBindVertexArray(0);
 		}
-		*/
+		
 	}
 
 	static glm::vec4 backgroundColor = glm::vec4(0, 0, 0, 1);
@@ -132,12 +139,12 @@ void display()
 	}
 	*/
 
+	SetModelAndViewMatrix(camMode, 0, 0);
+
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT || GL_DEPTH_BUFFER_BIT);
-
-	// draw our first triangle
-	glUseProgram(MyShader::GetShader());
-
+	glClear(GL_COLOR_BUFFER_BIT);
+	glClearDepth(1.0f);
+	glClear(GL_DEPTH_BUFFER_BIT);
 
 	if (camMode == CamMode::CHARACTER) {
 		glm::vec3 camerapos = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z);
@@ -157,16 +164,17 @@ void display()
 
 	switch (renMode) {
 	case NO_HIDDEN_LINE_REMOVAL:
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_GEQUAL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		for (map<string, GLuint>::iterator iter = VAO_map.begin(); iter != VAO_map.end(); ++iter) {
 			switch (mappingFromStringToInt[(*iter).first]) {
-			case BACKWALL:
+			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
-				MyShader::setVec4("myColor", lineColor);
+				MyShader::setVec4("myColor", lineColor);               
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, WALL_INDICES_NUM * 3, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, WALL_INDICES_NUM, GL_UNSIGNED_INT, 0);
+//				MyShader::setVec4("myColor", polygonInnerColor);
+//				glBindVertexArray(myVAO2);
+//				glDrawArrays(GL_TRIANGLES, 0, 3);
 				glBindVertexArray(0);
 				break;
 			case BALL: //이미 scale된 상태의 ball을 위치만큼 평행이동만 시킴.
@@ -201,8 +209,6 @@ void display()
 		break;
 
 	case HIDDEN_LINE_REMOVAL:
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_GEQUAL);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		MyShader::setVec4("myColor", lineColor);
 
@@ -289,7 +295,6 @@ void display()
 	*/
 
 	glutSwapBuffers();
-
 }
 
 /*
@@ -487,38 +492,54 @@ void genWallVAO(const Transform* object) // 121 vertics, 200 triangles를 가진 10
 		vector<float> vertices;
 		vector<unsigned int> indices;
 		
-
-		for (int j = -5; j <= 5; j++) // 중앙을 중심으로 +- 5개 범위까지 점 찍음
+		if (object->xlen == 0) // LEFT and RIGHT wall
 		{
-			for (int k = -5; k < 5; k++) {
-				if (object->xlen == 0) {
+			for (int k = 0; k < 10; k++)
+			{
+				for (int j = 0; j < 10; j++)
+				{
 					vertices.push_back(object->GetCurrentPosition().x);
-					vertices.push_back(object->GetCurrentPosition().y + object->ylen * j / 9.0);
-					vertices.push_back(object->GetCurrentPosition().z + object->zlen * k / 9.0);
+					vertices.push_back((object->GetCurrentPosition().y - object->ylen / 2) + object->ylen * j / 9.0);
+					vertices.push_back((object->GetCurrentPosition().z - object->zlen / 2) + object->zlen * k / 9.0);
 				}
-				else if (object->ylen == 0) {
-					vertices.push_back(object->GetCurrentPosition().x + object->xlen * j / 9.0);
-					vertices.push_back(object->GetCurrentPosition().y);
-					vertices.push_back(object->GetCurrentPosition().z + object->zlen * k / 9.0);
-				}
-				else if (object->zlen == 0) {
-					vertices.push_back(object->GetCurrentPosition().x + object->xlen * j / 9.0);
-					vertices.push_back(object->GetCurrentPosition().y + object->ylen * k / 9.0);
+			}
+		}
+		else if (object->zlen == 0) // FRONT and BACK wall
+		{
+			for (int k = 0; k < 10; k++)
+			{
+				for (int j = 0; j < 10; j++)
+				{
+					vertices.push_back((object->GetCurrentPosition().x - object->xlen / 2) + object->xlen * j / 9.0);
+					vertices.push_back((object->GetCurrentPosition().y - object->ylen / 2) + object->ylen * k / 9.0);
 					vertices.push_back(object->GetCurrentPosition().z);
 				}
 			}
 		}
-		for (int j = 0; j < 10; j++)
+		else if (object->ylen == 0) // BOTTOM wall
 		{
-			for (int k = 0; k < 10; k++) {
+			for (int k = 0; k < 10; k++)
+			{
+				for (int j = 0; j < 10; j++)
+				{
+					vertices.push_back((object->GetCurrentPosition().x - object->xlen / 2) + object->xlen * k / 9.0);
+					vertices.push_back(object->GetCurrentPosition().y);
+					vertices.push_back((object->GetCurrentPosition().z - object->zlen / 2) + object->zlen * j / 9.0);
+				}
+			}
+		}
+
+		for (int j = 0; j < 9; j++)
+		{
+			for (int k = 0; k < 9; k++) 
+			{
 				indices.push_back(10 * j + k);
 				indices.push_back(10 * j + k + 1);
-				indices.push_back(10 * j + k + 10);
+				indices.push_back(10 * j + 10 + k + 1);
 
-				indices.push_back(10 * j + k + 1);
-				indices.push_back(10 * j + k + 10);
-				indices.push_back(10 * j + k + 11);
-
+				indices.push_back(10 * j + 10 + k);
+				indices.push_back(10 * j + 10 + k + 1);
+				indices.push_back(10 * j + k);
 			}
 		}
 		glBindVertexArray(VAO);
@@ -534,9 +555,8 @@ void genWallVAO(const Transform* object) // 121 vertics, 200 triangles를 가진 10
 		glBindVertexArray(0);
 
 		string wallName = object->name;
-		
+		WALL_INDICES_NUM = indices.size();
 		VAO_map.insert(map<string, GLuint>::value_type(wallName, VAO));
-		cout << "Gen Wall VAO working" << endl;
 }
 
 
@@ -569,22 +589,28 @@ void SetModelAndViewMatrix(CamMode camMode, GLfloat a, GLfloat b) { //reference:
 		Projection = glm::ortho(-300.0f, 300.0f, -300.0f, 300.0f, (float)0.1, (float)WORLD_COORD_MAP_ZLEN); // 월드 좌표로 표현 수정 필요
 		break;
 	case BEHIND:
-		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN/2, WORLD_COORD_MAP_ZLEN);
-		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN / 2, 0);
-		up = glm::vec3(0.0f, 1.0f, 0.0f);
+		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN, WORLD_COORD_MAP_ZLEN / 2);
+		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN / 2, 0, WORLD_COORD_MAP_ZLEN / 2);
+		up = glm::vec3(0.0f, 0.0f, 1.0f);
 		view = glm::lookAt(cameraPos, cameraTarget, up);
-		Projection = glm::ortho((float)-WORLD_COORD_MAP_XLEN/2, (float)WORLD_COORD_MAP_XLEN/2, (float)-WORLD_COORD_MAP_YLEN / 2, (float)WORLD_COORD_MAP_YLEN /2, (float)0.1, (float)WORLD_COORD_MAP_ZLEN); // 월드 좌표로 표현 수정 필요
+		Projection = glm::ortho((float)-WORLD_COORD_MAP_XLEN, (float)WORLD_COORD_MAP_XLEN, (float)-WORLD_COORD_MAP_ZLEN , (float)WORLD_COORD_MAP_ZLEN , (float)0.1, (float)WORLD_COORD_MAP_YLEN); // 월드 좌표로 표현 수정 필요
 		break;
 	case HANGING:
-		cameraPos = glm::vec3(a, WORLD_COORD_MAP_YLEN, b);
+		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN/2 - 100, WORLD_COORD_MAP_YLEN, WORLD_COORD_MAP_ZLEN/2);
 		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN/2 ,0, WORLD_COORD_MAP_ZLEN/2);
 		glm::vec3 temp1 = glm::normalize(cameraTarget - cameraPos);
-		glm::vec3 temp2 = glm::normalize(glm::vec3(a, 0, b));
-		glm::mat4 temp3 = glm::identity<glm::mat4>();
-		temp3 = glm::rotate(temp3, glm::radians(90.0f), glm::cross(temp1, temp2));
-		up = temp3 * glm::vec4(temp1.x, temp1.y, temp1.z, 1);
+		
+		if(temp1.x==temp1.z && temp1.x==0)
+			up= glm::vec4(0, 0, 1, 1);
+		else {
+			glm::vec3 temp2 = glm::normalize(temp1 - glm::vec3(0, temp1.y, 0));
+			glm::mat4 temp3 = glm::identity<glm::mat4>();
+			temp3 = glm::rotate(temp3, glm::radians(90.0f), glm::cross(temp1, temp2));
+			up = temp3 * glm::vec4(temp1.x, temp1.y, temp1.z, 1);
+		}
 		view = glm::lookAt(cameraPos, cameraTarget, up);
-		Projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, 0.0f, 100.0f); // 월드 좌표로 표현 수정 필요
+		Projection = glm::perspective(glm::radians(80.0f), (float)4./3, 0.1f, (float)WORLD_COORD_MAP_ZLEN);
+// 월드 좌표로 표현 수정 필요
 		break;
 	}
 
