@@ -181,9 +181,9 @@ void display()
 				
 				trans = glm::identity<glm::mat4>();
 				unitpos = glm::vec3(ball->GetCurrentPosition().x, ball->GetCurrentPosition().y, ball->GetCurrentPosition().z);
-				trans = glm::translate(trans, unitpos); // Á¦´ë·Î ¾´°Å ¸Â³ª?
+//				trans = glm::translate(trans, unitpos); // Á¦´ë·Î ¾´°Å ¸Â³ª?
 				
-				MyShader::setMat4("Model", glm::mat4(1.0f));
+				MyShader::setMat4("Model", glm::rotate(trans, glm::radians(-45.0f), glm::vec3(1, 0, 0)));
 				MyShader::setVec4("myColor", lineColor);
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->triangleSize , GL_UNSIGNED_INT, 0);
@@ -198,12 +198,10 @@ void display()
 					unit = enemy;
 					objPath = enemyObjPath;
 				}
-				glm::vec3 my = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN / 2, WORLD_COORD_MAP_ZLEN / 2);
-				trans = glm::identity<glm::mat4>();
 				rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
 				unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
-				MyShader::setMat4("Model", glm::translate(glm::mat4(1.0f), my));
-				glBindVertexArray((*iter).second);
+				MyShader::setMat4("Model", glm::translate(glm::mat4(1.0f), unitpos));
+				glBindVertexArray((*iter).second);  
 				glDrawElements(GL_TRIANGLES, GetObj(objPath)->triangleSize, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
@@ -424,7 +422,7 @@ void genPolygonVAO(const Transform *object, string objPath) // obj ÆÄÀÏ °æ·Î¿Í À
 	drawingObjData = GetObj(objPath);
 
 	//shader drawing
-	float* scaledVertexArray = new float[drawingObjData->vertexSize * 3]; // ±âÁ¸ obj data¸¦ loadÇÑ vertex ÁÂÇ¥¸¦ object¿¡ ÀÔ·ÂµÈ Å©±â·Î scale
+	float* scaledVertexArray = new float[(int)(drawingObjData->vertexSize) * 3]; // ±âÁ¸ obj data¸¦ loadÇÑ vertex ÁÂÇ¥¸¦ object¿¡ ÀÔ·ÂµÈ Å©±â·Î scale
 
 	for (int i = 0; i < drawingObjData->vertexSize * 3; i++) {
 		switch (i % 3) {
@@ -433,7 +431,9 @@ void genPolygonVAO(const Transform *object, string objPath) // obj ÆÄÀÏ °æ·Î¿Í À
 		case 2: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().z;
 		}
 	}
-
+	for (int i = 0; i < drawingObjData->triangleSize; i++) {
+		drawingObjData->triangleArray[i] -= 1;
+	}
 	// starts to use
 
 	// make buffers
@@ -454,7 +454,6 @@ void genPolygonVAO(const Transform *object, string objPath) // obj ÆÄÀÏ °æ·Î¿Í À
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 	VAO_map.insert(map<string, GLuint>::value_type(object->name, VAO));
 	delete[] scaledVertexArray;
@@ -471,7 +470,7 @@ void genVAO() { // bind .obj path for each object
 				break;
 		case BALL: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, ballObjPath); break;
 		case PLAYER: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, playerObjPath); break;
-		case ENEMY: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, enemyObjPath); break;
+		case ENEMY: VAO_map.insert(map<string, GLuint>::value_type("enemy", VAO_map["player"])); break;
 		default: break;
 		}
 	}

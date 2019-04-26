@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "objloader.h"
-
+#include<iostream>
 // code source by https://github.com/opengl-tutorials/ogl/blob/master/common/objloader.cpp : OpenGL OFFICIAL TUTORIAL
 
 
@@ -138,7 +138,6 @@ bool loadOBJ(
 
 	objData->vertexSize = temp_vertices.size();
 	objData->triangleSize = vertexIndices.size();
-
 
 	// For each vertex of each triangle
 	for (unsigned int i = 0; i < vertexIndices.size(); i++) {
