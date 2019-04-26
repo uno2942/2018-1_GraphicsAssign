@@ -7,7 +7,7 @@
 
 #define BVIEW_HALF_W 400
 #define BVIEW_HALF_H 225
-#define WALL_VERTEX_NUM 121 // wall에 사용하는 vertex의 개수, 11*11 사각형 배열로 총 121개
+#define WALL_INDICES_NUM 121 // wall에 사용하는 vertex의 개수, 11*11 사각형 배열로 총 121개
 
 using namespace std;
 
@@ -96,7 +96,7 @@ void display()
 			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, WALL_VERTEX_NUM, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, WALL_INDICES_NUM * 3, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case BALL: //이미 scale된 상태의 ball을 위치만큼 평행이동만 시킴.
@@ -107,7 +107,7 @@ void display()
 				
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->vertexSize , GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->triangleSize * 3 , GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case PLAYER: case ENEMY: // 이 둘은 roataion 평행이동 둘 다
@@ -124,7 +124,7 @@ void display()
 				unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
 				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(objPath)->vertexSize, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(objPath)->triangleSize * 3, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
 		}
@@ -140,13 +140,13 @@ void display()
 			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, WALL_VERTEX_NUM, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, WALL_INDICES_NUM * 3, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case BALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->vertexSize, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->triangleSize * 3, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case PLAYER: case ENEMY:
@@ -163,7 +163,7 @@ void display()
 				unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
 				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(objPath)->vertexSize, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(objPath)->triangleSize * 3, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
 		}
@@ -179,13 +179,13 @@ void display()
 			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, WALL_VERTEX_NUM, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, WALL_INDICES_NUM, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case BALL:
 				MyShader::setMat4("Model", glm::translate(glm::mat4(), glm::vec3(ball->position.x, ball->position.y, ball->position.z)));
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->vertexSize, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->triangleSize * 3, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case PLAYER: case ENEMY:
@@ -202,7 +202,7 @@ void display()
 				unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
 				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(objPath)->vertexSize, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(objPath)->triangleSize * 3, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
 		}
