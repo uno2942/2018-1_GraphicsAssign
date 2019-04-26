@@ -15,8 +15,8 @@ enum stringToInt {LEFTWALL, RIGHTWALL, FRONTWALL, BACKWALL, BOTTOMWALL, BALL, PL
 static map< string, int > mappingFromStringToInt;
 
 static string ballObjPath = "sphere.obj";
-static string playerObjPath = "";
-static string enemyObjPath = "";
+static string playerObjPath = "Type 2020 Miku.obj";
+static string enemyObjPath = "Type 2020 Miku.obj";
 void genVAO();
 void drawNumVAO(glm::vec2 pos, int num);
 
@@ -55,7 +55,7 @@ void display()
 		mappingFromStringToInt["player"] = PLAYER;
 		mappingFromStringToInt["enemy"] = ENEMY;
 		genVAO();
-		camMode = HANGING;
+		camMode = BEHIND;
 		isInited = true;
 
 		{		// ------------------------------------------------------------------
@@ -183,9 +183,10 @@ void display()
 				unitpos = glm::vec3(ball->GetCurrentPosition().x, ball->GetCurrentPosition().y, ball->GetCurrentPosition().z);
 				trans = glm::translate(trans, unitpos); // 제대로 쓴거 맞나?
 				
-				MyShader::setMat4("Model", glm::identity<glm::mat4>());
+				MyShader::setMat4("Model", glm::mat4(1.0f));
+				MyShader::setVec4("myColor", lineColor);
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->triangleSize * 3 , GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->triangleSize , GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
 			case PLAYER: case ENEMY: // 이 둘은 roataion 평행이동 둘 다
@@ -197,12 +198,13 @@ void display()
 					unit = enemy;
 					objPath = enemyObjPath;
 				}
+				glm::vec3 my = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN / 2, WORLD_COORD_MAP_ZLEN / 2);
 				trans = glm::identity<glm::mat4>();
 				rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
 				unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
-				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
+				MyShader::setMat4("Model", glm::translate(glm::mat4(1.0f), my));
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(objPath)->triangleSize * 3, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(objPath)->triangleSize, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
 		}
@@ -221,7 +223,7 @@ void display()
 				glBindVertexArray(0);
 				break;
 			case BALL:
-				MyShader::setMat4("Model", glm::identity<glm::mat4>());
+				MyShader::setMat4("Model", glm::translate(glm::mat4(1.0f), glm::vec3(WORLD_COORD_MAP_XLEN/2, WORLD_COORD_MAP_YLEN / 2, WORLD_COORD_MAP_ZLEN / 2)));
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->triangleSize * 3, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
@@ -422,9 +424,9 @@ void genPolygonVAO(const Transform *object, string objPath) // obj 파일 경로와 �
 	drawingObjData = GetObj(objPath);
 
 	//shader drawing
-	float* scaledVertexArray = new float[drawingObjData->vertexSize]; // 기존 obj data를 load한 vertex 좌표를 object에 입력된 크기로 scale
+	float* scaledVertexArray = new float[drawingObjData->vertexSize * 3]; // 기존 obj data를 load한 vertex 좌표를 object에 입력된 크기로 scale
 
-	for (int i = 0; i < drawingObjData->vertexSize; i++) {
+	for (int i = 0; i < drawingObjData->vertexSize * 3; i++) {
 		switch (i % 3) {
 		case 0: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().x;
 		case 1: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().y;
@@ -444,24 +446,17 @@ void genPolygonVAO(const Transform *object, string objPath) // obj 파일 경로와 �
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(drawingObjData->vertices), scaledVertexArray, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float)* drawingObjData->vertexSize * 3, scaledVertexArray, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(drawingObjData->triangleArray), drawingObjData->triangleArray, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)* drawingObjData->triangleSize, drawingObjData->triangleArray, GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-
-	string polygonName = object->name;
-	for(int i = 0; i < polygonName.size(); i++) {
-		polygonName[i] = toupper(polygonName[i]); //enum stringToInt에 맞게 변환
-	}
-	
-
-	VAO_map.insert(map<string, GLuint>::value_type(polygonName, VAO));
+	VAO_map.insert(map<string, GLuint>::value_type(object->name, VAO));
 	delete[] scaledVertexArray;
 	cout << "GenPolygon Working" << endl;
 }
@@ -474,9 +469,9 @@ void genVAO() { // bind .obj path for each object
 		case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 			genWallVAO(objectsTreeVectorForDraw[i].root->data->object);
 				break;
-//		case BALL: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, ballObjPath); break;
-//		case PLAYER: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, playerObjPath); break;
-//		case ENEMY: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, enemyObjPath); break;
+		case BALL: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, ballObjPath); break;
+		case PLAYER: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, playerObjPath); break;
+		case ENEMY: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, enemyObjPath); break;
 		default: break;
 		}
 	}
@@ -577,9 +572,9 @@ void SetModelAndViewMatrix(CamMode camMode, GLfloat a, GLfloat b) { //reference:
 	Transform* player = GameManager::getInstance().player;
 	glm::vec3 cameraPos;
 	glm::vec3 cameraTarget;
-	glm::vec3 up; // 수정 필요
+	glm::vec3 up;
 	glm::mat4 view;
-	glm::mat4 Projection; // 월드 좌표로 표현 수정 필요
+	glm::mat4 Projection;
 	switch(camMode){
 	case CHARACTER: 
 		cameraPos = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z);
@@ -589,11 +584,11 @@ void SetModelAndViewMatrix(CamMode camMode, GLfloat a, GLfloat b) { //reference:
 		Projection = glm::ortho(-300.0f, 300.0f, -300.0f, 300.0f, (float)0.1, (float)WORLD_COORD_MAP_ZLEN); // 월드 좌표로 표현 수정 필요
 		break;
 	case BEHIND:
-		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN, WORLD_COORD_MAP_ZLEN / 2);
-		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN / 2, 0, WORLD_COORD_MAP_ZLEN / 2);
-		up = glm::vec3(0.0f, 0.0f, 1.0f);
+		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN / 2, WORLD_COORD_MAP_ZLEN);
+		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN / 2, WORLD_COORD_MAP_ZLEN / 2 -1);
+		up = glm::vec3(0.0f, 1.0f, 0.0f);
 		view = glm::lookAt(cameraPos, cameraTarget, up);
-		Projection = glm::ortho((float)-WORLD_COORD_MAP_XLEN, (float)WORLD_COORD_MAP_XLEN, (float)-WORLD_COORD_MAP_ZLEN , (float)WORLD_COORD_MAP_ZLEN , (float)0.1, (float)WORLD_COORD_MAP_YLEN); // 월드 좌표로 표현 수정 필요
+		Projection = glm::ortho((float)-WORLD_COORD_MAP_XLEN, (float)WORLD_COORD_MAP_XLEN, (float)-WORLD_COORD_MAP_YLEN , (float)WORLD_COORD_MAP_YLEN , (float)0.1, (float)WORLD_COORD_MAP_ZLEN); // 월드 좌표로 표현 수정 필요
 		break;
 	case HANGING:
 		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN/2 - 100, WORLD_COORD_MAP_YLEN, WORLD_COORD_MAP_ZLEN/2);
@@ -610,7 +605,6 @@ void SetModelAndViewMatrix(CamMode camMode, GLfloat a, GLfloat b) { //reference:
 		}
 		view = glm::lookAt(cameraPos, cameraTarget, up);
 		Projection = glm::perspective(glm::radians(80.0f), (float)4./3, 0.1f, (float)WORLD_COORD_MAP_ZLEN);
-// 월드 좌표로 표현 수정 필요
 		break;
 	}
 

@@ -141,8 +141,7 @@ bool loadOBJ(
 
 
 	// For each vertex of each triangle
-	/*
-	for (unsigned int i = 0; i<vertexIndices.size(); i++) {
+	for (unsigned int i = 0; i < vertexIndices.size(); i++) {
 
 		// Get the indices of its attributes
 		unsigned int vertexIndex = vertexIndices[i];
@@ -159,7 +158,7 @@ bool loadOBJ(
 		objData->uvs.push_back(uv);
 		objData->normals.push_back(normal);
 
-	}*/
+	}
 	fclose(file);
 	return true;
 }
