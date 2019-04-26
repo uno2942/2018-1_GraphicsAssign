@@ -14,11 +14,6 @@ public:
 		static bool isShaderGenerated = false;
 		if (!isShaderGenerated)
 		{
-			GLenum err = glewInit();
-			if (err != GLEW_OK)
-				exit(1); // or handle the error in a nicer way
-			if (!GLEW_VERSION_2_1)  // check that the machine supports the 2.1 API.
-				exit(1); // or handle the error in a nicer way
 			const char* vertexShaderSource = "#version 460 core\n"
 				"layout (location = 0) in vec3 aPos;\n"
 				"uniform mat4 View;\n"
