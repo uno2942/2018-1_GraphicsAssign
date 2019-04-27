@@ -217,16 +217,24 @@ void display()
 			case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, WALL_INDICES_NUM * 3, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, WALL_INDICES_NUM, GL_UNSIGNED_INT, 0);
+				//				MyShader::setVec4("myColor", polygonInnerColor);
+				//				glBindVertexArray(myVAO2);
+				//				glDrawArrays(GL_TRIANGLES, 0, 3);
 				glBindVertexArray(0);
 				break;
-			case BALL:
-				MyShader::setMat4("Model", glm::translate(glm::mat4(1.0f), glm::vec3(WORLD_COORD_MAP_XLEN/2, WORLD_COORD_MAP_YLEN / 2, WORLD_COORD_MAP_ZLEN / 2)));
+			case BALL: //이미 scale된 상태의 ball을 위치만큼 평행이동만 시킴.
+
+				trans = glm::identity<glm::mat4>();
+				unitpos = glm::vec3(ball->GetCurrentPosition().x, ball->GetCurrentPosition().y, ball->GetCurrentPosition().z);
+				//				trans = glm::translate(trans, unitpos); // 제대로 쓴거 맞나?
+
+				MyShader::setMat4("Model", glm::translate(trans, unitpos));
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->triangleSize * 3, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->triangleSize, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
-			case PLAYER: case ENEMY:
+			case PLAYER: case ENEMY: // 이 둘은 roataion 평행이동 둘 다
 				if (mappingFromStringToInt[(*iter).first] == PLAYER) {
 					unit = player;
 					objPath = playerObjPath;
@@ -235,16 +243,15 @@ void display()
 					unit = enemy;
 					objPath = enemyObjPath;
 				}
-				trans = glm::identity<glm::mat4>();
 				rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
 				unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
-				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
+				MyShader::setMat4("Model", glm::rotate(glm::translate(trans, unitpos), (float)unit->rotation, rotationAxis));
+				cout << rotationAxis.x << " " << rotationAxis.y << " " << rotationAxis.z << " " << "angle" << (float)unit->rotation << endl;
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(objPath)->triangleSize * 3, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(objPath)->triangleSize, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
 		}
-
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1.0, 1.0);
@@ -257,15 +264,23 @@ void display()
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, WALL_INDICES_NUM, GL_UNSIGNED_INT, 0);
+				//				MyShader::setVec4("myColor", polygonInnerColor);
+				//				glBindVertexArray(myVAO2);
+				//				glDrawArrays(GL_TRIANGLES, 0, 3);
 				glBindVertexArray(0);
 				break;
-			case BALL:
-				MyShader::setMat4("Model", glm::translate(glm::mat4(), glm::vec3(ball->position.x, ball->position.y, ball->position.z)));
+			case BALL: //이미 scale된 상태의 ball을 위치만큼 평행이동만 시킴.
+
+				trans = glm::identity<glm::mat4>();
+				unitpos = glm::vec3(ball->GetCurrentPosition().x, ball->GetCurrentPosition().y, ball->GetCurrentPosition().z);
+				//				trans = glm::translate(trans, unitpos); // 제대로 쓴거 맞나?
+
+				MyShader::setMat4("Model", glm::translate(trans, unitpos));
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->triangleSize * 3, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(ballObjPath)->triangleSize, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 				break;
-			case PLAYER: case ENEMY:
+			case PLAYER: case ENEMY: // 이 둘은 roataion 평행이동 둘 다
 				if (mappingFromStringToInt[(*iter).first] == PLAYER) {
 					unit = player;
 					objPath = playerObjPath;
@@ -274,15 +289,15 @@ void display()
 					unit = enemy;
 					objPath = enemyObjPath;
 				}
-				trans = glm::identity<glm::mat4>();
 				rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
 				unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
-				MyShader::setMat4("Model", glm::translate(glm::rotate(trans, glm::radians((float)unit->rotation), rotationAxis), unitpos));
+				MyShader::setMat4("Model", glm::rotate(glm::translate(trans, unitpos), (float)unit->rotation, rotationAxis));
+				cout << rotationAxis.x << " " << rotationAxis.y << " " << rotationAxis.z << " " << "angle" << (float)unit->rotation << endl;
 				glBindVertexArray((*iter).second);
-				glDrawElements(GL_TRIANGLES, GetObj(objPath)->triangleSize * 3, GL_UNSIGNED_INT, 0);
+				glDrawElements(GL_TRIANGLES, GetObj(objPath)->triangleSize, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			}
-		}
+		}		
 		glDisable(GL_POLYGON_OFFSET_FILL);
 
 		//이게 맞는 순서인지는 잘 모르겠습니다.
