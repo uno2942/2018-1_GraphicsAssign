@@ -15,13 +15,13 @@ GameObjectTree* GetEnemy() {
 	return enemyTree;
 }
 
-void SetenemyBoxVelocity(GLint enemyMoveTime, Object* ball) {
+void SetenemyBoxVelocity(GLint* enemyMoveTime, Object* ball) {
 	static bool enemyBoxMoveRightFlag = false;
 	static bool enemyBoxMoveLeftFlag = false;
 	Object* enemy = GetEnemy()->root->data->object;
-	if (enemyMoveTime > 3000)
-		enemyMoveTime = -5000;
-	if (enemyMoveTime > 0)
+	if (*enemyMoveTime > 3000)
+		*enemyMoveTime = -5000;
+	if (*enemyMoveTime > 0)
 	{
 		if (ball->position.x > enemy->position.x)
 			enemyBoxMoveRightFlag = true;

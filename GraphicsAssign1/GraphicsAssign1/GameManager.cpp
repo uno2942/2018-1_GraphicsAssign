@@ -59,10 +59,12 @@ void GameManager::OneFramePipeline() {
 	playerBoxMoveBackFlag = false;
 	playerBoxRotateCounterClockwiseFlag = false;
 	playerBoxRotateClockwiseFlag = false;
-	SetenemyBoxVelocity(enemyMoveTime += DeltaTime(), ball);
+	enemyMoveTime += DeltaTime();
+	SetenemyBoxVelocity(&enemyMoveTime, ball);
 	collisionManager.CollisionHandler(collisionManager.RestoreBallPosition(collisionManager.CollisionCheck()));
 	SetObjectPosition();
 	prevTime = timeSinceStart;
+	cout << player->position.x << endl;
 }
 
 void GameManager::SpecialKeyboardInputHandler(GLint key) {

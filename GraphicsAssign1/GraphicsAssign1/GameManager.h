@@ -23,9 +23,9 @@ public:
 		vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* CollisionCheck();
 		void CollisionHandler(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector);
 		vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* RestoreBallPosition(vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector);
-		bool CheckCollisionAtUpSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector);
-		bool CheckCollisionAtDownSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector);
-		bool CheckCollisionAtLeftSide(const CollisionComponent& o1, const CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector);
+		bool CheckCollisionAtUpSide(CollisionComponent& o1, CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector);
+		bool CheckCollisionAtDownSide(CollisionComponent& o1, CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector);
+		bool CheckCollisionAtLeftSide(CollisionComponent& o1, CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector);
 		bool CheckCollisionAtRightSide(CollisionComponent& o1, CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector);
 		void CheckCollision4side(CollisionComponent& o1, CollisionComponent& o2, vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* collisionPairvector);
 		GLdouble ballDeltaTime = 0;

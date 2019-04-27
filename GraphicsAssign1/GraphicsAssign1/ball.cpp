@@ -15,14 +15,9 @@ GameObjectTree* GetBall() {
 }
 
 void InitBallVelocity(GLint BALL_VELOCITY) {
-	GLint x = 0;
-	GLint y = 0;
+	GLdouble theta;
 
-	while (0 == x)
-		x = rand() % 101 - 50;
-
-	while (-20 < y && y < 20)
-		y = rand() % 101 - 50;
-
-	GetBall()->root->data->object->SetVelocity((Vector3::normalize(Vector3(x, y, 0)))*BALL_VELOCITY);
+	theta = (GLdouble)(rand() % 600 - 300);
+	theta = theta * 3.141592 / (180. * 10.);
+	GetBall()->root->data->object->SetVelocity((Vector3::normalize(Vector3(sin(theta), cos(theta), 0)))*BALL_VELOCITY);
 }

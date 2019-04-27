@@ -6,7 +6,7 @@ GameObjectTree* GetPlayer() {
 	if (playerTree == NULL)
 	{
 		playerTree = new GameObjectTree("player");
-		player = new Box("player", WORLD_COORD_MAP_XLEN / 4, WORLD_COORD_MAP_ZLEN / 4, 400, MY_YELLOW);
+		player = new Box("player", WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_YLEN / 18, MY_YELLOW);
 		player->rotationAxis = Vector3(0, 0, 1);
 		GameObject* playerObject = new GameObject(player);
 		GameObjectNode* playerNode = new GameObjectNode(playerObject, "player");
