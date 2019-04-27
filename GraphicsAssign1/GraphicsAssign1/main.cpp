@@ -36,10 +36,14 @@ void myKeyboard(unsigned char c, int x, int y) {
 		case '2': camMode = BEHIND; break;
 		case '3': camMode = HANGING;
 			cin >> a >> b;
+			SetHangingxy(a, b);
 			GameManager::getInstance().FreshTime();
+			break;
+		case '4': renMode = NO_HIDDEN_LINE_REMOVAL; break;
+		case '5': renMode = HIDDEN_LINE_REMOVAL;
+
 		}
 	}
-	SetModelAndViewMatrix(camMode, a, b);
 }
 
 void specialKeyboard(int key, int x, int y) {

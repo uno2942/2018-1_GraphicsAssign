@@ -32,4 +32,6 @@ void representScore(int score, GLfloat x, GLfloat y);
 
 void representResult(void);
 
-void SetModelAndViewMatrix(CamMode camMode, GLfloat a, GLfloat b);
+void SetModelAndViewMatrix(CamMode camMode);
+
+void SetHangingxy(int a, int b);

@@ -22,7 +22,7 @@ void drawNumVAO(glm::vec2 pos, int num);
 
 unsigned int myVAO, myVAO2;
 int WALL_INDICES_NUM;
-
+int Hanga, Hangb;
 void myReshape(int width, int height)
 {	
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
@@ -45,6 +45,7 @@ void display()
 		glUseProgram(MyShader::GetShader());
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
+
 
 		mappingFromStringToInt["leftwall"] = LEFTWALL;
 		mappingFromStringToInt["rightwall"] = RIGHTWALL;
@@ -112,12 +113,13 @@ void display()
 			glBindVertexArray(0);
 		}
 
-		SetModelAndViewMatrix(camMode, 0, 0);
 	}
 
-	static glm::vec4 backgroundColor = glm::vec4(0, 0, 0, 1);
+	static glm::vec4 backgroundColor = glm::vec4(0.2f, 0.3f, 0.3f, 1.0f);
 	static glm::vec4 polygonInnerColor = glm::vec4(0.5, 0.5, 0.5, 1);
 	static glm::vec4 lineColor = glm::vec4(1, 1, 1, 1);
+
+
 	Transform* player = GameManager::getInstance().player;
 	Transform* enemy = GameManager::getInstance().enemy;
 	Transform* ball = GameManager::getInstance().ball;
@@ -127,40 +129,73 @@ void display()
 		GameManager::getInstance().FreshTime();
 		ReshapeFlag = !ReshapeFlag;
 	}
-
-	/* 여긴 좀 해주세요.
-	if (GameManager::getInstance().WhoFinallyWin != 0) {
-
-		glClear(GL_COLOR_BUFFER_BIT);
-		glColor3f(1.0f, 1.0f, 1.0f);
-		representResult();
-		glLoadIdentity();
-		glutSwapBuffers();
-		return;
-	}
-	*/
-
+	
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glClearDepth(1.0f);
 	glClear(GL_DEPTH_BUFFER_BIT);
+	
+	if (GameManager::getInstance().WhoFinallyWin != 0) {
+		glDisable(GL_DEPTH_TEST);
+		MyShader::setMat4("Model", glm::scale(glm::mat4(1.0f), glm::vec3(5, 5, 5)));
+		glm::vec3 cameraPos = glm::vec3(0, 0, 1);
+		glm::vec3 cameraTarget = glm::vec3(0, 0, 0);
+		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+		glm::mat4 view = glm::lookAt(cameraPos, cameraTarget, up);
+		glm::mat4 Projection = glm::ortho((float)-0.1, (float)0.1, (float)-0.1, (float)0.1, (float)0.1, (float)10); // 월드 좌표로 표현 수정 필
+		MyShader::setMat4("View", view);
+		MyShader::setVec4("myColor", lineColor);
+		MyShader::setMat4("Projection", Projection);
 
-	if (camMode == CamMode::CHARACTER) {
-		glm::vec3 camerapos = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z);
-		glm::vec3 cameradirection = camerapos + glm::vec3(0, 0, -1);
-		glm::vec3 up = glm::vec3(0, 1, 0);
-		MyShader::setMat4("View", glm::lookAt(camerapos, cameradirection, up));
-		MyShader::setMat4("Projection", glm::ortho(-300.0f, 300.0f, -300.0f, 300.0f, (float)0.1, (float)WORLD_COORD_MAP_ZLEN));
+		string str;
+		if (GameManager::getInstance().WhoFinallyWin == 1)
+			str = "PLAYER WIN";
+		else
+			str = "ENEMY WIN";
 
+		glRasterPos2d(0, 0);
+		for (int n = 0; n < str.size(); ++n) {
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[n]);
+		}
+		glEnable(GL_DEPTH_TEST);
+		glutSwapBuffers();
+		return;
 	}
 
+	{
+		MyShader::setVec4("myColor", glm::vec4(0, 0, 0, 1));
+		MyShader::setMat4("Model",glm::mat4(1.0f));
+		glm::vec3 cameraPos = glm::vec3(0, 0, 1);
+		glm::vec3 cameraTarget = glm::vec3(0, 0, 0);
+		glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+		glm::mat4 view = glm::lookAt(cameraPos, cameraTarget, up);
+
+		MyShader::setMat4("View", view);
+		glm::mat4 Projection = glm::ortho((float)-0.1, (float)0.1, (float)-0.1, (float)0.1, (float)0.1, (float)1); // 월드 좌표로 표현 수정 필요
+
+		MyShader::setMat4("Projection", Projection);
+		string str = to_string(GameManager::getInstance().myScore);
+		glRasterPos3d(-0.09, 0.075, 0.9);
+		for (int n = 0; n < str.size(); ++n) {
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[n]);
+		}
+		string str2 = to_string(GameManager::getInstance().enemyScore);;
+		glRasterPos3d(0.09, 0.075, 0.9);
+		for (int n = 0; n < str2.size(); ++n) {
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str2[n]);
+		}
+	}
+
+
+	SetModelAndViewMatrix(camMode);
+	MyShader::setMat4("Model", glm::identity<glm::mat4>());
 	glm::mat4 trans;
 	glm::vec3 unitpos;
 	Transform* unit;
 	string objPath;
 	glm::vec3 rotationAxis;
 
-
+	
 	switch (renMode) {
 	case NO_HIDDEN_LINE_REMOVAL:
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -256,7 +291,7 @@ void display()
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1.0, 1.0);
 
-		MyShader::setVec4("myColor", polygonInnerColor);
+		MyShader::setVec4("myColor", backgroundColor);
 
 		for (map<string, GLuint>::iterator iter = VAO_map.begin(); iter != VAO_map.end(); ++iter) {
 			switch (mappingFromStringToInt[(*iter).first]) {
@@ -582,30 +617,37 @@ ObjData* GetObj(string path) { //path를 받아 해당 path에 있는 obj 파일을 로드한 
 }
 
 
-void SetModelAndViewMatrix(CamMode camMode, GLfloat a, GLfloat b) { //reference: https://heinleinsgame.tistory.com/12
+void SetModelAndViewMatrix(CamMode camMode) { //reference: https://heinleinsgame.tistory.com/12
 	Transform* player = GameManager::getInstance().player;
+	glm::vec3 rotationAxis;
+	glm::vec3 unitpos;
 	glm::vec3 cameraPos;
 	glm::vec3 cameraTarget;
 	glm::vec3 up;
 	glm::mat4 view;
 	glm::mat4 Projection;
 	switch(camMode){
-	case CHARACTER: 
-		cameraPos = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z);
-		cameraTarget = glm::vec3(player->GetCurrentPosition().x, player->GetCurrentPosition().y, player->GetCurrentPosition().z - 1);
+	case CHARACTER:
+		unitpos = glm::vec3(player->GetCurrentPosition().x - 100 * sin(player->rotation), player->GetCurrentPosition().y, player->GetCurrentPosition().z - 100* cos(player->rotation));
+		rotationAxis = glm::vec3(player->rotationAxis.x, player->rotationAxis.y, player->rotationAxis.z);
+
+		glm::mat4 rotatemat = glm::rotate(glm::mat4(1.0f), (float)player->rotation, rotationAxis);
+		
+		cameraPos = glm::vec3(unitpos);
+		cameraTarget = glm::vec3(glm::vec4(unitpos, 1) + rotatemat * glm::vec4(0, 0, -1, 1));
 		up = glm::vec3(0.0f, 1.0f, 0.0f);
 		view = glm::lookAt(cameraPos, cameraTarget, up);
-		Projection = glm::ortho(-300.0f, 300.0f, -300.0f, 300.0f, (float)0.1, (float)WORLD_COORD_MAP_ZLEN); // 월드 좌표로 표현 수정 필요
+		Projection = glm::perspective(glm::radians(80.0f), (float)4. / 3, 0.1f, (float)10 * WORLD_COORD_MAP_YLEN);
 		break;
 	case BEHIND:
-		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN / 2, WORLD_COORD_MAP_ZLEN);
-		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN / 2, WORLD_COORD_MAP_ZLEN / 2 -1);
+		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN / 2, WORLD_COORD_MAP_ZLEN - 2);
+		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN / 2, WORLD_COORD_MAP_YLEN / 2, WORLD_COORD_MAP_ZLEN / 2 -3);
 		up = glm::vec3(0.0f, 1.0f, 0.0f);
 		view = glm::lookAt(cameraPos, cameraTarget, up);
-		Projection = glm::ortho((float)-WORLD_COORD_MAP_XLEN, (float)WORLD_COORD_MAP_XLEN, (float)-WORLD_COORD_MAP_YLEN , (float)WORLD_COORD_MAP_YLEN , (float)0.1, (float)WORLD_COORD_MAP_ZLEN); // 월드 좌표로 표현 수정 필요
+		Projection = glm::perspective(glm::radians(80.0f), (float)4. / 3, 0.1f, (float)10 * WORLD_COORD_MAP_YLEN);
 		break;
 	case HANGING:
-		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN/2 - a, 2*WORLD_COORD_MAP_YLEN, WORLD_COORD_MAP_ZLEN/2 - b);
+		cameraPos = glm::vec3(WORLD_COORD_MAP_XLEN/2 - Hanga, 2*WORLD_COORD_MAP_YLEN, WORLD_COORD_MAP_ZLEN/2 - Hangb);
 		cameraTarget = glm::vec3(WORLD_COORD_MAP_XLEN/2 ,0, WORLD_COORD_MAP_ZLEN/2);
 		glm::vec3 temp1 = glm::normalize(cameraTarget - cameraPos);
 		
@@ -666,6 +708,11 @@ void representResult(void)
 		
 }
 
+
+void SetHangingxy(int _a, int _b) {
+	Hanga = _a;
+	Hangb = _b;
+}
 
 /*
 void representBox(const Transform& box)
