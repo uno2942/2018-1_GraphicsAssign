@@ -426,8 +426,8 @@ void genPolygonVAO(const Transform *object, string objPath) // obj 파일 경로와 �
 
 	for (int i = 0; i < drawingObjData->vertexSize * 3; i++) {
 		switch (i % 3) {
-		case 0: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().x;
-		case 1: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().y;
+		case 0: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().x; break;
+		case 1: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().y; break;
 		case 2: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().z;
 		}
 	}
@@ -603,7 +603,7 @@ void SetModelAndViewMatrix(CamMode camMode, GLfloat a, GLfloat b) { //reference:
 			up = temp3 * glm::vec4(temp1.x, temp1.y, temp1.z, 1);
 		}
 		view = glm::lookAt(cameraPos, cameraTarget, up);
-		Projection = glm::perspective(glm::radians(80.0f), (float)4./3, 0.1f, (float)3* WORLD_COORD_MAP_YLEN);
+		Projection = glm::perspective(glm::radians(80.0f), (float)4./3, 0.1f, (float)10* WORLD_COORD_MAP_YLEN);
 		break;
 	}
 

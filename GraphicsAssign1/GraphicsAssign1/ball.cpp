@@ -5,7 +5,7 @@ GameObjectTree* GetBall() {
 	if (ballTree == NULL)
 	{
 		ballTree = new GameObjectTree("ball");
-		Object* ball = new Oval("ball", 150, 150, 150, MY_RED);
+		Object* ball = new Oval("ball", 200, 200, 200, MY_RED);
 		GameObject* ballObject = new GameObject(ball);
 		GameObjectNode* ballNode = new GameObjectNode(ballObject, "ball");
 		ballObject->AddCollisionComponentAsItself(ballNode);
