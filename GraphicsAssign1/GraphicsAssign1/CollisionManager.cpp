@@ -250,10 +250,10 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* GameManager::Coll
 			&& GameManager::getInstance().player->velocity.x > 0)
 			GameManager::getInstance().player->SetVelocity(0, 0, 0);
 
-		if (GameManager::getInstance().player->GetCurrentPosition().z - GameManager::getInstance().player->zlen / 2 < 0
+		if (GameManager::getInstance().player->GetCurrentPosition().z - GameManager::getInstance().player->zlen / 2 < WORLD_COORD_MAP_ZLEN / 2
 			&& GameManager::getInstance().player->velocity.z < 0)
 			GameManager::getInstance().player->SetVelocity(0, 0, 0);
-		else if (GameManager::getInstance().player->GetCurrentPosition().z + GameManager::getInstance().player->zlen / 2 > WORLD_COORD_MAP_ZLEN / 2
+		else if (GameManager::getInstance().player->GetCurrentPosition().z + GameManager::getInstance().player->zlen / 2 > WORLD_COORD_MAP_ZLEN
 			&& GameManager::getInstance().player->velocity.z > 0)
 			GameManager::getInstance().player->SetVelocity(0, 0, 0);
 
@@ -264,10 +264,10 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* GameManager::Coll
 			&& GameManager::getInstance().enemy->velocity.x < 0)
 			GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
 
-		if (GameManager::getInstance().enemy->GetCurrentPosition().z - GameManager::getInstance().enemy->zlen / 2 < WORLD_COORD_MAP_ZLEN / 2
+		if (GameManager::getInstance().enemy->GetCurrentPosition().z - GameManager::getInstance().enemy->zlen / 2 > WORLD_COORD_MAP_ZLEN / 2
 			&& GameManager::getInstance().enemy->velocity.z > 0)
 			GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
-		else if (GameManager::getInstance().enemy->GetCurrentPosition().z + GameManager::getInstance().enemy->zlen / 2 > WORLD_COORD_MAP_ZLEN
+		else if (GameManager::getInstance().enemy->GetCurrentPosition().z + GameManager::getInstance().enemy->zlen / 2 <0
 			&& GameManager::getInstance().enemy->velocity.z < 0)
 			GameManager::getInstance().enemy->SetVelocity(0, 0, 0);
 	}
@@ -277,7 +277,7 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* GameManager::Coll
 		{
 			Vector3 ballPos = GameManager::getInstance().ball->GetCurrentPosition();
 			Vector3 ballVel = GameManager::getInstance().ball->velocity;
-			GameManager::getInstance().ball->SetVelocity(-ballVel.x, ballVel.y, ballVel.z);
+			GameManager::getInstance().ball->SetVelocity(-ballVel.x, ballVel.z, ballVel.y);
 			while (GameManager::getInstance().ball->GetCurrentPosition().x - GameManager::getInstance().ball->xlen / 2 < 0)
 			{
 				GameManager::getInstance().ball->position += GameManager::getInstance().ball->velocity * (0.0001);
@@ -288,32 +288,8 @@ vector<pair<pair<GameObjectNode*, GameObjectNode*>, Vector3>>* GameManager::Coll
 		{
 			Vector3 ballPos = GameManager::getInstance().ball->GetCurrentPosition();
 			Vector3 ballVel = GameManager::getInstance().ball->velocity;
-			GameManager::getInstance().ball->SetVelocity(-ballVel.x, ballVel.y, ballVel.z);
+			GameManager::getInstance().ball->SetVelocity(-ballVel.x, ballVel.z, ballVel.y);
 			while (GameManager::getInstance().ball->GetCurrentPosition().x + GameManager::getInstance().ball->xlen / 2 > WORLD_COORD_MAP_XLEN)
-			{
-				GameManager::getInstance().ball->position += GameManager::getInstance().ball->velocity * (0.0001);
-			}
-			return collisionPairvector;
-		}
-
-		if (GameManager::getInstance().ball->GetCurrentPosition().z - GameManager::getInstance().ball->zlen / 2 < 0)
-		{
-			Vector3 ballPos = GameManager::getInstance().ball->GetCurrentPosition();
-			Vector3 ballVel = GameManager::getInstance().ball->velocity;
-			GameManager::getInstance().ball->SetVelocity(ballVel.x, ballVel.y, -ballVel.z);
-			while (GameManager::getInstance().ball->GetCurrentPosition().z - GameManager::getInstance().ball->zlen / 2 < 0)
-			{
-				GameManager::getInstance().ball->position += GameManager::getInstance().ball->velocity * (0.0001);
-			}
-			return collisionPairvector;
-		}
-		else if (GameManager::getInstance().ball->GetCurrentPosition().z + GameManager::getInstance().ball->zlen / 2 > WORLD_COORD_MAP_ZLEN / 2)
-		{
-			Vector3 ballPos = GameManager::getInstance().ball->GetCurrentPosition();
-			Vector3 ballVel = GameManager::getInstance().ball->velocity;
-			GameManager::getInstance().ball->SetVelocity(ballVel.x, ballVel.y, -ballVel.z);
-
-			while (GameManager::getInstance().ball->GetCurrentPosition().z + GameManager::getInstance().ball->zlen / 2 > WORLD_COORD_MAP_ZLEN / 2)
 			{
 				GameManager::getInstance().ball->position += GameManager::getInstance().ball->velocity * (0.0001);
 			}

@@ -57,8 +57,10 @@ void GameManager::OneFramePipeline() {
 	SetplayerBoxVelocity(playerBoxMoveFrontFlag, playerBoxMoveBackFlag);
 	playerBoxMoveFrontFlag = false;
 	playerBoxMoveBackFlag = false;
+	playerBoxRotateCounterClockwiseFlag = false;
+	playerBoxRotateClockwiseFlag = false;
 	SetenemyBoxVelocity(enemyMoveTime += DeltaTime(), ball);
-//	collisionManager.CollisionHandler(collisionManager.RestoreBallPosition(collisionManager.CollisionCheck()));
+	collisionManager.CollisionHandler(collisionManager.RestoreBallPosition(collisionManager.CollisionCheck()));
 	SetObjectPosition();
 	prevTime = timeSinceStart;
 }

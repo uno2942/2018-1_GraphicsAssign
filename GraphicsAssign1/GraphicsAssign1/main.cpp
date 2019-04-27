@@ -36,6 +36,7 @@ void myKeyboard(unsigned char c, int x, int y) {
 		case '2': camMode = BEHIND; break;
 		case '3': camMode = HANGING;
 			cin >> a >> b;
+			GameManager::getInstance().FreshTime();
 		}
 	}
 	SetModelAndViewMatrix(camMode, a, b);

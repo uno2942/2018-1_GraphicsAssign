@@ -7,6 +7,7 @@ GameObjectTree* GetPlayer() {
 	{
 		playerTree = new GameObjectTree("player");
 		player = new Box("player", WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_ZLEN / 8, WORLD_COORD_MAP_YLEN / 18, MY_YELLOW);
+		player->rotationAxis = Vector3(0, 0, 1);
 		GameObject* playerObject = new GameObject(player);
 		GameObjectNode* playerNode = new GameObjectNode(playerObject, "player");
 		playerObject->AddCollisionComponentAsItself(playerNode);

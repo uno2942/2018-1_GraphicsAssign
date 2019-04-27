@@ -71,7 +71,8 @@ public:
 		velocity.y = y;
 		return velocity;
 	}
-	inline const Vector3& SetRotationAxis(GLdouble x, GLdouble z, GLdouble y) {
+	inline const Vector3& Set
+	(GLdouble x, GLdouble z, GLdouble y) {
 		rotationAxis.x = x;
 		rotationAxis.z = z;
 		rotationAxis.y = y;
