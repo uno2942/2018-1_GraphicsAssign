@@ -26,9 +26,6 @@ void myReshape(int width, int height)
 {	
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);
 	ReshapeFlag = !ReshapeFlag;
-	//나머지 부분을 아래쪽으로: 공을 추적하기 위해 공이 움직일 때마다 카메라 움직여야 함
-	
-	//lookAtByCamMode(camMode);
 }
 
 void display()
@@ -81,7 +78,6 @@ void display()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	
 	if (GameManager::getInstance().WhoFinallyWin != 0) {
-		glDisable(GL_DEPTH_TEST);
 		MyShader::setMat4("Model", glm::scale(glm::mat4(1.0f), glm::vec3(5, 5, 5)));
 		glm::vec3 cameraPos = glm::vec3(0, 0, 1);
 		glm::vec3 cameraTarget = glm::vec3(0, 0, 0);
@@ -89,7 +85,7 @@ void display()
 		glm::mat4 view = glm::lookAt(cameraPos, cameraTarget, up);
 		glm::mat4 Projection = glm::ortho((float)-0.1, (float)0.1, (float)-0.1, (float)0.1, (float)0.1, (float)10); // 월드 좌표로 표현 수정 필
 		MyShader::setMat4("View", view);
-		MyShader::setVec4("myColor", lineColor);
+		MyShader::setVec4("myColor", glm::vec4(0, 0, 0, 1));
 		MyShader::setMat4("Projection", Projection);
 
 		string str;

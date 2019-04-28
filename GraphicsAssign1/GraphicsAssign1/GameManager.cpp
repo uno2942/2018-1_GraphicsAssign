@@ -44,11 +44,11 @@ GameManager::~GameManager() {
 	deleteTree(*GetPlayer());
 	deleteTree(*GetEnemy());
 	deleteTree(*GetBall());
-	objectsTreeVectorForDraw.push_back(*GetLeftWall());
-	objectsTreeVectorForDraw.push_back(*GetRightWall());
-	objectsTreeVectorForDraw.push_back(*GetFrontWall());
-	objectsTreeVectorForDraw.push_back(*GetBackWall());
-	objectsTreeVectorForDraw.push_back(*GetBottomWall());
+	deleteTree(*GetLeftWall());
+	deleteTree(*GetRightWall());
+	deleteTree(*GetFrontWall());
+	deleteTree(*GetBackWall());
+	deleteTree(*GetBottomWall());
 }
 
 void GameManager::OneFramePipeline() {
