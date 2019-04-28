@@ -28,7 +28,7 @@ void SetplayerBoxVelocity(bool playerBoxMoveFrontFlag, bool playerBoxMoveBackFla
 
 void SetplayerBoxRotation(bool playerBoxRotateCounterClockwiseFlag, bool playerBoxRotateClockwiseFlag) {
 	if (playerBoxRotateCounterClockwiseFlag == true)
-		player->rotation += 0.1;
-	else if (playerBoxRotateClockwiseFlag == true)
 		player->rotation -= 0.1;
+	else if (playerBoxRotateClockwiseFlag == true)
+		player->rotation += 0.1;
 }

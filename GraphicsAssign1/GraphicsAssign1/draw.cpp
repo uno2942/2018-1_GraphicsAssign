@@ -628,10 +628,10 @@ void SetModelAndViewMatrix(CamMode camMode) { //reference: https://heinleinsgame
 	glm::mat4 Projection;
 	switch(camMode){
 	case CHARACTER:
-		unitpos = glm::vec3(player->GetCurrentPosition().x - 100 * sin(player->rotation), player->GetCurrentPosition().y, player->GetCurrentPosition().z - 100* cos(player->rotation));
+		unitpos = glm::vec3(player->GetCurrentPosition().x - 100 * sin(player->rotation + 3.141592), player->GetCurrentPosition().y, player->GetCurrentPosition().z - 100* cos(player->rotation + 3.141592));
 		rotationAxis = glm::vec3(player->rotationAxis.x, player->rotationAxis.y, player->rotationAxis.z);
 
-		glm::mat4 rotatemat = glm::rotate(glm::mat4(1.0f), (float)player->rotation, rotationAxis);
+		glm::mat4 rotatemat = glm::rotate(glm::mat4(1.0f), (float)player->rotation + 3.141592f, rotationAxis);
 		
 		cameraPos = glm::vec3(unitpos);
 		cameraTarget = glm::vec3(glm::vec4(unitpos, 1) + rotatemat * glm::vec4(0, 0, -1, 1));
@@ -652,7 +652,7 @@ void SetModelAndViewMatrix(CamMode camMode) { //reference: https://heinleinsgame
 		glm::vec3 temp1 = glm::normalize(cameraTarget - cameraPos);
 		
 		if(temp1.x==temp1.z && temp1.x==0)
-			up= glm::vec4(0, 0, 1, 1);
+			up= glm::vec4(0, 0, -1, 1);
 		else {
 			glm::vec3 temp2 = glm::normalize(temp1 - glm::vec3(0, temp1.y, 0));
 			glm::mat4 temp3 = glm::identity<glm::mat4>();

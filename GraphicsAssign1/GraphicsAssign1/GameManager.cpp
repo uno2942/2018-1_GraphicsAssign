@@ -94,6 +94,7 @@ void GameManager::InitializeGame() {
 
 void GameManager::InitObjectsPosition() {
 	(*player).SetPosition(INITIAL_PLAYER_BOX_POSITION);
+	(*player).SetRotation(3.141592);
 	(*enemy).SetPosition(INITIAL_ENEMY_BOX_POSITION);
 	(*ball).SetPosition(INITIAL_BALL_POSITION);
 }
