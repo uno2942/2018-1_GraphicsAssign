@@ -20,7 +20,6 @@ static string enemyObjPath = "Type 2020 Miku.obj";
 void genVAO();
 void drawNumVAO(glm::vec2 pos, int num);
 
-unsigned int myVAO, myVAO2;
 int WALL_INDICES_NUM;
 int Hanga, Hangb;
 void myReshape(int width, int height)
@@ -58,60 +57,6 @@ void display()
 		genVAO();
 		camMode = HANGING;
 		isInited = true;
-
-		{		// ------------------------------------------------------------------
-			float vertices[] = {
-				10, 10, 0, // left  
-				WORLD_COORD_MAP_XLEN-10, 10, 0, // right 
-				10, WORLD_COORD_MAP_YLEN-10, 0, // top   
-				10, WORLD_COORD_MAP_YLEN-10, 0, // top   
-				WORLD_COORD_MAP_XLEN-10, WORLD_COORD_MAP_YLEN-10, 0, // right 
-				WORLD_COORD_MAP_XLEN - 10, 10, 0 // top   
-			};
-			float vertices2[] = {
-				-1000, 500, 10, // left  
-				1000, 500, 10, // right 
-				500, 500, 700// top   
-			};
-
-			unsigned int VBO;
-			glGenVertexArrays(1, &myVAO);
-			glGenBuffers(1, &VBO);
-			// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-			glBindVertexArray(myVAO);
-
-			glBindBuffer(GL_ARRAY_BUFFER, VBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(0);
-
-			// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-			// You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-			// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-			glBindVertexArray(0);
-
-
-			glGenVertexArrays(1, &myVAO2);
-			glGenBuffers(1, &VBO);
-			// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-			glBindVertexArray(myVAO2);
-
-			glBindBuffer(GL_ARRAY_BUFFER, VBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
-
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(0);
-
-			// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-			// You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-			// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-			glBindVertexArray(0);
-		}
 
 	}
 
@@ -206,16 +151,12 @@ void display()
 				MyShader::setVec4("myColor", lineColor);               
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, WALL_INDICES_NUM, GL_UNSIGNED_INT, 0);
-//				MyShader::setVec4("myColor", polygonInnerColor);
-//				glBindVertexArray(myVAO2);
-//				glDrawArrays(GL_TRIANGLES, 0, 3);
 				glBindVertexArray(0);
 				break;
 			case BALL: //이미 scale된 상태의 ball을 위치만큼 평행이동만 시킴.
 				
 				trans = glm::identity<glm::mat4>();
 				unitpos = glm::vec3(ball->GetCurrentPosition().x, ball->GetCurrentPosition().y, ball->GetCurrentPosition().z);
-//				trans = glm::translate(trans, unitpos); // 제대로 쓴거 맞나?
 				
 				MyShader::setMat4("Model", glm::translate(trans, unitpos));
 				MyShader::setVec4("myColor", lineColor);
@@ -253,16 +194,12 @@ void display()
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, WALL_INDICES_NUM, GL_UNSIGNED_INT, 0);
-				//				MyShader::setVec4("myColor", polygonInnerColor);
-				//				glBindVertexArray(myVAO2);
-				//				glDrawArrays(GL_TRIANGLES, 0, 3);
 				glBindVertexArray(0);
 				break;
 			case BALL: //이미 scale된 상태의 ball을 위치만큼 평행이동만 시킴.
 
 				trans = glm::identity<glm::mat4>();
 				unitpos = glm::vec3(ball->GetCurrentPosition().x, ball->GetCurrentPosition().y, ball->GetCurrentPosition().z);
-				//				trans = glm::translate(trans, unitpos); // 제대로 쓴거 맞나?
 
 				MyShader::setMat4("Model", glm::translate(trans, unitpos));
 				glBindVertexArray((*iter).second);
@@ -299,16 +236,12 @@ void display()
 				MyShader::setMat4("Model", glm::identity<glm::mat4>());
 				glBindVertexArray((*iter).second);
 				glDrawElements(GL_TRIANGLES, WALL_INDICES_NUM, GL_UNSIGNED_INT, 0);
-				//				MyShader::setVec4("myColor", polygonInnerColor);
-				//				glBindVertexArray(myVAO2);
-				//				glDrawArrays(GL_TRIANGLES, 0, 3);
 				glBindVertexArray(0);
 				break;
 			case BALL: //이미 scale된 상태의 ball을 위치만큼 평행이동만 시킴.
 
 				trans = glm::identity<glm::mat4>();
 				unitpos = glm::vec3(ball->GetCurrentPosition().x, ball->GetCurrentPosition().y, ball->GetCurrentPosition().z);
-				//				trans = glm::translate(trans, unitpos); // 제대로 쓴거 맞나?
 
 				MyShader::setMat4("Model", glm::translate(trans, unitpos));
 				glBindVertexArray((*iter).second);
@@ -335,40 +268,10 @@ void display()
 		}		
 		glDisable(GL_POLYGON_OFFSET_FILL);
 
-		//이게 맞는 순서인지는 잘 모르겠습니다.
 	}
-	/* 스코어는 해주세요.
-	glLoadIdentity();
-	representScore(GameManager::getInstance().myScore, 100.0, 800.0);
-	glLoadIdentity();
-	representScore(GameManager::getInstance().enemyScore, 1400.0, 800.0);
-	*/
 
 	glutSwapBuffers();
 }
-
-/*
-void drawObjectRecursive(GameObjectNode* root)
-{
-	glPushMatrix();
-	//위치이동
-	glTranslated(root->data->object->position.x, root->data->object->position.y, 0.0);
-
-	//회전축으로 이동한 후 회젼, 되돌리기
-	glTranslated(root->data->object->rotationAxis.x, root->data->object->rotationAxis.y, 0.0);
-	glRotated(root->data->object->rotation, 0., 0., 1.);
-	glTranslated(- root->data->object->rotationAxis.x, - root->data->object->rotationAxis.y, 0.0);
-
-	representComponent(*(root->data->object));
-
-//	GameObjectNode *tmp;
-	if (root->successor != NULL) drawObjectRecursive(root->successor);
-	glPopMatrix();
-
-	if (root->sibling != NULL) drawObjectRecursive(root->sibling);
-}
-*/
-
 
 void representScore(int score, glm::vec2 pos)
 {
@@ -683,11 +586,6 @@ void representScore(int score, GLfloat x, GLfloat y)
 
 	_itoa_s(score % 10, s, 10);
 	glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&s[0]);
-	/*
-	for (int i = 0; i < strlen(s); i++)
-	{
-	glutStrokeString(GLUT_STROKE_MONO_ROMAN, (const unsigned char*)&s[i]);
-	}*/
 
 
 }
@@ -713,102 +611,3 @@ void SetHangingxy(int _a, int _b) {
 	Hanga = _a;
 	Hangb = _b;
 }
-
-/*
-void representBox(const Transform& box)
-{
-	GLfloat x = 0;
-	GLfloat y = 0;
-	GLfloat w = box.GetSize().x;
-	GLfloat h = box.GetSize().y;
-
-
-	glColor4f(box.myColor.r / 255.0, box.myColor.g / 255.0, box.myColor.b / 255.0, box.myColor.a);
-	glBegin(GL_QUADS);
-
-	glVertex2f(x, y);
-	glVertex2f(x, y + h);
-	glVertex2f(x + w, y + h);
-	glVertex2f(x + w, y);
-	glEnd();
-}
-
-void representCircle(const Transform &circle)
-{
-	int lineNum = 100; // lineNum각형 으로 근사
-
-	GLfloat x = 0;
-	GLfloat y = 0;
-	GLfloat r_x = circle.GetSize().x / 2;
-	GLfloat r_y = circle.GetSize().y / 2;
-
-
-	glColor4f(circle.myColor.r / 255.0, circle.myColor.g / 255.0, circle.myColor.b / 255.0, circle.myColor.a);
-	glBegin(GL_POLYGON);
-
-	for (int i = 0; i < lineNum/2; i++)
-	{
-		glVertex2f(x + r_x + r_x * sinf(i * PI * 2 / lineNum), y + r_y + r_y * cosf(i * PI * 2 / lineNum));
-
-		float colR = (circle.myColor.r * (lineNum / 2 - i) + 1 * i) / (float)(lineNum / 2);
-		float colG = (circle.myColor.g * (lineNum / 2 - i) + 1 * i) / (float)(lineNum / 2);
-		float colB = (circle.myColor.b * (lineNum / 2 - i) + 1 * i) / (float)(lineNum / 2);
-		glColor4f(colR, colG, colB, 1);
-	}
-	for (int i = lineNum/2; i < lineNum; i++)
-	{
-		glVertex2f(x + r_x + r_x * sinf(i * PI * 2 / lineNum), y + r_y + r_y * cosf(i * PI * 2 / lineNum));
-
-		float colR = (circle.myColor.r * (i - lineNum / 2 ) + 1 * (lineNum - i)) / (float)(lineNum / 2);
-		float colG = (circle.myColor.g * (i - lineNum / 2) + 1 * (lineNum - i)) / (float)(lineNum / 2);
-		float colB = (circle.myColor.b * (i - lineNum / 2) + 1 * (lineNum - i)) / (float)(lineNum / 2);
-		glColor4f(colR, colG, colB, 1);
-	}
-
-
-
-	glEnd();
-}
-
-void representTriangle(const Transform & triangle)
-{
-	GLfloat x = 0;
-	GLfloat y = 0;
-	GLfloat w = triangle.GetSize().x;
-	GLfloat h = triangle.GetSize().y;
-
-
-	glColor4f(triangle.myColor.r / 255.0, triangle.myColor.g / 255.0, triangle.myColor.b / 255.0, triangle.myColor.a);
-	glBegin(GL_TRIANGLES);
-
-	glVertex2f(x, y);
-	glVertex2f(x + w, y);
-	glVertex2f(x + w / 2, y + h);
-	glEnd();
-}
-*/
-
-/*void lookAtBall(const Object& ball) // to be modified
-{
-
-	GLdouble lookAtX = ball.GetCurrentPosition().x + ball.GetSize().x / 2;
-	GLdouble lookAtY = ball.GetCurrentPosition().y + ball.GetSize().y / 2;
-	GLdouble screenX = WORLDCOORDWINDOWWIDTH;
-	GLdouble screenY = WORLDCOORDWINDOWHEIGHT;
-
-	if (lookAtX > screenX - BVIEW_HALF_W)
-		lookAtX = screenX - BVIEW_HALF_W;
-	else if (lookAtX < BVIEW_HALF_W)
-		lookAtX = BVIEW_HALF_W;
-
-	if (lookAtY > screenY - BVIEW_HALF_H)
-		lookAtY = screenY - BVIEW_HALF_H;
-	else if (lookAtY < BVIEW_HALF_H)
-		lookAtY = BVIEW_HALF_H;
-
-
-	gluLookAt(lookAtX, lookAtY, 0.0f,
-		lookAtX, lookAtY, -100.0f,
-		0.0f, 1.0f, 0.0f);
-	printf("%f\n", lookAtX);
-}*/
