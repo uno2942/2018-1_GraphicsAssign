@@ -114,9 +114,7 @@ void display()
 		MyShader::setVec4("myColor", lineColor);
 
 		for (map<string, MyObjData*>::iterator iter = ObjData_map.begin(); iter != ObjData_map.end(); ++iter) {
-			switch (mappingFromStringToInt[(*iter).first]) {
-				drawObject(mappingFromStringToUnit[(*iter).first], ObjData_map[(*iter).first]);
-			}
+			drawObject(mappingFromStringToUnit[(*iter).first], ObjData_map[(*iter).first]);
 		}
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glEnable(GL_POLYGON_OFFSET_FILL);
@@ -125,9 +123,7 @@ void display()
 		MyShader::setVec4("myColor", backgroundColor);
 
 		for (map<string, MyObjData*>::iterator iter = ObjData_map.begin(); iter != ObjData_map.end(); ++iter) {
-			switch (mappingFromStringToInt[(*iter).first]) {
-				drawObject(mappingFromStringToUnit[(*iter).first], ObjData_map[(*iter).first]);
-			}
+			drawObject(mappingFromStringToUnit[(*iter).first], ObjData_map[(*iter).first]);
 		}
 		glDisable(GL_POLYGON_OFFSET_FILL);
 		break;
