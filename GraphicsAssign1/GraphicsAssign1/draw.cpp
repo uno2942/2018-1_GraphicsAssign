@@ -67,15 +67,9 @@ void PrepareDrawing() {
 void display()
 {
 	static bool isInited = false;
-	static Transform* player;
-	static Transform* enemy;
-	static Transform* ball;
 
 	if (!isInited) {
 		PrepareDrawingAtFirstTime();
-		player = GameManager::getInstance().player;
-		enemy = GameManager::getInstance().enemy;
-		ball = GameManager::getInstance().ball;;
 		isInited = true;
 	}
 
@@ -103,8 +97,7 @@ void display()
 	case NO_HIDDEN_LINE_REMOVAL:
 	{glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	for (map<string, MyObjData*>::iterator iter = ObjData_map.begin(); iter != ObjData_map.end(); ++iter) {
-		switch (mappingFromStringToInt[(*iter).first]) {
-		}
+		drawObject(mappingFromStringToUnit[(*iter).first], ObjData_map[(*iter).first]);
 	}
 	break;
 	}
@@ -153,7 +146,6 @@ void drawResult() {
 	for (int n = 0; n < str.size(); ++n) {
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[n]);
 	}
-	glEnable(GL_DEPTH_TEST);
 	glutSwapBuffers();
 	return;
 }
