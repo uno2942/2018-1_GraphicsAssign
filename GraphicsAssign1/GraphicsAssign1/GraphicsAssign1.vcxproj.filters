@@ -19,6 +19,9 @@
     <Filter Include="소스 파일\DrawPart">
       <UniqueIdentifier>{a4099244-3086-4b32-ab16-ec5919c3420c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="헤더 파일\DrawPartHeader">
+      <UniqueIdentifier>{ba84c2c7-8fe9-455c-a463-eae5e2237639}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameManager.cpp">
@@ -31,9 +34,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CommonBetweenGameAndDraw.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ball.cpp">
@@ -55,7 +55,16 @@
       <Filter>소스 파일\DrawPart</Filter>
     </ClCompile>
     <ClCompile Include="objloader.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\DrawPart</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>소스 파일\DrawPart</Filter>
+    </ClCompile>
+    <ClCompile Include="gen_VAO.cpp">
+      <Filter>소스 파일\DrawPart</Filter>
+    </ClCompile>
+    <ClCompile Include="myShader.cpp">
+      <Filter>소스 파일\DrawPart</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -63,9 +72,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Objects.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Draw.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="MyDataType.h">
@@ -80,14 +86,20 @@
     <ClInclude Include="Camera.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="ObjData.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="objloader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="myShader.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjData.h">
+      <Filter>헤더 파일\DrawPartHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="objloader.h">
+      <Filter>헤더 파일\DrawPartHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="Draw.h">
+      <Filter>헤더 파일\DrawPartHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="gen_VAO.h">
+      <Filter>헤더 파일\DrawPartHeader</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

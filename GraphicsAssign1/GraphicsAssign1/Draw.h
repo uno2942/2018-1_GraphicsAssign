@@ -1,37 +1,29 @@
 #pragma once
 #include<vector>
+#include <cmath>
+#include<algorithm>
+
 #include "GameManager.h"
 #include "Objects.h"
 #include"CommonBetweenGameAndDraw.h"
 #include "ObjData.h"
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+
+#include<glm/glm.hpp>
+#include<glm/gtc/type_ptr.hpp>
+#include"objloader.h"
+#include"myShader.h"
+#include"Camera.h"
+
+enum stringToInt { LEFTWALL, RIGHTWALL, FRONTWALL, BACKWALL, BOTTOMWALL, BALL, PLAYER, ENEMY };
+
+extern map< string, int > mappingFromStringToInt;
+extern map< string, Object* > mappingFromStringToUnit;
+extern map<string, MyObjData*> ObjData_map;
+
+extern string ballObjPath;
+extern string playerObjPath;
+extern string enemyObjPath;
+
 void myReshape(int width, int height);
-
 void display();
-
-//void drawObjectRecursive(GameObjectNode* root);
-
-//void representComponent(const Transform &object);
-
-//void representBox(const Transform& box);
-
-//void representCircle(const Transform& circle);
-
-//void representTriangle(const Transform& triangle);
-
-void genWallVAO(const Transform* wall);
-
-void genPolygonVAO(const Transform* object, string objPath);
-
-ObjData* GetObj(string path);
-
-//void lookAtBall(const Object& circle); //deleted in Assign#3
-
-void representScore(int score, GLfloat x, GLfloat y);
-
-void representResult(void);
-
-void SetModelAndViewMatrix(CamMode camMode);
-
-void SetHangingxy(int a, int b);
+void genVAO(map< string, int > mappingFromStringToInt, map<string, MyObjData*>* ObjData_map, string ballObjPath, string playerObjPath, string enemyObjPath);

@@ -16,10 +16,7 @@
 // - More secure. Change another line and you can inject code.
 // - Loading from memory, stream, etc
 
-bool loadOBJ(
-	const char * path,
-	ObjData* objData
-) {
+bool loadOBJ(const char * path,	ObjData* objData) {
 	printf("Loading OBJ file %s...\n", path);
 
 	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;

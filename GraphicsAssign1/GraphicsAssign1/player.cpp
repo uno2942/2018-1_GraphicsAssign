@@ -7,11 +7,11 @@ GameObjectTree* GetPlayer() {
 	{
 		playerTree = new GameObjectTree("player");
 		player = new Box("player", WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_YLEN / 18, MY_YELLOW);
-		player->rotationAxis = Vector3(0, 0, 1);
 		GameObject* playerObject = new GameObject(player);
 		GameObjectNode* playerNode = new GameObjectNode(playerObject, "player");
 		playerObject->AddCollisionComponentAsItself(playerNode);
 		playerTree->insert_back(playerNode);
+
 	}
 	return playerTree;
 }
@@ -28,7 +28,7 @@ void SetplayerBoxVelocity(bool playerBoxMoveFrontFlag, bool playerBoxMoveBackFla
 
 void SetplayerBoxRotation(bool playerBoxRotateCounterClockwiseFlag, bool playerBoxRotateClockwiseFlag) {
 	if (playerBoxRotateCounterClockwiseFlag == true)
-		player->rotation -= 0.1;
+		player->rotation -= 0.03;
 	else if (playerBoxRotateClockwiseFlag == true)
-		player->rotation += 0.1;
+		player->rotation += 0.03;
 }

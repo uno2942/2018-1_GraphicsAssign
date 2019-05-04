@@ -3,7 +3,7 @@
 #include<freeglut.h>
 #include"GameManager.h"
 #include "Draw.h"
-
+#include"Camera.h"
 void head() {
 	static int prevTime = glutGet(GLUT_ELAPSED_TIME);
 	if(glutGet(GLUT_ELAPSED_TIME)-prevTime>5)
@@ -36,7 +36,7 @@ void myKeyboard(unsigned char c, int x, int y) {
 		case '2': camMode = BEHIND; break;
 		case '3': camMode = HANGING;
 			cin >> a >> b;
-			SetHangingxy(a, b);
+			myCamera::SetHangingxy(a, b);
 			GameManager::getInstance().FreshTime();
 			break;
 		case '4': renMode = NO_HIDDEN_LINE_REMOVAL; break;

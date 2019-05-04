@@ -26,6 +26,11 @@ GameManager::GameManager() {
 	player = GetPlayer()->root->data->object;
 	enemy = GetEnemy()->root->data->object;
 	ball = GetBall()->root->data->object;
+	leftWall = GetLeftWall()->root->data->object;
+	rightWall = GetRightWall()->root->data->object;
+	frontWall = GetFrontWall()->root->data->object;
+	backWall = GetBackWall()->root->data->object;
+	bottomWall = GetBottomWall()->root->data->object;
 	BALL_VELOCITY = 300;
 
 	objectsTreeVectorForDraw.push_back(*(GetPlayer()));
@@ -93,10 +98,17 @@ void GameManager::InitializeGame() {
 }
 
 void GameManager::InitObjectsPosition() {
-	(*player).SetPosition(INITIAL_PLAYER_BOX_POSITION);
-	(*player).SetRotation(3.141592);
-	(*enemy).SetPosition(INITIAL_ENEMY_BOX_POSITION);
-	(*ball).SetPosition(INITIAL_BALL_POSITION);
+	player->SetPosition(INITIAL_PLAYER_BOX_POSITION);
+	player->SetRotation(3.141592);
+	player->rotationAxis = Vector3(0, 0, 1);
+
+	enemy->SetPosition(INITIAL_ENEMY_BOX_POSITION);
+	enemy->rotationAxis = Vector3(0, 0, 1);
+	enemy->SetRotation(0);
+
+	ball->SetPosition(INITIAL_BALL_POSITION);	
+	ball->rotationAxis = Vector3(0, 0, 1);
+	ball->SetRotation(0);
 }
 
 /**

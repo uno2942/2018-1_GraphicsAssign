@@ -7,7 +7,6 @@ GameObjectTree* GetEnemy() {
 		enemyTree = new GameObjectTree("enemy");
 		Object* enemy = new Box("enemy", WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_YLEN / 18, MY_YELLOW);
 		GameObject* enemyObject = new GameObject(enemy);
-		enemy->rotationAxis = Vector3(0, 0, 1);
 		GameObjectNode* enemyNode = new GameObjectNode(enemyObject, "enemy");
 		enemyObject->AddCollisionComponentAsItself(enemyNode);
 		enemyTree->insert_back(enemyNode);

@@ -67,6 +67,12 @@ public:
 	Object* enemy;
 	Object* ball;
 
+	Object* leftWall;
+	Object* rightWall;
+	Object* frontWall;
+	Object* backWall;
+	Object* bottomWall;
+
 	static GLint BALL_VELOCITY;
 	GLint myScore = 0;
 	GLint enemyScore = 0;

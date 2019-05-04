@@ -5,7 +5,6 @@
 #include<freeglut.h>
 #include <glm/glm.hpp>
 
-
 class ObjData{
 public:
 	std::vector<glm::vec3> vertices; //3차원 vertex들의 vector
@@ -18,4 +17,9 @@ public:
 
 	unsigned int vertexSize; // obj의 vertex 수
 	unsigned int triangleSize; //obj의 triangle 수
+};
+
+class MyObjData : public ObjData {
+public:
+	GLuint VAO;
 };

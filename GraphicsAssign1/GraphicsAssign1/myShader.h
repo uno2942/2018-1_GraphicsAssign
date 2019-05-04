@@ -1,9 +1,8 @@
 #pragma once
-#include<vector>
-#include "GameManager.h"
-#include "Objects.h"
-#include"CommonBetweenGameAndDraw.h"
-#include "ObjData.h"
+#include<string>
+#include<iostream>
+#include<glew.h>
+#include<freeglut.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -97,5 +96,3 @@ public:
 		glUniformMatrix4fv(glGetUniformLocation(myshader, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 	}
 };
-
-GLuint MyShader::myshader = 0;

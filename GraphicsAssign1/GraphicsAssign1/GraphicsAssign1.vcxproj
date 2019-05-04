@@ -143,7 +143,9 @@
     <ClCompile Include="draw.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="gen_VAO.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="myShader.cpp" />
     <ClCompile Include="Objects.cpp" />
     <ClCompile Include="objloader.cpp" />
     <ClCompile Include="player.cpp" />
@@ -154,6 +156,7 @@
     <ClInclude Include="CommonBetweenGameAndDraw.h" />
     <ClInclude Include="Draw.h" />
     <ClInclude Include="GameManager.h" />
+    <ClInclude Include="gen_VAO.h" />
     <ClInclude Include="MyDataType.h" />
     <ClInclude Include="myShader.h" />
     <ClInclude Include="ObjData.h" />
