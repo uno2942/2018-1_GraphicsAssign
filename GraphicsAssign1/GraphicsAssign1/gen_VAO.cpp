@@ -1,9 +1,10 @@
 #pragma once
 #include"Draw.h"
+#include<soil.h>
 
 void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map);
 MyObjData* GetObj(string path);
-void genPolygonVAO(const Transform* object, map<string, MyObjData*>* ObjData_map, string objPath);
+void genPlayerVAO(const Transform* object, map<string, MyObjData*>* ObjData_map, string objPath);
 
 void genVAO(map< string, int > mappingFromStringToInt, map<string, MyObjData*>* ObjData_map, string ballObjPath, string playerObjPath, string enemyObjPath) { // bind .obj path for each object
 	for (int i = 0; i < objectsTreeVectorForDraw.size(); i++) {
@@ -106,56 +107,71 @@ void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map) {
 
 	string wallName = object->name;
 	MyObjData* drawingObjData = new MyObjData();
-	drawingObjData->VAO = VAO;
-	drawingObjData->triangleSize = indices.size();
+	drawingObjData->numberOfComponent = 1;
+	drawingObjData->VAO.push_back(VAO);
+	drawingObjData->triangleSizes.push_back(indices.size());
 	ObjData_map->insert(map<string, MyObjData*>::value_type(wallName, drawingObjData));
 }
 
-void genPolygonVAO(const Transform * object, map<string, MyObjData*>* ObjData_map, string objPath) // obj 파일 경로와 이를 사용하는 object를 입력받아 VAO_map에 (objPath, objData)의 형식으로 삽입
+void genPlayerVAO(const Transform* object, map<string, MyObjData*>* ObjData_map, string objPath) // obj 파일 경로와 이를 사용하는 object를 입력받아 VAO_map에 (objPath, objData)의 형식으로 삽입
 {
 	MyObjData* drawingObjData;
+	string imagepath[] = { "Image09C37780_09C26A60.png", "Image09C27700_09C272A0.png", "Image09C3F800_09C26E80.png",
+	"Image09CDBA00_09CC3480.png", "Image09CD3980_09CC3060.png" };
+	GLuint texture;
 
-	//load image
 	drawingObjData = GetObj(objPath);
+	for (int j = 0; j < drawingObjData->numberOfComponent; j++)
+	{
+		//shader drawing
+		float* scaledVertexArray = new float[(int)(drawingObjData->vertexSize) * 3]; // 기존 obj data를 load한 vertex 좌표를 object에 입력된 크기로 scale
 
-	//shader drawing
-	float* scaledVertexArray = new float[(int)(drawingObjData->vertexSize) * 3]; // 기존 obj data를 load한 vertex 좌표를 object에 입력된 크기로 scale
-
-	for (int i = 0; i < drawingObjData->vertexSize * 3; i++) {
-		switch (i % 3) {
-		case 0: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().x; break;
-		case 1: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().y; break;
-		case 2: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().z;
+		for (int i = 0; i < drawingObjData->vertexSize * 3; i++) {
+			switch (i % 3) {
+			case 0: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().x; break;
+			case 1: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().y; break;
+			case 2: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().z;
+			}
 		}
+		for (int i = 0; i < drawingObjData->triangleSizes[j]; i++) {
+			drawingObjData->triangleArray[j][i] -= 1;
+		}
+		// starts to use
+
+		// make buffers
+		GLuint VBO, VAO, EBO; //each vertex buffer, vertex array, Elemental buffer
+
+		glGenVertexArrays(1, &VAO);
+		glGenBuffers(1, &VBO);
+		glGenBuffers(1, &EBO);
+
+		glBindVertexArray(VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * drawingObjData->vertexSize * 3, scaledVertexArray, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * drawingObjData->triangleSizes[j], drawingObjData->triangleArray[j], GL_STATIC_DRAW);
+
+		texture = SOIL_load_OGL_texture
+		(
+			imagepath[j].c_str(),
+			SOIL_LOAD_AUTO,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+		);
+		//load image
+
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
+
+		glBindVertexArray(0);
+		drawingObjData->VAO.push_back(VAO);
+		ObjData_map->insert(map<string, MyObjData*>::value_type(object->name, drawingObjData));
+		delete[] scaledVertexArray;
+		cout << "GenPolygon Working" << endl;
 	}
-	for (int i = 0; i < drawingObjData->triangleSize; i++) {
-		drawingObjData->triangleArray[i] -= 1;
-	}
-	// starts to use
 
-	// make buffers
-	GLuint VBO, VAO, EBO; //each vertex buffer, vertex array, Elemental buffer
-
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * drawingObjData->vertexSize * 3, scaledVertexArray, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * drawingObjData->triangleSize, drawingObjData->triangleArray, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(0);
-	drawingObjData->VAO = VAO;
-	ObjData_map->insert(map<string, MyObjData*>::value_type(object->name, drawingObjData));
-	delete[] scaledVertexArray;
-	cout << "GenPolygon Working" << endl;
 }
 
 

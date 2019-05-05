@@ -19,13 +19,13 @@
 bool loadOBJ(const char * path,	ObjData* objData) {
 	printf("Loading OBJ file %s...\n", path);
 
-	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
+	std::vector<std::vector<unsigned int>> vertexIndices, uvIndices, normalIndices;
 	std::vector<glm::vec3> temp_vertices;
 	std::vector<glm::vec2> temp_uvs;
 	std::vector<glm::vec3> temp_normals;
-	std::vector<glm::vec3> temp_triangles;
 	std::vector<glm::vec2> range;// 3 vec2 for x, y, z, vec2.x is min, vec2.y is max
-
+	int index = 0;
+	bool mtlFlag = false;
 
 	FILE * file = fopen(path, "r");
 	if (file == NULL) {
@@ -69,15 +69,29 @@ bool loadOBJ(const char * path,	ObjData* objData) {
 				fclose(file);
 				return false;
 			}
-			vertexIndices.push_back(vertexIndex[0]);
-			vertexIndices.push_back(vertexIndex[1]);
-			vertexIndices.push_back(vertexIndex[2]);
-			uvIndices.push_back(uvIndex[0]);
-			uvIndices.push_back(uvIndex[1]);
-			uvIndices.push_back(uvIndex[2]);
-			normalIndices.push_back(normalIndex[0]);
-			normalIndices.push_back(normalIndex[1]);
-			normalIndices.push_back(normalIndex[2]);
+			vertexIndices[index].push_back(vertexIndex[0]);
+			vertexIndices[index].push_back(vertexIndex[1]);
+			vertexIndices[index].push_back(vertexIndex[2]);
+			uvIndices[index].push_back(uvIndex[0]);
+			uvIndices[index].push_back(uvIndex[1]);
+			uvIndices[index].push_back(uvIndex[2]);
+			normalIndices[index].push_back(normalIndex[0]);
+			normalIndices[index].push_back(normalIndex[1]);
+			normalIndices[index].push_back(normalIndex[2]);
+		}
+		else if (strcmp(lineHeader, "usetml") == 0) {
+			string temp;
+			fscanf(file, "%s\n", &temp);
+			if (!mtlFlag)
+			{
+				mtlFlag = true;
+				index = -1;
+			}
+			objData->name.push_back(temp);
+			vertexIndices.push_back(std::vector<unsigned int>());
+			uvIndices.push_back(std::vector<unsigned int>());
+			normalIndices.push_back(std::vector<unsigned int>());
+			index++;
 		}
 		else {
 			// Probably a comment, eat up the rest of the line
@@ -89,9 +103,11 @@ bool loadOBJ(const char * path,	ObjData* objData) {
 
 	//wanted values: vertex array, triangle aray
 	//fill trangle array
-	objData->triangleArray = (unsigned int*)malloc(sizeof(float)*vertexIndices.size());
-	for (unsigned int i = 0; i < vertexIndices.size(); i++) {
-		objData->triangleArray[i] = vertexIndices[i];
+	for (int i = 0; i < index; i++) {
+		objData->triangleArray.push_back((unsigned int*)malloc(sizeof(float) * (vertexIndices[i]).size()));
+		for (unsigned int j = 0; j < vertexIndices[i].size(); j++) {
+			(objData->triangleArray[i])[j] = (vertexIndices[i])[j];
+		}
 	}
 	objData->vertexArray = (float*)malloc(sizeof(unsigned int)*temp_vertices.size()*3);
 	for (unsigned int i = 0; i < temp_vertices.size(); i++) {
@@ -134,27 +150,36 @@ bool loadOBJ(const char * path,	ObjData* objData) {
 
 
 	objData->vertexSize = temp_vertices.size();
-	objData->triangleSize = vertexIndices.size();
+
+	for (int i = 0; i < index; i++)
+	{
+		(objData->triangleSizes).push_back(vertexIndices[i].size());
+	}
 
 	// For each vertex of each triangle
-	for (unsigned int i = 0; i < vertexIndices.size(); i++) {
+	for (int i = 0; i < index; i++) {
+		objData->vertices.push_back(vector<glm::vec3>());
+		objData->uvs.push_back(vector<glm::vec2>());
+		objData->normals.push_back(vector<glm::vec3>());
+		for (unsigned int j = 0; j < vertexIndices[i].size(); j++) {
 
-		// Get the indices of its attributes
-		unsigned int vertexIndex = vertexIndices[i];
-		unsigned int uvIndex = uvIndices[i];
-		unsigned int normalIndex = normalIndices[i];
+			// Get the indices of its attributes
+			unsigned int vertexIndex = vertexIndices[i][j];
+			unsigned int uvIndex = uvIndices[i][j];
+			unsigned int normalIndex = normalIndices[i][j];
 
-		// Get the attributes thanks to the index
-		glm::vec3 vertex = temp_vertices[vertexIndex - 1];
-		glm::vec2 uv = temp_uvs[uvIndex - 1];
-		glm::vec3 normal = temp_normals[normalIndex - 1];
+			// Get the attributes thanks to the index
+			glm::vec3 vertex = temp_vertices[vertexIndex - 1];
+			glm::vec2 uv = temp_uvs[uvIndex - 1];
+			glm::vec3 normal = temp_normals[normalIndex - 1];
 
-		// Put the attributes in buffers
-		objData->vertices.push_back(vertex);
-		objData->uvs.push_back(uv);
-		objData->normals.push_back(normal);
-
+			// Put the attributes in buffers
+			objData->vertices[i].push_back(vertex);
+			objData->uvs[i].push_back(uv);
+			objData->normals[i].push_back(normal);
+		}
 	}
+	objData->numberOfComponent = index + 1;
 	fclose(file);
 	return true;
 }
