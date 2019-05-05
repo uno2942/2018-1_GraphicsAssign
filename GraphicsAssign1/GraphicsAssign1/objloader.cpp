@@ -137,22 +137,22 @@ bool loadOBJ(const char * path,	ObjData* objData) {
 	objData->triangleSize = vertexIndices.size();
 
 	// For each vertex of each triangle
-	for (unsigned int i = 0; i < vertexIndices.size(); i++) {
+	for (unsigned int i = 0; i < temp_vertices.size(); i++) {
 
 		// Get the indices of its attributes
-		unsigned int vertexIndex = vertexIndices[i];
-		unsigned int uvIndex = uvIndices[i];
-		unsigned int normalIndex = normalIndices[i];
+		//unsigned int vertexIndex = vertexIndices[i];
+		//unsigned int uvIndex = uvIndices[i];
+		//unsigned int normalIndex = normalIndices[i];
 
 		// Get the attributes thanks to the index
-		glm::vec3 vertex = temp_vertices[vertexIndex - 1];
-		glm::vec2 uv = temp_uvs[uvIndex - 1];
-		glm::vec3 normal = temp_normals[normalIndex - 1];
+		//glm::vec3 vertex = temp_vertices[vertexIndex - 1];
+		//glm::vec2 uv = temp_uvs[uvIndex - 1];
+		//glm::vec3 normal = temp_normals[normalIndex - 1];
 
 		// Put the attributes in buffers
-		objData->vertices.push_back(vertex);
-		objData->uvs.push_back(uv);
-		objData->normals.push_back(normal);
+		objData->vertices.push_back(temp_vertices[i]);
+		objData->uvs.push_back(temp_uvs[i]);
+		objData->normals.push_back(temp_normals[i]);
 
 	}
 	fclose(file);

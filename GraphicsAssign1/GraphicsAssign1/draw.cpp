@@ -104,7 +104,6 @@ void display()
 	MyShader::setVec3("lightPos", sunLightPos);
 	MyShader::setVec3("lightColor", sunLightColor);
 
-	MyShader::setVec4("diffuse", glm::vec4(0, 0, 0, 1));
 	//set specular
 	MyShader::setVec4("specular", glm::vec4(0, 0, 0, 1));
 

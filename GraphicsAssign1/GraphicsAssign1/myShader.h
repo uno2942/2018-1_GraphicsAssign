@@ -43,7 +43,7 @@ public:
 				"uniform vec4 specular;\n"
 				"void main()\n"
 				"{\n"
-				"	vec3 lightDir = vec3(1, 0, 0);\n"
+				"	vec3 lightDir = vec3(0, 0, 1);\n"
 				"	vec3 norm = normalize(normal);\n"
 				"	float diff = max(dot(norm, lightDir), 0.0);\n;"
 				"   FragColor = (ambient + vec4(diff * lightColor, 1.0) + specular) * myColor;\n"
