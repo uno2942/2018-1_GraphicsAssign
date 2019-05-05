@@ -1,5 +1,6 @@
 ﻿#include"Draw.h"
 #define PI 3.1415926535
+#define DAY_TICKS 100 // 몇 번의 display마다 밤낮이 바뀌는가
 
 using namespace std;
 using namespace glm;
@@ -15,7 +16,13 @@ const vec4 backgroundColor = vec4(0.2f, 0.3f, 0.3f, 1.0f);
 const vec4 polygonInnerColor = vec4(0.5, 0.5, 0.5, 1);
 const vec4 lineColor = vec4(1, 1, 1, 1);
 
+static unsigned int calledTicks = 0; //display 함수가 호출된 횟수
+
 void drawResult();
+const unsigned int getTime()//책임 분담: gameManager로 넘어갈때 대비해서 만듦
+{
+	return calledTicks;
+}
 void drawObject(Object* unit, MyObjData* myObjData);
 void drawScore(int playerScore, int enemyScore);
 void myReshape(int width, int height)
@@ -67,6 +74,7 @@ void PrepareDrawing() {
 void display()
 {
 	static bool isInited = false;
+	calledTicks++;
 
 	if (!isInited) {
 		PrepareDrawingAtFirstTime();
@@ -99,10 +107,25 @@ void display()
 	float amb = 0.0;
 	MyShader::setVec4("ambient", glm::vec4(amb, amb, amb, 1));
 	//set diffuse
-	glm::vec3 sunLightPos = glm::vec3(0, 0, 5000);
-	glm::vec3 sunLightColor = glm::vec3(1, 1, 1);
-	MyShader::setVec3("lightPos", sunLightPos);
-	MyShader::setVec3("lightColor", sunLightColor);
+	float diff = 0.8;
+	
+	glm::vec3 sunLightColor = glm::vec3(1, 1, 1) * diff;
+	glm::vec3 moonLightColor = glm::vec3(0.8078, 0.8078, 0.9647) * diff;  //CECEF6
+	
+	glm::vec3 orbDir;
+	
+	
+	if ((int)(getTime() / DAY_TICKS) % 2 == 0) {
+		MyShader::setVec3("lightColor", sunLightColor);
+		orbDir = glm::vec3(cos(PI * getTime() / DAY_TICKS), sin(PI * getTime() / DAY_TICKS), 0);
+	}
+	else {
+		MyShader::setVec3("lightColor", moonLightColor);
+		orbDir = glm::vec3(cos(PI * (getTime() - DAY_TICKS ) / DAY_TICKS), sin(PI * (getTime() - DAY_TICKS) / DAY_TICKS), 0);
+	}
+
+	MyShader::setVec3("orbDir", orbDir);
+	
 
 	//set specular
 	MyShader::setVec4("specular", glm::vec4(0, 0, 0, 1));
