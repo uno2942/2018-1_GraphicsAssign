@@ -15,6 +15,7 @@ public:
 		{
 			const char* vertexShaderSource = "#version 460 core\n"
 				"layout (location = 0) in vec3 aPos;\n"
+				"layout (location = 1) in vec3 aNormal;\n"
 				"uniform mat4 View;\n"
 				"uniform mat4 Projection;\n"
 				"uniform mat4 Model;\n"

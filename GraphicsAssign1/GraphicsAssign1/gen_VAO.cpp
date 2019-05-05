@@ -119,14 +119,16 @@ void genPolygonVAO(const Transform * object, map<string, MyObjData*>* ObjData_ma
 	drawingObjData = GetObj(objPath);
 
 	//shader drawing
-	float* scaledVertexArray = new float[(int)(drawingObjData->vertexSize) * 3]; // 기존 obj data를 load한 vertex 좌표를 object에 입력된 크기로 scale
-
-	for (int i = 0; i < drawingObjData->vertexSize * 3; i++) {
-		switch (i % 3) {
-		case 0: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().x; break;
-		case 1: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().y; break;
-		case 2: scaledVertexArray[i] = drawingObjData->vertexArray[i] / drawingObjData->width3D[i % 3] * object->GetSize().z;
-		}
+	float* scaledVertexArray = new float[(int)(drawingObjData->vertexSize) * 6]; // 기존 obj data를 load한 vertex 좌표를 object에 입력된 크기로 scale
+	
+	for (int i = 0; i < drawingObjData->vertexSize; i++) {
+		int j = 0;
+		scaledVertexArray[i * 6 + j] = drawingObjData->vertexArray[i*3] / drawingObjData->width3D[j] * object->GetSize().x; j++;
+		scaledVertexArray[i * 6 + j] = drawingObjData->vertexArray[i*3+1] / drawingObjData->width3D[j] * object->GetSize().y; j++;
+		scaledVertexArray[i * 6 + j] = drawingObjData->vertexArray[i*3+2] / drawingObjData->width3D[j] * object->GetSize().z; j++;
+		scaledVertexArray[i * 6 + j] = drawingObjData->normals[i].x; j++;
+		scaledVertexArray[i * 6 + j] = drawingObjData->normals[i].y; j++;
+		scaledVertexArray[i * 6 + j] = drawingObjData->normals[i].z;
 	}
 	for (int i = 0; i < drawingObjData->triangleSize; i++) {
 		drawingObjData->triangleArray[i] -= 1;
@@ -143,19 +145,21 @@ void genPolygonVAO(const Transform * object, map<string, MyObjData*>* ObjData_ma
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * drawingObjData->vertexSize * 3, scaledVertexArray, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * drawingObjData->vertexSize * 6, scaledVertexArray, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * drawingObjData->triangleSize, drawingObjData->triangleArray, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)) );
+	glEnableVertexAttribArray(1);
 
 	glBindVertexArray(0);
 	drawingObjData->VAO = VAO;
 	ObjData_map->insert(map<string, MyObjData*>::value_type(object->name, drawingObjData));
 	delete[] scaledVertexArray;
-	cout << "GenPolygon Working" << endl;
+	std::cout << "GenPolygon Working" << endl;
 }
 
 
