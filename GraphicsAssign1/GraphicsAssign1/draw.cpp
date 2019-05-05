@@ -93,6 +93,18 @@ void display()
 	MyShader::setMat4("Model", glm::identity<glm::mat4>());
 
 	
+	/*Light Setting*/
+
+	//set ambient
+	float amb = 0.3;
+	MyShader::setVec4("ambient", glm::vec4(amb, amb, amb, 1));
+	//set diffuse
+	MyShader::setVec4("diffuse", glm::vec4(0, 0, 0, 1));
+	//set specular
+	MyShader::setVec4("specular", glm::vec4(0, 0, 0, 1));
+
+
+
 	switch (renMode) {
 	case NO_HIDDEN_LINE_REMOVAL:
 	{glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);

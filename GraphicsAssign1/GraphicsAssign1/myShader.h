@@ -26,9 +26,12 @@ public:
 			const char* fragmentShaderSource = "#version 460 core\n"
 				"out vec4 FragColor;\n"
 				"uniform vec4 myColor;\n"
+				"uniform vec4 ambient;\n"
+				"uniform vec4 diffuse;\n"
+				"uniform vec4 specular;\n"
 				"void main()\n"
 				"{\n"
-				"   FragColor = myColor;\n"
+				"   FragColor = (ambient + diffuse + specular) * myColor;\n"
 				"}\n\0";
 			//code copy from here
 
