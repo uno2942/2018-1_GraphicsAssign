@@ -38,6 +38,8 @@ public:
 				"uniform vec4 myColor;\n"
 				"uniform vec3 orbDir;\n"
 				"uniform vec3 lightColor;\n"
+				"uniform vec3 ballLightPos;\n"
+				"uniform vec3 ballLightColor;\n"
 
 				"uniform vec4 ambient;\n"
 				"uniform vec4 specular;\n"
@@ -45,8 +47,13 @@ public:
 				"{\n"
 				"	vec3 lightDir = orbDir;\n"
 				"	vec3 norm = normalize(normal);\n"
-				"	float diff = max(dot(norm, lightDir), 0.0);\n;"
-				"   FragColor = (ambient + vec4(diff * lightColor, 1.0) + specular) * myColor;\n"
+				"	float diff = max(dot(norm, lightDir), 0.0);\n"
+
+				"	vec3 ballLightDir = normalize(worldPos - ballLightPos);\n"
+				"	float distance = length(worldPos - ballLightPos);\n"
+				"	float diffBall = max(dot(norm, -ballLightDir), 0.0) / (1 + 0.01 * distance);\n"
+
+				"   FragColor = (ambient + vec4(diff * lightColor, 1.0) + vec4(diffBall * ballLightColor, 1.0)+ specular) * myColor;\n"
 				"}\n\0";
 			//code copy from here
 

@@ -107,13 +107,12 @@ void display()
 	float amb = 0.0;
 	MyShader::setVec4("ambient", glm::vec4(amb, amb, amb, 1));
 	//set diffuse
-	float diff = 0.8;
+	float diff = 0.5;
 	
+	//for sun/moonlight
 	glm::vec3 sunLightColor = glm::vec3(1, 1, 1) * diff;
 	glm::vec3 moonLightColor = glm::vec3(0.8078, 0.8078, 0.9647) * diff;  //CECEF6
-	
 	glm::vec3 orbDir;
-	
 	
 	if ((int)(getTime() / DAY_TICKS) % 2 == 0) {
 		MyShader::setVec3("lightColor", sunLightColor);
@@ -123,9 +122,11 @@ void display()
 		MyShader::setVec3("lightColor", moonLightColor);
 		orbDir = glm::vec3(cos(PI * (getTime() - DAY_TICKS ) / DAY_TICKS), sin(PI * (getTime() - DAY_TICKS) / DAY_TICKS), 0);
 	}
-
 	MyShader::setVec3("orbDir", orbDir);
-	
+
+	//for ballLight
+	MyShader::setVec3("ballLightPos", glm::vec3(GameManager::getInstance().ball->position.x, GameManager::getInstance().ball->position.y, GameManager::getInstance().ball->position.z) + glm::vec3(200, 200, 200));
+	MyShader::setVec3("ballLightColor", glm::vec3(1, 0, 0));
 
 	//set specular
 	MyShader::setVec4("specular", glm::vec4(0, 0, 0, 1));
