@@ -19,20 +19,34 @@ public:
 				"uniform mat4 View;\n"
 				"uniform mat4 Projection;\n"
 				"uniform mat4 Model;\n"
+				"out vec3 worldPos;\n"
+				"out vec3 normal;\n"
 				"void main()\n"
 				"{\n"
 				"   gl_Position = (Projection * View * Model) * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+				"	vec4 worldPos4 = Model * vec4(aPos.x, aPos.y, aPos.z, 1.0);"
+				"	worldPos = vec3(worldPos4.x, worldPos4.y, worldPos4.z) / worldPos4.w;\n"
+				"	normal = aNormal;\n"
 				"}\0";
 
 			const char* fragmentShaderSource = "#version 460 core\n"
+				"in vec3 worldPos;\n"
+				"in vec3 normal;\n"
+
 				"out vec4 FragColor;\n"
+				
 				"uniform vec4 myColor;\n"
+				"uniform vec3 lightPos;\n"
+				"uniform vec3 lightColor;\n"
+
 				"uniform vec4 ambient;\n"
-				"uniform vec4 diffuse;\n"
 				"uniform vec4 specular;\n"
 				"void main()\n"
 				"{\n"
-				"   FragColor = (ambient + diffuse + specular) * myColor;\n"
+				"	vec3 lightDir = vec3(1, 0, 0);\n"
+				"	vec3 norm = normalize(normal);\n"
+				"	float diff = max(dot(norm, lightDir), 0.0);\n;"
+				"   FragColor = (ambient + vec4(diff * lightColor, 1.0) + specular) * myColor;\n"
 				"}\n\0";
 			//code copy from here
 

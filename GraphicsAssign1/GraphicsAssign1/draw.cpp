@@ -96,9 +96,14 @@ void display()
 	/*Light Setting*/
 
 	//set ambient
-	float amb = 0.3;
+	float amb = 0.0;
 	MyShader::setVec4("ambient", glm::vec4(amb, amb, amb, 1));
 	//set diffuse
+	glm::vec3 sunLightPos = glm::vec3(0, 0, 5000);
+	glm::vec3 sunLightColor = glm::vec3(1, 1, 1);
+	MyShader::setVec3("lightPos", sunLightPos);
+	MyShader::setVec3("lightColor", sunLightColor);
+
 	MyShader::setVec4("diffuse", glm::vec4(0, 0, 0, 1));
 	//set specular
 	MyShader::setVec4("specular", glm::vec4(0, 0, 0, 1));
