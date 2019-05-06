@@ -95,4 +95,8 @@ public:
 	{
 		glUniformMatrix4fv(glGetUniformLocation(myshader, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 	}
+	static void setTexture(const std::string& name, const GLuint n)
+	{
+		glUniform1i(glGetUniformLocation(myshader, name.c_str()), n);
+	}
 };

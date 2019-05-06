@@ -66,6 +66,9 @@
     <ClCompile Include="myShader.cpp">
       <Filter>소스 파일\DrawPart</Filter>
     </ClCompile>
+    <ClCompile Include="bmpddsloader.cpp">
+      <Filter>소스 파일\DrawPart</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameManager.h">
@@ -99,6 +102,9 @@
       <Filter>헤더 파일\DrawPartHeader</Filter>
     </ClInclude>
     <ClInclude Include="gen_VAO.h">
+      <Filter>헤더 파일\DrawPartHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="bmpddsloader.h">
       <Filter>헤더 파일\DrawPartHeader</Filter>
     </ClInclude>
   </ItemGroup>

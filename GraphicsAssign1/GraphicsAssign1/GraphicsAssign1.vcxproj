@@ -137,6 +137,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ball.cpp" />
+    <ClCompile Include="bmpddsloader.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="CommonBetweenGameAndDraw.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bmpddsloader.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CommonBetweenGameAndDraw.h" />
     <ClInclude Include="Draw.h" />

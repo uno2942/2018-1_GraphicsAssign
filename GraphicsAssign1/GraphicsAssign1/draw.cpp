@@ -183,7 +183,7 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 	unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
 	MyShader::setMat4("Model", rotate(glm::translate(trans, unitpos), (float)unit->rotation, rotationAxis));
 	glBindVertexArray(myObjData->VAO);
-	glDrawElements(GL_TRIANGLES, myObjData->triangleSize, GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, myObjData->Size);
 	glBindVertexArray(0);
 }
 /*

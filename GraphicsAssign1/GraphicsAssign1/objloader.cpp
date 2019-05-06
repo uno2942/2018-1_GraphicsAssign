@@ -89,16 +89,8 @@ bool loadOBJ(const char * path,	ObjData* objData) {
 
 	//wanted values: vertex array, triangle aray
 	//fill trangle array
-	objData->triangleArray = (unsigned int*)malloc(sizeof(float)*vertexIndices.size());
-	for (unsigned int i = 0; i < vertexIndices.size(); i++) {
-		objData->triangleArray[i] = vertexIndices[i];
-	}
-	objData->vertexArray = (float*)malloc(sizeof(unsigned int)*temp_vertices.size()*3);
-	for (unsigned int i = 0; i < temp_vertices.size(); i++) {
-		objData->vertexArray[3*i] = temp_vertices[i][0];
-		objData->vertexArray[3*i+1] = temp_vertices[i][1];
-		objData->vertexArray[3*i+2] = temp_vertices[i][2];
-	}
+
+
 	glm::vec2 tempV;
 	tempV.x = tempV.y = temp_vertices[0][0];
 	range.push_back(tempV);
@@ -128,13 +120,9 @@ bool loadOBJ(const char * path,	ObjData* objData) {
 	for (unsigned int i = 0; i < temp_vertices.size(); i++) {
 
 		for (int j = 0; j < 3; j++) {
-			objData->vertexArray[3 * i + j] = temp_vertices[i][j] - center[j];
+			temp_vertices[i][j] -= center[j];
 		}
 	}
-
-
-	objData->vertexSize = temp_vertices.size();
-	objData->triangleSize = vertexIndices.size();
 
 	// For each vertex of each triangle
 	for (unsigned int i = 0; i < vertexIndices.size(); i++) {
