@@ -1,4 +1,3 @@
-#pragma once
 #include"Draw.h"
 
 void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map);
@@ -9,7 +8,6 @@ void genVAO(map< string, int > mappingFromStringToInt, map<string, MyObjData*>* 
 	for (int i = 0; i < objectsTreeVectorForDraw.size(); i++) {
 		switch (mappingFromStringToInt[objectsTreeVectorForDraw[i].name])
 		{
-			objectsTreeVectorForDraw[i].root->data;
 		case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
 			genWallVAO(objectsTreeVectorForDraw[i].root->data->object, ObjData_map);
 			break;
@@ -39,22 +37,45 @@ void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map) {
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
+
 	vector<float> vertices;
 	vector<unsigned int> indices;
-
-	if (object->xlen == 0) // LEFT and RIGHT wall
+	vector<float> realdata;
+	if (object->xlen == 0) // LEFT wall
 	{
 		for (int k = 0; k < 10; k++)
 		{
 			for (int j = 0; j < 10; j++)
 			{
-				vertices.push_back(0);
+				vertices.push_back(0);//vertices
 				vertices.push_back((object->GetCurrentPosition().y - object->ylen / 2) + object->ylen * j / 9.0);
 				vertices.push_back((object->GetCurrentPosition().z - object->zlen / 2) + object->zlen * k / 9.0);
+				vertices.push_back(1);//normals
+				vertices.push_back(0);
+				vertices.push_back(0);
+				vertices.push_back(k / 9.);//uvs
+				vertices.push_back(j / 9.);
 			}
 		}
 	}
-	else if (object->zlen == 0) // FRONT and BACK wall
+	else if (object->xlen == WORLD_COORD_MAP_XLEN) //RIGHT wall
+	{
+		for (int k = 0; k < 10; k++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				vertices.push_back(WORLD_COORD_MAP_XLEN);//vertices
+				vertices.push_back((object->GetCurrentPosition().y - object->ylen / 2) + object->ylen * j / 9.0);
+				vertices.push_back((object->GetCurrentPosition().z - object->zlen / 2) + object->zlen * k / 9.0);
+				vertices.push_back(-1);//normals
+				vertices.push_back(0);
+				vertices.push_back(0);
+				vertices.push_back(k / 9.);//uvs
+				vertices.push_back(j / 9.);
+			}
+		}
+	}
+	else if (object->zlen == 0) // FRONT wall
 	{
 		for (int k = 0; k < 10; k++)
 		{
@@ -63,6 +84,28 @@ void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map) {
 				vertices.push_back((object->GetCurrentPosition().x - object->xlen / 2) + object->xlen * j / 9.0);
 				vertices.push_back((object->GetCurrentPosition().y - object->ylen / 2) + object->ylen * k / 9.0);
 				vertices.push_back(0);
+				vertices.push_back(0);//normals
+				vertices.push_back(0);
+				vertices.push_back(1);
+				vertices.push_back(k / 9.);//uvs
+				vertices.push_back(j / 9.);
+			}
+		}
+	}
+	else if (object->zlen == WORLD_COORD_MAP_ZLEN) // BACK wall
+	{
+		for (int k = 0; k < 10; k++)
+		{
+			for (int j = 0; j < 10; j++)
+			{
+				vertices.push_back((object->GetCurrentPosition().x - object->xlen / 2) + object->xlen * j / 9.0);
+				vertices.push_back((object->GetCurrentPosition().y - object->ylen / 2) + object->ylen * k / 9.0);
+				vertices.push_back(0);
+				vertices.push_back(0);//normals
+				vertices.push_back(0);
+				vertices.push_back(-1);
+				vertices.push_back(k / 9.);//uvs
+				vertices.push_back(j / 9.);
 			}
 		}
 	}
@@ -75,6 +118,11 @@ void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map) {
 				vertices.push_back((object->GetCurrentPosition().x - object->xlen / 2) + object->xlen * k / 9.0);
 				vertices.push_back(0);
 				vertices.push_back((object->GetCurrentPosition().z - object->zlen / 2) + object->zlen * j / 9.0);
+				vertices.push_back(0);//normals
+				vertices.push_back(1);
+				vertices.push_back(0);
+				vertices.push_back(k / 9.);//uvs
+				vertices.push_back(j / 9.);
 			}
 		}
 	}
@@ -92,22 +140,35 @@ void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map) {
 			indices.push_back(10 * j + k);
 		}
 	}
+
+	for (int i = 0; i < indices.size(); i++) {
+		realdata.push_back(vertices[8 * indices[i]]);
+		realdata.push_back(vertices[8 * indices[i] + 1]);
+		realdata.push_back(vertices[8 * indices[i] + 2]);
+		realdata.push_back(vertices[8 * indices[i] + 3]);
+		realdata.push_back(vertices[8 * indices[i] + 4]);
+		realdata.push_back(vertices[8 * indices[i] + 5]);
+		realdata.push_back(vertices[8 * indices[i] + 6]);
+		realdata.push_back(vertices[8 * indices[i] + 7]);
+	}
+
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &vertices[0], GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glBufferData(GL_ARRAY_BUFFER, realdata.size() * sizeof(float), &realdata[0], GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);//vertices
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));//normals
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));//uvs
+	glEnableVertexAttribArray(2);
+
 	glBindVertexArray(0);
 
 	string wallName = object->name;
 	MyObjData* drawingObjData = new MyObjData();
 	drawingObjData->VAO = VAO;
-	drawingObjData->triangleSize = indices.size();
+	drawingObjData->Size = indices.size();
 	ObjData_map->insert(map<string, MyObjData*>::value_type(wallName, drawingObjData));
 }
 
@@ -123,9 +184,9 @@ void genPolygonVAO(const Transform * object, map<string, MyObjData*>* ObjData_ma
 	float* myarray = new float[arraysize];
 
 	for (int i = 0; i < drawingObjData->vertices.size(); i++) {
-		myarray[8 * i] = drawingObjData->vertices[i].x * object->scaleFactor;
-		myarray[8 * i + 1] = drawingObjData->vertices[i].y * object->scaleFactor;
-		myarray[8 * i + 2] = drawingObjData->vertices[i].z * object->scaleFactor;
+		myarray[8 * i] = drawingObjData->vertices[i].x; //* object->scaleFactor;
+		myarray[8 * i + 1] = drawingObjData->vertices[i].y;
+		myarray[8 * i + 2] = drawingObjData->vertices[i].z;
 		myarray[8 * i + 3] = drawingObjData->normals[i].x;
 		myarray[8 * i + 4] = drawingObjData->normals[i].y;
 		myarray[8 * i + 5] = drawingObjData->normals[i].z;
@@ -144,11 +205,11 @@ void genPolygonVAO(const Transform * object, map<string, MyObjData*>* ObjData_ma
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * arraysize, myarray, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);//vertices
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);//vertices
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);//normals
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));//normals
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);//uvs
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));//uvs
 	glEnableVertexAttribArray(2);
 
 	glBindVertexArray(0);

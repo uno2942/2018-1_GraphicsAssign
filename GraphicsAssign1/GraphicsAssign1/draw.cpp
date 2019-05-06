@@ -1,15 +1,11 @@
 ﻿#include"Draw.h"
-#define PI 3.1415926535
+
 
 using namespace std;
 using namespace glm;
 static map< string, int > mappingFromStringToInt;
 static map< string, Object* > mappingFromStringToUnit;
 static map<string, MyObjData*> ObjData_map;
-
-static string ballObjPath = "sphere.obj";
-static string playerObjPath = "Type 2020 Miku.obj";
-static string enemyObjPath = "Type 2020 Miku.obj";
 
 const vec4 backgroundColor = vec4(0.2f, 0.3f, 0.3f, 1.0f);
 const vec4 polygonInnerColor = vec4(0.5, 0.5, 0.5, 1);
@@ -53,7 +49,23 @@ void PrepareDrawingAtFirstTime() {
 	mappingFromStringToUnit["player"] = GameManager::getInstance().player;
 	mappingFromStringToUnit["enemy"] = GameManager::getInstance().enemy;
 
+	string ballObjPath = "sphere.obj";
+	string playerObjPath = "12221_Cat_v1_l3.obj";
+	string enemyObjPath = "12221_Cat_v1_l3.obj";
+	vector<string> WallTexturePath;
+	vector<string> PlayerTexturePath;
+
+	WallTexturePath.push_back("normal.bmp");
+	WallTexturePath.push_back("diffuse.DDS");
+	WallTexturePath.push_back("specular.DDS");
+
+	PlayerTexturePath.push_back("Cat_diffuse.bmp");
+
 	genVAO(mappingFromStringToInt, &ObjData_map, ballObjPath, playerObjPath, enemyObjPath);
+	addTexture(mappingFromStringToInt, &ObjData_map, WallTexturePath, PlayerTexturePath);
+	MyShader::setInt("diffuseTexture", 0);
+	MyShader::setInt("specularTexture", 1);
+	MyShader::setInt("normalTexture", 2);
 	myCamera::InitiateCamera(GameManager::getInstance().player);
 }
 
@@ -142,6 +154,7 @@ void drawResult() {
 	else
 		str = "ENEMY WIN";
 
+	MyShader::setInt("numOfTexture", 0);
 	glRasterPos2d(0, 0);
 	for (int n = 0; n < str.size(); ++n) {
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[n]);
@@ -164,6 +177,8 @@ void drawScore(int playerScore, int enemyScore) {
 
 	MyShader::setMat4("Projection", Projection);
 	string str = to_string(playerScore);
+
+	MyShader::setInt("numOfTexture", 0);
 	glRasterPos3d(-0.09, 0.075, 0.9);
 	for (int n = 0; n < str.size(); ++n) {
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[n]);
@@ -182,9 +197,24 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 	vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
 	unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
 	MyShader::setMat4("Model", rotate(glm::translate(trans, unitpos), (float)unit->rotation, rotationAxis));
+
+	MyShader::setInt("numOfTexture", (*myObjData).tex.size());
+	
+	for (int i = 0; i < (*myObjData).tex.size(); i++)
+	{
+		if(i==0)
+			glActiveTexture(GL_TEXTURE0);
+		else if(i==1)
+			glActiveTexture(GL_TEXTURE1);
+		else
+			glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, (*myObjData).tex[i]);
+	}
+	
 	glBindVertexArray(myObjData->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, myObjData->Size);
 	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 /*
 void representScore(int score, glm::vec2 pos)

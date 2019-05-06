@@ -15,17 +15,25 @@ public:
 		{
 			const char* vertexShaderSource = "#version 460 core\n"
 				"layout (location = 0) in vec3 aPos;\n"
+				"layout (location = 1) in vec3 aNormal;\n"
+				"layout (location = 2) in vec2 aTexCoord;\n"
 				"uniform mat4 View;\n"
 				"uniform mat4 Projection;\n"
 				"uniform mat4 Model;\n"
+				"out vec2 TexCoord;\n"
 				"void main()\n"
 				"{\n"
 				"   gl_Position = (Projection * View * Model) * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+				"	TexCoord = aTexCoord;\n"
 				"}\0";
 
 			const char* fragmentShaderSource = "#version 460 core\n"
 				"out vec4 FragColor;\n"
 				"uniform vec4 myColor;\n"
+				"uniform int numOfTexture;\n"
+				"uniform sampler2D diffuseTexture;\n"
+				"uniform sampler2D specularTexture;\n"
+				"uniform sampler2D normalTexture;\n"
 				"void main()\n"
 				"{\n"
 				"   FragColor = myColor;\n"
@@ -69,6 +77,10 @@ public:
 		return myshader;
 	}
 
+	static void setInt(const std::string& name, const GLuint value) //https://learnopengl.com/code_viewer_gh.php?code=includes/learnopengl/shader.h
+	{
+		glUniform1i(glGetUniformLocation(myshader, name.c_str()), value);
+	}
 	static void setVec3(const std::string& name, const glm::vec3& value) //https://learnopengl.com/code_viewer_gh.php?code=includes/learnopengl/shader.h
 	{
 		glUniform3fv(glGetUniformLocation(myshader, name.c_str()), 1, &value[0]);

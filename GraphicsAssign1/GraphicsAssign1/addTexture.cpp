@@ -1,0 +1,33 @@
+#include"bmpddsloader.h"
+#include"Draw.h"
+
+void AddWallTexture(const vector<string> filePaths, MyObjData* ObjData);
+void AddPolygonTexture(const vector<string> filePaths, MyObjData* ObjData);
+
+void addTexture(map< string, int > mappingFromStringToInt, map<string, MyObjData*>* ObjData_map, const vector<string> WallTexturePaths, const vector<string> PlayerTexturePaths) { // bind .obj path for each object
+	for (int i = 0; i < objectsTreeVectorForDraw.size(); i++) {
+		switch (mappingFromStringToInt[objectsTreeVectorForDraw[i].name])
+		{
+		case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
+			AddWallTexture(WallTexturePaths, (*ObjData_map)[objectsTreeVectorForDraw[i].name]);
+			break;
+		case BALL:  break;
+		case PLAYER: AddPolygonTexture(PlayerTexturePaths, (*ObjData_map)[objectsTreeVectorForDraw[i].name]); break;
+		case ENEMY: (*ObjData_map)[objectsTreeVectorForDraw[i].name]->tex = (*ObjData_map)["player"]->tex; break;
+		default: break;
+		}
+	}
+}
+
+void AddWallTexture(const vector<string> filePaths, MyObjData* ObjData) {
+	GLuint tex1 = loadBMP_custom("normal.bmp"); //mipmap ±¦ÂúÀºÁö È®ÀÎ ÇÊ¿ä
+	ObjData->tex.push_back(tex1);
+	GLuint tex2 = loadDDS("diffuse.DDS");
+	ObjData->tex.push_back(tex2);
+	GLuint tex3 = loadDDS("diffuse.DDS");
+	ObjData->tex.push_back(tex3);
+}
+void AddPolygonTexture(const vector<string> filePaths, MyObjData* ObjData) {
+	GLuint tex1 = loadBMP_custom("Cat_diffuse.bmp");
+	ObjData->tex.push_back(tex1);
+}

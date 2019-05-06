@@ -18,5 +18,5 @@ public:
 class MyObjData : public ObjData {
 public:
 	GLuint VAO;
-	GLuint tex;
+	std::vector<GLuint> tex;
 };
