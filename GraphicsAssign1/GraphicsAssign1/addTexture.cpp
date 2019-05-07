@@ -20,11 +20,11 @@ void addTexture(map< string, int > mappingFromStringToInt, map<string, MyObjData
 }
 
 void AddWallTexture(const vector<string> filePaths, MyObjData* ObjData) {
-	GLuint tex1 = loadBMP_custom("normal.bmp"); //mipmap ±¦ÂúÀºÁö È®ÀÎ ÇÊ¿ä
+	GLuint tex1 = loadDDS("diffuse.DDS"); //mipmap ±¦ÂúÀºÁö È®ÀÎ ÇÊ¿ä
 	ObjData->tex.push_back(tex1);
-	GLuint tex2 = loadDDS("diffuse.DDS");
+	GLuint tex2 = loadDDS("specular.DDS");
 	ObjData->tex.push_back(tex2);
-	GLuint tex3 = loadDDS("diffuse.DDS");
+	GLuint tex3 = loadBMP_custom("normal.bmp");
 	ObjData->tex.push_back(tex3);
 }
 void AddPolygonTexture(const vector<string> filePaths, MyObjData* ObjData) {

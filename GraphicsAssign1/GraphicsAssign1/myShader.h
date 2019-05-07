@@ -29,6 +29,7 @@ public:
 
 			const char* fragmentShaderSource = "#version 460 core\n"
 				"out vec4 FragColor;\n"
+				"in vec2 TexCoord;\n"
 				"uniform vec4 myColor;\n"
 				"uniform int numOfTexture;\n"
 				"uniform sampler2D diffuseTexture;\n"
@@ -36,7 +37,10 @@ public:
 				"uniform sampler2D normalTexture;\n"
 				"void main()\n"
 				"{\n"
-				"   FragColor = myColor;\n"
+				"   if(numOfTexture>0)\n"
+				"		FragColor = texture(diffuseTexture, TexCoord);\n"
+				"   else\n"
+				"		FragColor = myColor;\n"
 				"}\n\0";
 			//code copy from here
 

@@ -92,14 +92,14 @@ void display()
 
 	PrepareDrawing();	
 	//=============================== Draw Start
-	
+	/*
 	if (GameManager::getInstance().WhoFinallyWin != 0)
 	{
 		drawResult();
 		return;
 	}
 	drawScore(GameManager::getInstance().myScore, GameManager::getInstance().enemyScore);
-
+	*/
 
 	myCamera::SetModelAndViewMatrix(camMode);
 	MyShader::setMat4("Model", glm::identity<glm::mat4>());
@@ -115,12 +115,14 @@ void display()
 	}
 	case HIDDEN_LINE_REMOVAL:
 	{
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		MyShader::setVec4("myColor", lineColor);
 
 		for (map<string, MyObjData*>::iterator iter = ObjData_map.begin(); iter != ObjData_map.end(); ++iter) {
 			drawObject(mappingFromStringToUnit[(*iter).first], ObjData_map[(*iter).first]);
 		}
+		/*
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(1.0, 1.0);
@@ -131,13 +133,14 @@ void display()
 			drawObject(mappingFromStringToUnit[(*iter).first], ObjData_map[(*iter).first]);
 		}
 		glDisable(GL_POLYGON_OFFSET_FILL);
+		*/
 		break;
 	}
 	}
 	glutSwapBuffers();
 }
 
-void drawResult() {
+void drawResult() {/*
 	MyShader::setMat4("Model", glm::scale(glm::mat4(1.0f), glm::vec3(5, 5, 5)));
 	glm::vec3 cameraPos = glm::vec3(0, 0, 1);
 	glm::vec3 cameraTarget = glm::vec3(0, 0, 0);
@@ -159,12 +162,12 @@ void drawResult() {
 	for (int n = 0; n < str.size(); ++n) {
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[n]);
 	}
-	glutSwapBuffers();
+	glutSwapBuffers();*/
 	return;
 }
 
 void drawScore(int playerScore, int enemyScore) {
-
+	/*
 	MyShader::setVec4("myColor", glm::vec4(0, 0, 0, 1));
 	MyShader::setMat4("Model", glm::mat4(1.0f));
 	glm::vec3 cameraPos = glm::vec3(0, 0, 1);
@@ -187,7 +190,7 @@ void drawScore(int playerScore, int enemyScore) {
 	glRasterPos3d(0.09, 0.075, 0.9);
 	for (int n = 0; n < str2.size(); ++n) {
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str2[n]);
-	}
+	}*/
 }
 
 void drawObject(Object* unit, MyObjData* myObjData) {

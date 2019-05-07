@@ -41,83 +41,83 @@ void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map) {
 	vector<float> vertices;
 	vector<unsigned int> indices;
 	vector<float> realdata;
-	if (object->xlen == 0) // LEFT wall
+	if (object->name == "leftwall") // LEFT wall
 	{
 		for (int k = 0; k < 10; k++)
 		{
 			for (int j = 0; j < 10; j++)
 			{
 				vertices.push_back(0);//vertices
-				vertices.push_back((object->GetCurrentPosition().y - object->ylen / 2) + object->ylen * j / 9.0);
-				vertices.push_back((object->GetCurrentPosition().z - object->zlen / 2) + object->zlen * k / 9.0);
+				vertices.push_back((- object->ylen / 2) + object->ylen * j / 9.0);
+				vertices.push_back((- object->zlen / 2) + object->zlen * k / 9.0);
 				vertices.push_back(1);//normals
 				vertices.push_back(0);
 				vertices.push_back(0);
 				vertices.push_back(k / 9.);//uvs
-				vertices.push_back(j / 9.);
+				vertices.push_back(- j / 9.);
 			}
 		}
 	}
-	else if (object->xlen == WORLD_COORD_MAP_XLEN) //RIGHT wall
+	else if (object->name == "rightwall") //RIGHT wall
 	{
 		for (int k = 0; k < 10; k++)
 		{
 			for (int j = 0; j < 10; j++)
 			{
-				vertices.push_back(WORLD_COORD_MAP_XLEN);//vertices
-				vertices.push_back((object->GetCurrentPosition().y - object->ylen / 2) + object->ylen * j / 9.0);
-				vertices.push_back((object->GetCurrentPosition().z - object->zlen / 2) + object->zlen * k / 9.0);
+				vertices.push_back(0);//vertices
+				vertices.push_back((- object->ylen / 2) + object->ylen * j / 9.0);
+				vertices.push_back((- object->zlen / 2) + object->zlen * k / 9.0);
 				vertices.push_back(-1);//normals
 				vertices.push_back(0);
 				vertices.push_back(0);
 				vertices.push_back(k / 9.);//uvs
-				vertices.push_back(j / 9.);
+				vertices.push_back(- j / 9.);
 			}
 		}
 	}
-	else if (object->zlen == 0) // FRONT wall
+	else if (object->name == "frontwall") // FRONT wall
 	{
 		for (int k = 0; k < 10; k++)
 		{
 			for (int j = 0; j < 10; j++)
 			{
-				vertices.push_back((object->GetCurrentPosition().x - object->xlen / 2) + object->xlen * j / 9.0);
-				vertices.push_back((object->GetCurrentPosition().y - object->ylen / 2) + object->ylen * k / 9.0);
+				vertices.push_back((- object->xlen / 2) + object->xlen * j / 9.0);
+				vertices.push_back((- object->ylen / 2) + object->ylen * k / 9.0);
 				vertices.push_back(0);
 				vertices.push_back(0);//normals
 				vertices.push_back(0);
 				vertices.push_back(1);
 				vertices.push_back(k / 9.);//uvs
-				vertices.push_back(j / 9.);
+				vertices.push_back(- j / 9.);
 			}
 		}
 	}
-	else if (object->zlen == WORLD_COORD_MAP_ZLEN) // BACK wall
+	else if (object->name == "backwall") // BACK wall
 	{
 		for (int k = 0; k < 10; k++)
 		{
 			for (int j = 0; j < 10; j++)
 			{
-				vertices.push_back((object->GetCurrentPosition().x - object->xlen / 2) + object->xlen * j / 9.0);
-				vertices.push_back((object->GetCurrentPosition().y - object->ylen / 2) + object->ylen * k / 9.0);
+				vertices.push_back((- object->xlen / 2) + object->xlen * j / 9.0);
+				vertices.push_back((- object->ylen / 2) + object->ylen * k / 9.0);
 				vertices.push_back(0);
 				vertices.push_back(0);//normals
 				vertices.push_back(0);
 				vertices.push_back(-1);
 				vertices.push_back(k / 9.);//uvs
-				vertices.push_back(j / 9.);
+				vertices.push_back(- j / 9.);
 			}
 		}
 	}
-	else if (object->ylen == 0) // BOTTOM wall
+	else if (object->name == "bottomwall") // BOTTOM wall
 	{
 		for (int k = 0; k < 10; k++)
 		{
 			for (int j = 0; j < 10; j++)
 			{
-				vertices.push_back((object->GetCurrentPosition().x - object->xlen / 2) + object->xlen * k / 9.0);
+				vertices.push_back((- object->xlen / 2) + object->xlen * k / 9.0);
 				vertices.push_back(0);
-				vertices.push_back((object->GetCurrentPosition().z - object->zlen / 2) + object->zlen * j / 9.0);
+				vertices.push_back((- object->zlen / 2) + object->zlen * j / 9.0);
 				vertices.push_back(0);//normals
 				vertices.push_back(1);
 				vertices.push_back(0);
@@ -184,9 +184,9 @@ void genPolygonVAO(const Transform * object, map<string, MyObjData*>* ObjData_ma
 	float* myarray = new float[arraysize];
 
 	for (int i = 0; i < drawingObjData->vertices.size(); i++) {
-		myarray[8 * i] = drawingObjData->vertices[i].x; //* object->scaleFactor;
-		myarray[8 * i + 1] = drawingObjData->vertices[i].y;
-		myarray[8 * i + 2] = drawingObjData->vertices[i].z;
+		myarray[8 * i] = drawingObjData->vertices[i].x * 10; //* object->scaleFactor;
+		myarray[8 * i + 1] = drawingObjData->vertices[i].y * 10;
+		myarray[8 * i + 2] = drawingObjData->vertices[i].z * 10;
 		myarray[8 * i + 3] = drawingObjData->normals[i].x;
 		myarray[8 * i + 4] = drawingObjData->normals[i].y;
 		myarray[8 * i + 5] = drawingObjData->normals[i].z;
