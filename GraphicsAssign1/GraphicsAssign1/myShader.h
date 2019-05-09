@@ -13,34 +13,58 @@ public:
 		static bool isShaderGenerated = false;
 		if (!isShaderGenerated)
 		{
-			const char* vertexShaderSource = "#version 460 core\n"
+			const char* vertexShaderSource = "#version 450 core\n"
 				"layout (location = 0) in vec3 aPos;\n"
 				"layout (location = 1) in vec3 aNormal;\n"
 				"layout (location = 2) in vec2 aTexCoord;\n"
 				"uniform mat4 View;\n"
 				"uniform mat4 Projection;\n"
 				"uniform mat4 Model;\n"
+				"uniform vec3 LightPosition;\n"
+				"uniform vec3 ViewPos;\n"
 				"out vec2 TexCoord;\n"
+				"out vec3 FragPos;\n"
+				"out vec3 fN;\n"
+				"out vec3 fE;\n"
+				"out vec3 fL;\n"
 				"void main()\n"
 				"{\n"
-				"   gl_Position = (Projection * View * Model) * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+				"   FragPos = vec3(Model * vec4(aPos, 1.0));\n"
 				"	TexCoord = aTexCoord;\n"
+				"	fN = aNormal;\n"
+				"	fE = ViewPos-aPos;\n"
+				"	fL = LightPosition-aPos;\n"
+				"   gl_Position = (Projection * View * vec4(FragPos, 1.0));\n"
 				"}\0";
 
-			const char* fragmentShaderSource = "#version 460 core\n"
+			const char* fragmentShaderSource = "#version 450 core\n"
 				"out vec4 FragColor;\n"
 				"in vec2 TexCoord;\n"
+				"in vec3 FragPos;\n"
+				"in vec3 fN;\n"
+				"in vec3 fE;\n"
+				"in vec3 fL;\n"
 				"uniform vec4 myColor;\n"
+
+				"uniform float ambientIaka;\n"
+				"uniform float diffuseIpkd;\n"
+				"uniform float specularIpks;\n"
+
 				"uniform int numOfTexture;\n"
 				"uniform sampler2D diffuseTexture;\n"
 				"uniform sampler2D specularTexture;\n"
 				"uniform sampler2D normalTexture;\n"
 				"void main()\n"
 				"{\n"
+				"   vec3 N = normalize(fN);\n"
+				"   vec3 E = normalize(fE);\n"
+				"   vec3 L = normalize(fL);\n"
+				"	vec3 H = normalize( L + E );\n"
 				"   if(numOfTexture>0)\n"
 				"		FragColor = texture(diffuseTexture, TexCoord);\n"
 				"   else\n"
 				"		FragColor = myColor;\n"
+				"   FragColor = (ambientIpkp + diffuseIpkp + specular) * FragColor;\n"
 				"}\n\0";
 			//code copy from here
 
@@ -67,6 +91,11 @@ public:
 				}
 				assert(success == GL_TRUE);
 				glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+				if (!success)
+				{
+					glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+					std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+				}
 				assert(success == GL_TRUE);
 			}
 			//shader link
