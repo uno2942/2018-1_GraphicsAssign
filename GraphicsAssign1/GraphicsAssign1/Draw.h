@@ -13,6 +13,7 @@
 #include"objloader.h"
 #include"myShader.h"
 #include"Camera.h"
+#include"Light.h"
 #define PI 3.1415926535
 
 enum stringToInt { LEFTWALL, RIGHTWALL, FRONTWALL, BACKWALL, BOTTOMWALL, BALL, PLAYER, ENEMY };

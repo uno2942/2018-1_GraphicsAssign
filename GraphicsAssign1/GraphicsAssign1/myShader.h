@@ -13,32 +13,35 @@ public:
 		static bool isShaderGenerated = false;
 		if (!isShaderGenerated)
 		{
-			const char* vertexShaderSource = "#version 450 core\n"
+			const char* vertexShaderSource = "#version 460 core\n"
 				"layout (location = 0) in vec3 aPos;\n"
 				"layout (location = 1) in vec3 aNormal;\n"
 				"layout (location = 2) in vec2 aTexCoord;\n"
+
 				"uniform mat4 View;\n"
 				"uniform mat4 Projection;\n"
 				"uniform mat4 Model;\n"
+
 				"uniform vec3 LightPosition;\n"
-				"uniform vec3 ViewPos;\n"
+				"uniform vec3 CameraPos;\n"
+
 				"out vec2 TexCoord;\n"
 				"out vec3 FragPos;\n"
+
 				"out vec3 fN;\n"
 				"out vec3 fE;\n"
 				"out vec3 fL;\n"
 				"void main()\n"
 				"{\n"
-				"   FragPos = vec3(Model * vec4(aPos, 1.0));\n"
 				"	TexCoord = aTexCoord;\n"
+				"   FragPos = vec3(Model * vec4(aPos, 1.0));\n"
 				"	fN = aNormal;\n"
-				"	fE = ViewPos-aPos;\n"
-				"	fL = LightPosition-aPos;\n"
+				"	fE = CameraPos-FragPos;\n"
+				"	fL = LightPosition-FragPos;\n"
 				"   gl_Position = (Projection * View * vec4(FragPos, 1.0));\n"
 				"}\0";
 
-			const char* fragmentShaderSource = "#version 450 core\n"
-				"out vec4 FragColor;\n"
+			const char* fragmentShaderSource = "#version 460 core\n"
 				"in vec2 TexCoord;\n"
 				"in vec3 FragPos;\n"
 				"in vec3 fN;\n"
@@ -54,17 +57,31 @@ public:
 				"uniform sampler2D diffuseTexture;\n"
 				"uniform sampler2D specularTexture;\n"
 				"uniform sampler2D normalTexture;\n"
+
+				"out vec4 FragColor;\n"
 				"void main()\n"
 				"{\n"
-				"   vec3 N = normalize(fN);\n"
+				"	float dL = length(fL);\n"
+				"	float fatt = 1./(1+0.001*dL + (0.001*dL)*(0.001*dL));\n"
+
+				"	vec3 N;\n"
+				"	if(numOfTexture==3)"
+				"		N=normalize((2.*(1./0xff))*vec3(texture(diffuseTexture, TexCoord))-vec3(1, 1, 1));\n"
+				"	else"
+				"		N = normalize(fN);\n"
 				"   vec3 E = normalize(fE);\n"
 				"   vec3 L = normalize(fL);\n"
 				"	vec3 H = normalize( L + E );\n"
+
+				"	vec4 diffuseColor = vec4(0, 0, 0, 0);\n"
+				"	vec4 specularColor = vec4(0, 0, 0, 0);\n"
+
 				"   if(numOfTexture>0)\n"
-				"		FragColor = texture(diffuseTexture, TexCoord);\n"
-				"   else\n"
-				"		FragColor = myColor;\n"
-				"   FragColor = (ambientIpkp + diffuseIpkp + specular) * FragColor;\n"
+				"		diffuseColor = texture(diffuseTexture, TexCoord);\n"
+				"   if(numOfTexture>1)\n"
+				"		specularColor = texture(specularTexture, TexCoord);\n"
+
+				"   FragColor = (ambientIaka * myColor + fatt * (diffuseIpkd* max(dot(N, L), 0.0) * diffuseColor+ specularIpks * pow(max(dot(H, N), 0.0), 16) * specularColor));\n"
 				"}\n\0";
 			//code copy from here
 
@@ -78,7 +95,7 @@ public:
 			GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 			glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 			glCompileShader(fragmentShader);
-
+			
 			//debug compile completed
 			{
 				int success;
@@ -109,7 +126,10 @@ public:
 		}
 		return myshader;
 	}
-
+	static void setFloat(const std::string& name, const GLfloat value) //https://learnopengl.com/code_viewer_gh.php?code=includes/learnopengl/shader.h
+	{
+		glUniform1f(glGetUniformLocation(myshader, name.c_str()), value);
+	}
 	static void setInt(const std::string& name, const GLuint value) //https://learnopengl.com/code_viewer_gh.php?code=includes/learnopengl/shader.h
 	{
 		glUniform1i(glGetUniformLocation(myshader, name.c_str()), value);

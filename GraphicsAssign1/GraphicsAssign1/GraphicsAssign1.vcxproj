@@ -161,6 +161,7 @@
     <ClInclude Include="Draw.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="gen_VAO.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="MyDataType.h" />
     <ClInclude Include="myShader.h" />
     <ClInclude Include="ObjData.h" />

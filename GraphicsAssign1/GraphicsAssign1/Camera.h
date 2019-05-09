@@ -76,6 +76,7 @@ public:
 		nowcameraPos = cameraPos;
 		nowcameraTarget = cameraTarget;
 		nowup = up;
+		MyShader::setVec3("CameraPos", nowcameraPos);
 		MyShader::setMat4("View", view);
 		MyShader::setMat4("Projection", Projection);
 	}

@@ -89,9 +89,6 @@
     <ClInclude Include="Units.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="ObjData.h">
       <Filter>헤더 파일\DrawPartHeader</Filter>
     </ClInclude>
@@ -111,6 +108,12 @@
       <Filter>헤더 파일\DrawPartHeader</Filter>
     </ClInclude>
     <ClInclude Include="myShader.h">
+      <Filter>헤더 파일\DrawPartHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>헤더 파일\DrawPartHeader</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
       <Filter>헤더 파일\DrawPartHeader</Filter>
     </ClInclude>
   </ItemGroup>

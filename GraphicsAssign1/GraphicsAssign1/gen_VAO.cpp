@@ -1,5 +1,5 @@
 #include"Draw.h"
-
+#define LATTICE_PT 50
 void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map);
 MyObjData* GetObj(string path);
 void genPolygonVAO(const Transform* object, map<string, MyObjData*>* ObjData_map, string objPath);
@@ -43,101 +43,101 @@ void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map) {
 	vector<float> realdata;
 	if (object->name == "leftwall") // LEFT wall
 	{
-		for (int k = 0; k < 10; k++)
+		for (int k = 0; k < LATTICE_PT; k++)
 		{
-			for (int j = 0; j < 10; j++)
+			for (int j = 0; j < LATTICE_PT; j++)
 			{
 				vertices.push_back(0);//vertices
-				vertices.push_back((- object->ylen / 2) + object->ylen * j / 9.0);
-				vertices.push_back((- object->zlen / 2) + object->zlen * k / 9.0);
+				vertices.push_back((-object->ylen / 2) + object->ylen * j / (float)(LATTICE_PT - 1));
+				vertices.push_back((- object->zlen / 2) + object->zlen * k / (float)(LATTICE_PT - 1));
 				vertices.push_back(1);//normals
 				vertices.push_back(0);
 				vertices.push_back(0);
-				vertices.push_back(k / 9.);//uvs
-				vertices.push_back(- j / 9.);
+				vertices.push_back(k / (float)(LATTICE_PT - 1));//uvs
+				vertices.push_back(- j / (float)(LATTICE_PT - 1));
 			}
 		}
 	}
 	else if (object->name == "rightwall") //RIGHT wall
 	{
-		for (int k = 0; k < 10; k++)
+		for (int k = 0; k < LATTICE_PT; k++)
 		{
-			for (int j = 0; j < 10; j++)
+			for (int j = 0; j < LATTICE_PT; j++)
 			{
 				vertices.push_back(0);//vertices
-				vertices.push_back((- object->ylen / 2) + object->ylen * j / 9.0);
-				vertices.push_back((- object->zlen / 2) + object->zlen * k / 9.0);
+				vertices.push_back((- object->ylen / 2) + object->ylen * j / (float)(LATTICE_PT - 1));
+				vertices.push_back((- object->zlen / 2) + object->zlen * k / (float)(LATTICE_PT - 1));
 				vertices.push_back(-1);//normals
 				vertices.push_back(0);
 				vertices.push_back(0);
-				vertices.push_back(k / 9.);//uvs
-				vertices.push_back(- j / 9.);
+				vertices.push_back(k / (float)(LATTICE_PT - 1));//uvs
+				vertices.push_back(- j / (float)(LATTICE_PT - 1));
 			}
 		}
 	}
 	else if (object->name == "frontwall") // FRONT wall
 	{
-		for (int k = 0; k < 10; k++)
+		for (int k = 0; k < LATTICE_PT; k++)
 		{
-			for (int j = 0; j < 10; j++)
+			for (int j = 0; j < LATTICE_PT; j++)
 			{
-				vertices.push_back((- object->xlen / 2) + object->xlen * j / 9.0);
-				vertices.push_back((- object->ylen / 2) + object->ylen * k / 9.0);
+				vertices.push_back((- object->xlen / 2) + object->xlen * j / (float)(LATTICE_PT - 1));
+				vertices.push_back((- object->ylen / 2) + object->ylen * k / (float)(LATTICE_PT - 1));
 				vertices.push_back(0);
 				vertices.push_back(0);//normals
 				vertices.push_back(0);
 				vertices.push_back(1);
-				vertices.push_back(k / 9.);//uvs
-				vertices.push_back(- j / 9.);
+				vertices.push_back(k / (float)(LATTICE_PT - 1));//uvs
+				vertices.push_back(- j / (float)(LATTICE_PT - 1));
 			}
 		}
 	}
 	else if (object->name == "backwall") // BACK wall
 	{
-		for (int k = 0; k < 10; k++)
+		for (int k = 0; k < LATTICE_PT; k++)
 		{
-			for (int j = 0; j < 10; j++)
+			for (int j = 0; j < LATTICE_PT; j++)
 			{
-				vertices.push_back((- object->xlen / 2) + object->xlen * j / 9.0);
-				vertices.push_back((- object->ylen / 2) + object->ylen * k / 9.0);
+				vertices.push_back((- object->xlen / 2) + object->xlen * j / (float)(LATTICE_PT - 1));
+				vertices.push_back((- object->ylen / 2) + object->ylen * k / (float)(LATTICE_PT - 1));
 				vertices.push_back(0);
 				vertices.push_back(0);//normals
 				vertices.push_back(0);
 				vertices.push_back(-1);
-				vertices.push_back(k / 9.);//uvs
-				vertices.push_back(- j / 9.);
+				vertices.push_back(k / (float)(LATTICE_PT - 1));//uvs
+				vertices.push_back(- j / (float)(LATTICE_PT - 1));
 			}
 		}
 	}
 	else if (object->name == "bottomwall") // BOTTOM wall
 	{
-		for (int k = 0; k < 10; k++)
+		for (int k = 0; k < LATTICE_PT; k++)
 		{
-			for (int j = 0; j < 10; j++)
+			for (int j = 0; j < LATTICE_PT; j++)
 			{
-				vertices.push_back((- object->xlen / 2) + object->xlen * k / 9.0);
+				vertices.push_back((- object->xlen / 2) + object->xlen * k / (float)(LATTICE_PT - 1));
 				vertices.push_back(0);
-				vertices.push_back((- object->zlen / 2) + object->zlen * j / 9.0);
+				vertices.push_back((- object->zlen / 2) + object->zlen * j / (float)(LATTICE_PT - 1));
 				vertices.push_back(0);//normals
 				vertices.push_back(1);
 				vertices.push_back(0);
-				vertices.push_back(k / 9.);//uvs
-				vertices.push_back(j / 9.);
+				vertices.push_back(k / (float)(LATTICE_PT - 1));//uvs
+				vertices.push_back(j / (float)(LATTICE_PT - 1));
 			}
 		}
 	}
 
-	for (int j = 0; j < 9; j++)
+	for (int j = 0; j < LATTICE_PT-1; j++)
 	{
-		for (int k = 0; k < 9; k++)
+		for (int k = 0; k < LATTICE_PT-1; k++)
 		{
-			indices.push_back(10 * j + k);
-			indices.push_back(10 * j + k + 1);
-			indices.push_back(10 * j + 10 + k + 1);
+			indices.push_back(LATTICE_PT * j + k);
+			indices.push_back(LATTICE_PT* j + k + 1);
+			indices.push_back(LATTICE_PT* j + LATTICE_PT + k + 1);
 
-			indices.push_back(10 * j + 10 + k);
-			indices.push_back(10 * j + 10 + k + 1);
-			indices.push_back(10 * j + k);
+			indices.push_back(LATTICE_PT* j + LATTICE_PT + k);
+			indices.push_back(LATTICE_PT* j + LATTICE_PT + k + 1);
+			indices.push_back(LATTICE_PT* j + k);
 		}
 	}
 
