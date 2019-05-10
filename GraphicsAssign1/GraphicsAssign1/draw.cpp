@@ -27,9 +27,6 @@ void ChangeShader(RenderingMode renMode) {
 	}
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-	MyShader::setInt("diffuseTexture", 0);
-	MyShader::setInt("specularTexture", 1);
-	MyShader::setInt("normalTexture", 2);
 }
 void PrepareDrawingAtFirstTime() {
 	GLenum err = glewInit();
@@ -74,9 +71,6 @@ void PrepareDrawingAtFirstTime() {
 	genVAO(mappingFromStringToInt, &ObjData_map, ballObjPath, playerObjPath, enemyObjPath);
 
 	addTexture(mappingFromStringToInt, &ObjData_map, WallTexturePath, PlayerTexturePath);
-	MyShader::setInt("diffuseTexture", 0);
-	MyShader::setInt("specularTexture", 1);
-	MyShader::setInt("normalTexture", 2);
 	myCamera::InitiateCamera(GameManager::getInstance().player);
 }
 
@@ -202,18 +196,14 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 		yratio = 1;
 	else
 		yratio = unit->GetSize().y / myObjData->width3D.y;
-	model = scale(model, vec3(unit->GetSize().x / myObjData->width3D.x, yratio,
-		unit->GetSize().z / myObjData->width3D.z));
+	model = scale(model, vec3(10, 10, 10));
 	MyShader::setMat4("Model", model);
 	MyShader::setInt("numOfTexture", 0);
+	MyShader::setInt("isNormalTextureExists", 0);
 	MyShader::setVec4("myColor", zeroColor);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, 0);
-	/*
+	MyShader::setInt("diffuseTexture", 0);
+	MyShader::setInt("specularTexture", 1);
+	MyShader::setInt("normalTexture", 2);
 	if (mappingFromStringToInt[unit->name] == PLAYER || mappingFromStringToInt[unit->name] == ENEMY) {
 		MyShader::setInt("numOfTexture", 1);
 
@@ -231,6 +221,8 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 				j = 3;
 			else if ((*myObjData).mtlName[i] == "Hair")
 				j = 4;
+
+			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, (*myObjData).tex[j]);
 			glBindVertexArray(myObjData->VAO[i]);
 			glDrawArrays(GL_TRIANGLES, 0, myObjData->Size[i]);
@@ -238,7 +230,6 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
-	*/
 	/*
 	else
 	{

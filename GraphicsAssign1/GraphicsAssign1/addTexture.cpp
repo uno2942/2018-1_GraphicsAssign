@@ -1,6 +1,6 @@
 #include"bmpddsloader.h"
 #include"Draw.h"
-
+#include"soil.h"
 void AddWallTexture(const vector<string> filePaths, MyObjData* ObjData);
 void AddPolygonTexture(const vector<string> filePaths, MyObjData* ObjData);
 
@@ -32,14 +32,44 @@ void AddWallTexture(const vector<string> filePaths, MyObjData* ObjData) {
 	ObjData->tex.push_back(tex3);
 }
 void AddPolygonTexture(const vector<string> filePaths, MyObjData* ObjData) {
-	GLuint tex1 = loadBMP_custom("Image09C37780_09C26A60.bmp");
+	GLuint tex1 = SOIL_load_OGL_texture
+	(
+		"Image09C37780_09C26A60.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
 	ObjData->tex.push_back(tex1);
-	GLuint tex2 = loadBMP_custom("Image09C27700_09C272A0.bmp");
+	GLuint tex2 = SOIL_load_OGL_texture
+	(
+		"Image09C27700_09C272A0.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_TEXTURE_REPEATS |  SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
 	ObjData->tex.push_back(tex2);
-	GLuint tex3 = loadBMP_custom("Image09C3F800_09C26E80.bmp");
+	GLuint tex3 = SOIL_load_OGL_texture
+	(
+		"Image09C3F800_09C26E80.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
 	ObjData->tex.push_back(tex3);
-	GLuint tex4 = loadBMP_custom("Image09CDBA00_09CC3480.bmp");
+	GLuint tex4 = SOIL_load_OGL_texture
+	(
+		"Image09CDBA00_09CC3480.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
 	ObjData->tex.push_back(tex4);
-	GLuint tex5 = loadBMP_custom("Image09CD3980_09CC3060.bmp");
+	GLuint tex5 = SOIL_load_OGL_texture
+	(
+		"Image09CD3980_09CC3060.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+	);
 	ObjData->tex.push_back(tex5);
 }

@@ -149,10 +149,10 @@ void genPolygonVAO(const Transform * object, map<string, MyObjData*>* ObjData_ma
 		glBindVertexArray(0);
 
 		drawingObjData->VAO.push_back(VAO);
-		drawingObjData->Size.push_back(drawingObjData->vertices.size());
-		ObjData_map->insert(map<string, MyObjData*>::value_type(object->name, drawingObjData));
+		drawingObjData->Size.push_back(drawingObjData->vertices[i].size());
 		delete[] myarray;
 	}
+	ObjData_map->insert(map<string, MyObjData*>::value_type(object->name, drawingObjData));
 	cout << "GenPolygon Working" << endl;
 }
 
