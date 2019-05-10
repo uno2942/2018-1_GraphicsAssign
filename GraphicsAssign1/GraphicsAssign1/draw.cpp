@@ -197,30 +197,38 @@ void drawScore(int playerScore, int enemyScore) {
 }
 
 void drawObject(Object* unit, MyObjData* myObjData) {
-
 	mat4 trans = glm::identity<glm::mat4>();
 	vec3 unitpos;
 	vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
 	unitpos = glm::vec3(unit->GetCurrentPosition().x, unit->GetCurrentPosition().y, unit->GetCurrentPosition().z);
-	MyShader::setMat4("Model", rotate(glm::translate(trans, unitpos), (float)unit->rotation, rotationAxis));
+	mat4 model = rotate(glm::translate(trans, unitpos), (float)unit->rotation, rotationAxis);
+	float yratio = 1;
+	if (unit->GetSize().y == 0 && myObjData->width3D.y == 0)
+		yratio = 1;
+	else
+		yratio = unit->GetSize().y / myObjData->width3D.y;
+	model = scale(model, vec3(unit->GetSize().x / myObjData->width3D.x, yratio,
+		unit->GetSize().z / myObjData->width3D.z));
+	MyShader::setMat4("Model", model);
 
 	MyShader::setInt("numOfTexture", (*myObjData).tex.size());
-	
+
 	for (int i = 0; i < (*myObjData).tex.size(); i++)
 	{
-		if(i==0)
+		if (i == 0)
 			glActiveTexture(GL_TEXTURE0);
-		else if(i==1)
+		else if (i == 1)
 			glActiveTexture(GL_TEXTURE1);
 		else
 			glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, (*myObjData).tex[i]);
 	}
-	
+
 	glBindVertexArray(myObjData->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, myObjData->Size);
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
 }
 /*
 void representScore(int score, glm::vec2 pos)

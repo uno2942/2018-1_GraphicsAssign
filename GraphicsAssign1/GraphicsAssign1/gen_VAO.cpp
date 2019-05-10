@@ -1,16 +1,19 @@
 #include"Draw.h"
-#define LATTICE_PT 50
+#define LATTICE_PT 100
 void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map);
 MyObjData* GetObj(string path);
 void genPolygonVAO(const Transform* object, map<string, MyObjData*>* ObjData_map, string objPath);
 
 void genVAO(map< string, int > mappingFromStringToInt, map<string, MyObjData*>* ObjData_map, string ballObjPath, string playerObjPath, string enemyObjPath) { // bind .obj path for each object
 	for (int i = 0; i < objectsTreeVectorForDraw.size(); i++) {
+		if(mappingFromStringToInt[objectsTreeVectorForDraw[i].name]==BOTTOMWALL)
+			genWallVAO(objectsTreeVectorForDraw[i].root->data->object, ObjData_map);
+	}
+	for (int i = 0; i < objectsTreeVectorForDraw.size(); i++) {
 		switch (mappingFromStringToInt[objectsTreeVectorForDraw[i].name])
 		{
-		case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL: case BOTTOMWALL:
-			genWallVAO(objectsTreeVectorForDraw[i].root->data->object, ObjData_map);
-			break;
+		case LEFTWALL: case RIGHTWALL: case FRONTWALL: case BACKWALL:
+			ObjData_map->insert(map<string, MyObjData*>::value_type(objectsTreeVectorForDraw[i].name, (*ObjData_map)["bottomwall"])); break;
 		case BALL: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, ObjData_map, ballObjPath); break;
 		case PLAYER: genPolygonVAO(objectsTreeVectorForDraw[i].root->data->object, ObjData_map, playerObjPath); break;
 		case ENEMY: ObjData_map->insert(map<string, MyObjData*>::value_type("enemy", (*ObjData_map)["player"])); break;
@@ -41,89 +44,18 @@ void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map) {
 	vector<float> vertices;
 	vector<unsigned int> indices;
 	vector<float> realdata;
-	if (object->name == "leftwall") // LEFT wall
+	for (int k = 0; k < LATTICE_PT; k++)
 	{
-		for (int k = 0; k < LATTICE_PT; k++)
+		for (int j = 0; j < LATTICE_PT; j++)
 		{
-			for (int j = 0; j < LATTICE_PT; j++)
-			{
-				vertices.push_back(0);//vertices
-				vertices.push_back((-object->ylen / 2) + object->ylen * j / (float)(LATTICE_PT - 1));
-				vertices.push_back((- object->zlen / 2) + object->zlen * k / (float)(LATTICE_PT - 1));
-				vertices.push_back(1);//normals
-				vertices.push_back(0);
-				vertices.push_back(0);
-				vertices.push_back(k / (float)(LATTICE_PT - 1));//uvs
-				vertices.push_back(- j / (float)(LATTICE_PT - 1));
-			}
-		}
-	}
-	else if (object->name == "rightwall") //RIGHT wall
-	{
-		for (int k = 0; k < LATTICE_PT; k++)
-		{
-			for (int j = 0; j < LATTICE_PT; j++)
-			{
-				vertices.push_back(0);//vertices
-				vertices.push_back((- object->ylen / 2) + object->ylen * j / (float)(LATTICE_PT - 1));
-				vertices.push_back((- object->zlen / 2) + object->zlen * k / (float)(LATTICE_PT - 1));
-				vertices.push_back(-1);//normals
-				vertices.push_back(0);
-				vertices.push_back(0);
-				vertices.push_back(k / (float)(LATTICE_PT - 1));//uvs
-				vertices.push_back(- j / (float)(LATTICE_PT - 1));
-			}
-		}
-	}
-	else if (object->name == "frontwall") // FRONT wall
-	{
-		for (int k = 0; k < LATTICE_PT; k++)
-		{
-			for (int j = 0; j < LATTICE_PT; j++)
-			{
-				vertices.push_back((- object->xlen / 2) + object->xlen * j / (float)(LATTICE_PT - 1));
-				vertices.push_back((- object->ylen / 2) + object->ylen * k / (float)(LATTICE_PT - 1));
-				vertices.push_back(0);
-				vertices.push_back(0);//normals
-				vertices.push_back(0);
-				vertices.push_back(1);
-				vertices.push_back(k / (float)(LATTICE_PT - 1));//uvs
-				vertices.push_back(- j / (float)(LATTICE_PT - 1));
-			}
-		}
-	}
-	else if (object->name == "backwall") // BACK wall
-	{
-		for (int k = 0; k < LATTICE_PT; k++)
-		{
-			for (int j = 0; j < LATTICE_PT; j++)
-			{
-				vertices.push_back((- object->xlen / 2) + object->xlen * j / (float)(LATTICE_PT - 1));
-				vertices.push_back((- object->ylen / 2) + object->ylen * k / (float)(LATTICE_PT - 1));
-				vertices.push_back(0);
-				vertices.push_back(0);//normals
-				vertices.push_back(0);
-				vertices.push_back(-1);
-				vertices.push_back(k / (float)(LATTICE_PT - 1));//uvs
-				vertices.push_back(- j / (float)(LATTICE_PT - 1));
-			}
-		}
-	}
-	else if (object->name == "bottomwall") // BOTTOM wall
-	{
-		for (int k = 0; k < LATTICE_PT; k++)
-		{
-			for (int j = 0; j < LATTICE_PT; j++)
-			{
-				vertices.push_back((- object->xlen / 2) + object->xlen * k / (float)(LATTICE_PT - 1));
-				vertices.push_back(0);
-				vertices.push_back((- object->zlen / 2) + object->zlen * j / (float)(LATTICE_PT - 1));
-				vertices.push_back(0);//normals
-				vertices.push_back(1);
-				vertices.push_back(0);
-				vertices.push_back(k / (float)(LATTICE_PT - 1));//uvs
-				vertices.push_back(j / (float)(LATTICE_PT - 1));
-			}
+			vertices.push_back((-object->xlen / 2) + object->xlen * k / (float)(LATTICE_PT - 1));
+			vertices.push_back(0);
+			vertices.push_back((-object->zlen / 2) + object->zlen * j / (float)(LATTICE_PT - 1));
+			vertices.push_back(0);//normals
+			vertices.push_back(1);
+			vertices.push_back(0);
+			vertices.push_back(k / (float)(LATTICE_PT - 1));//uvs
+			vertices.push_back(j / (float)(LATTICE_PT - 1));
 		}
 	}
 
@@ -169,6 +101,7 @@ void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map) {
 	MyObjData* drawingObjData = new MyObjData();
 	drawingObjData->VAO = VAO;
 	drawingObjData->Size = indices.size();
+	drawingObjData->width3D = vec3(object->xlen, 0, object->zlen);
 	ObjData_map->insert(map<string, MyObjData*>::value_type(wallName, drawingObjData));
 }
 
@@ -184,9 +117,9 @@ void genPolygonVAO(const Transform * object, map<string, MyObjData*>* ObjData_ma
 	float* myarray = new float[arraysize];
 
 	for (int i = 0; i < drawingObjData->vertices.size(); i++) {
-		myarray[8 * i] = drawingObjData->vertices[i].x * 10; //* object->scaleFactor;
-		myarray[8 * i + 1] = drawingObjData->vertices[i].y * 10;
-		myarray[8 * i + 2] = drawingObjData->vertices[i].z * 10;
+		myarray[8 * i] = drawingObjData->vertices[i].x; //* object->scaleFactor;
+		myarray[8 * i + 1] = drawingObjData->vertices[i].y;
+		myarray[8 * i + 2] = drawingObjData->vertices[i].z;
 		myarray[8 * i + 3] = drawingObjData->normals[i].x;
 		myarray[8 * i + 4] = drawingObjData->normals[i].y;
 		myarray[8 * i + 5] = drawingObjData->normals[i].z;
