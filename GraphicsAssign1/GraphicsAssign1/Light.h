@@ -5,7 +5,7 @@ using namespace std;
 using namespace glm;
 class myLight {
 public:
-	myLight() : Ia(0.25), ka(0.5), Ip(1), kd(1), ks(1), DIa(0.5), DIp(2){
+	myLight() : Ia(0.25), ka(0.5), Ip(1), kd(1), ks(1), DIa(0.5), DIp(2) {
 
 	}
 	void SetLightPosition(vec3 _lightpos) {

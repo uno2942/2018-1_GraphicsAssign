@@ -196,16 +196,18 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 		yratio = 1;
 	else
 		yratio = unit->GetSize().y / myObjData->width3D.y;
-	model = scale(model, vec3(10, 10, 10));
+	model = scale(model, vec3(unit->GetSize().x / myObjData->width3D.x, yratio,
+		unit->GetSize().z / myObjData->width3D.z));
 	MyShader::setMat4("Model", model);
-	MyShader::setInt("numOfTexture", 0);
-	MyShader::setInt("isNormalTextureExists", 0);
 	MyShader::setVec4("myColor", zeroColor);
+
 	MyShader::setInt("diffuseTexture", 0);
 	MyShader::setInt("specularTexture", 1);
 	MyShader::setInt("normalTexture", 2);
+
 	if (mappingFromStringToInt[unit->name] == PLAYER || mappingFromStringToInt[unit->name] == ENEMY) {
 		MyShader::setInt("numOfTexture", 1);
+		MyShader::setInt("isNormalTextureExists", 0);
 
 		MyShader::setVec4("myColor", zeroColor);
 		for (int i = 0; i < (*myObjData).VAO.size(); i++)
@@ -230,11 +232,10 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
-	/*
 	else
 	{
 		MyShader::setInt("numOfTexture", (*myObjData).tex.size());
-
+		MyShader::setInt("isNormalTextureExists", 0);
 		switch (mappingFromStringToInt[unit->name])
 		{
 		case PLAYER: case ENEMY: case BACKWALL: case FRONTWALL: case LEFTWALL: case RIGHTWALL: case BOTTOMWALL:
@@ -250,7 +251,10 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 			else if (i == 1)
 				glActiveTexture(GL_TEXTURE1);
 			else
+			{
 				glActiveTexture(GL_TEXTURE2);
+				MyShader::setInt("isNormalTextureExists", 1);
+			}
 			glBindTexture(GL_TEXTURE_2D, (*myObjData).tex[i]);
 		}
 
@@ -259,7 +263,6 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 		glBindVertexArray(0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	*/
 }
 /*
 void representScore(int score, glm::vec2 pos)

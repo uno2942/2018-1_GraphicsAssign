@@ -124,8 +124,16 @@ void genPolygonVAO(const Transform * object, map<string, MyObjData*>* ObjData_ma
 			myarray[8 * j + 3] = drawingObjData->normals[i][j].x;
 			myarray[8 * j + 4] = drawingObjData->normals[i][j].y;
 			myarray[8 * j + 5] = drawingObjData->normals[i][j].z;
-			myarray[8 * j + 6] = drawingObjData->uvs[i][j].x;
-			myarray[8 * j + 7] = drawingObjData->uvs[i][j].y;
+			if (object->name == "player")
+			{
+				myarray[8 * j + 6] = drawingObjData->uvs[i][j].x;
+				myarray[8 * j + 7] = -drawingObjData->uvs[i][j].y;
+			}
+			else
+			{
+				myarray[8 * j + 6] = drawingObjData->uvs[i][j].x;
+				myarray[8 * j + 7] = drawingObjData->uvs[i][j].y;
+			}
 		}
 		// starts to use
 

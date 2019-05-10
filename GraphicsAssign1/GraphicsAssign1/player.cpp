@@ -1,4 +1,4 @@
-#include"Units.h"
+﻿#include"Units.h"
 
 static Object* player;
 GameObjectTree* GetPlayer() {
@@ -6,7 +6,7 @@ GameObjectTree* GetPlayer() {
 	if (playerTree == NULL)
 	{
 		playerTree = new GameObjectTree("player");
-		player = new Box("player", 62.775997161865234, 188.03649902343750, 304.41650390625000, MY_YELLOW);
+		player = new Box("player", 208.0530092, 75.627212, 282.6852112, MY_YELLOW);
 		GameObject* playerObject = new GameObject(player);
 		GameObjectNode* playerNode = new GameObjectNode(playerObject, "player");
 		playerObject->AddCollisionComponentAsItself(playerNode);
