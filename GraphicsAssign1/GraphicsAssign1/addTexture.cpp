@@ -32,6 +32,14 @@ void AddWallTexture(const vector<string> filePaths, MyObjData* ObjData) {
 	ObjData->tex.push_back(tex3);
 }
 void AddPolygonTexture(const vector<string> filePaths, MyObjData* ObjData) {
-	GLuint tex1 = loadBMP_custom("Cat_diffuse.bmp");
+	GLuint tex1 = loadBMP_custom("Image09C37780_09C26A60.bmp");
 	ObjData->tex.push_back(tex1);
+	GLuint tex2 = loadBMP_custom("Image09C27700_09C272A0.bmp");
+	ObjData->tex.push_back(tex2);
+	GLuint tex3 = loadBMP_custom("Image09C3F800_09C26E80.bmp");
+	ObjData->tex.push_back(tex3);
+	GLuint tex4 = loadBMP_custom("Image09CDBA00_09CC3480.bmp");
+	ObjData->tex.push_back(tex4);
+	GLuint tex5 = loadBMP_custom("Image09CD3980_09CC3060.bmp");
+	ObjData->tex.push_back(tex5);
 }

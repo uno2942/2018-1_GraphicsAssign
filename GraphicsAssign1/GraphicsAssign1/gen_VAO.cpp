@@ -99,8 +99,8 @@ void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map) {
 
 	string wallName = object->name;
 	MyObjData* drawingObjData = new MyObjData();
-	drawingObjData->VAO = VAO;
-	drawingObjData->Size = indices.size();
+	drawingObjData->VAO.push_back(VAO);
+	drawingObjData->Size.push_back(indices.size());
 	drawingObjData->width3D = vec3(object->xlen, 0, object->zlen);
 	ObjData_map->insert(map<string, MyObjData*>::value_type(wallName, drawingObjData));
 }
@@ -113,43 +113,46 @@ void genPolygonVAO(const Transform * object, map<string, MyObjData*>* ObjData_ma
 	drawingObjData = GetObj(objPath);
 
 	//shader drawing
-	long long arraysize = drawingObjData->vertices.size() * (3 + 2 + 3);
-	float* myarray = new float[arraysize];
-
 	for (int i = 0; i < drawingObjData->vertices.size(); i++) {
-		myarray[8 * i] = drawingObjData->vertices[i].x; //* object->scaleFactor;
-		myarray[8 * i + 1] = drawingObjData->vertices[i].y;
-		myarray[8 * i + 2] = drawingObjData->vertices[i].z;
-		myarray[8 * i + 3] = drawingObjData->normals[i].x;
-		myarray[8 * i + 4] = drawingObjData->normals[i].y;
-		myarray[8 * i + 5] = drawingObjData->normals[i].z;
-		myarray[8 * i + 6] = drawingObjData->uvs[i].x;
-		myarray[8 * i + 7] = drawingObjData->uvs[i].y;
+		long long arraysize = drawingObjData->vertices[i].size() * (3 + 2 + 3);
+		float* myarray = new float[arraysize];
+
+		for (int j = 0; j < drawingObjData->vertices[i].size(); j++) {
+			myarray[8 * j] = drawingObjData->vertices[i][j].x; //* object->scaleFactor;
+			myarray[8 * j + 1] = drawingObjData->vertices[i][j].y;
+			myarray[8 * j + 2] = drawingObjData->vertices[i][j].z;
+			myarray[8 * j + 3] = drawingObjData->normals[i][j].x;
+			myarray[8 * j + 4] = drawingObjData->normals[i][j].y;
+			myarray[8 * j + 5] = drawingObjData->normals[i][j].z;
+			myarray[8 * j + 6] = drawingObjData->uvs[i][j].x;
+			myarray[8 * j + 7] = drawingObjData->uvs[i][j].y;
+		}
+		// starts to use
+
+		// make buffers
+		GLuint VAO, VBO; //each vertex buffer, vertex array, Elemental buffer
+
+		glGenVertexArrays(1, &VAO);
+		glGenBuffers(1, &VBO);
+
+		glBindVertexArray(VAO);
+
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * arraysize, myarray, GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);//vertices
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));//normals
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));//uvs
+		glEnableVertexAttribArray(2);
+
+		glBindVertexArray(0);
+
+		drawingObjData->VAO.push_back(VAO);
+		drawingObjData->Size.push_back(drawingObjData->vertices.size());
+		ObjData_map->insert(map<string, MyObjData*>::value_type(object->name, drawingObjData));
+		delete[] myarray;
 	}
-	// starts to use
-
-	// make buffers
-	GLuint VAO, VBO; //each vertex buffer, vertex array, Elemental buffer
-
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * arraysize, myarray, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);//vertices
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));//normals
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));//uvs
-	glEnableVertexAttribArray(2);
-
-	glBindVertexArray(0);
-
-	drawingObjData->VAO = VAO;
-	drawingObjData->Size = drawingObjData->vertices.size();
-	ObjData_map->insert(map<string, MyObjData*>::value_type(object->name, drawingObjData));
 	cout << "GenPolygon Working" << endl;
 }
 

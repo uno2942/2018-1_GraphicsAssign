@@ -60,8 +60,8 @@ void PrepareDrawingAtFirstTime() {
 	mappingFromStringToUnit["enemy"] = GameManager::getInstance().enemy;
 
 	string ballObjPath = "sphere.obj";
-	string playerObjPath = "12221_Cat_v1_l3.obj";
-	string enemyObjPath = "12221_Cat_v1_l3.obj";
+	string playerObjPath = "Type 2020 Miku.obj";
+	string enemyObjPath = "Type 2020 Miku.obj";
 	vector<string> WallTexturePath;
 	vector<string> PlayerTexturePath;
 
@@ -202,39 +202,73 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 		yratio = 1;
 	else
 		yratio = unit->GetSize().y / myObjData->width3D.y;
-	if (mappingFromStringToInt[unit->name] == PLAYER || mappingFromStringToInt[unit->name] == ENEMY) {
-		model = rotate(model, -3.141592f / 2, vec3(1, 0, 0));
-	}
 	model = scale(model, vec3(unit->GetSize().x / myObjData->width3D.x, yratio,
 		unit->GetSize().z / myObjData->width3D.z));
 	MyShader::setMat4("Model", model);
-
-	MyShader::setInt("numOfTexture", (*myObjData).tex.size());
-
-	switch (mappingFromStringToInt[unit->name])
-	{
-	case PLAYER: case ENEMY: case BACKWALL: case FRONTWALL: case LEFTWALL: case RIGHTWALL: case BOTTOMWALL:
-		MyShader::setVec4("myColor", zeroColor);
-		break;
-	case BALL:
-		MyShader::setVec4("myColor", ballColor);
-	}
-	for (int i = 0; i < (*myObjData).tex.size(); i++)
-	{
-		if (i == 0)
-			glActiveTexture(GL_TEXTURE0);
-		else if (i == 1)
-			glActiveTexture(GL_TEXTURE1);
-		else
-			glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, (*myObjData).tex[i]);
-	}
-
-	glBindVertexArray(myObjData->VAO);
-	glDrawArrays(GL_TRIANGLES, 0, myObjData->Size);
-	glBindVertexArray(0);
+	MyShader::setInt("numOfTexture", 0);
+	MyShader::setVec4("myColor", zeroColor);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, 0);
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, 0);
+	/*
+	if (mappingFromStringToInt[unit->name] == PLAYER || mappingFromStringToInt[unit->name] == ENEMY) {
+		MyShader::setInt("numOfTexture", 1);
 
+		MyShader::setVec4("myColor", zeroColor);
+		for (int i = 0; i < (*myObjData).VAO.size(); i++)
+		{
+			int j=0;
+			if ((*myObjData).mtlName[i] == "Legs")
+				j = 0;
+			else if ((*myObjData).mtlName[i] == "Top")
+				j = 1;
+			else if ((*myObjData).mtlName[i] == "Lace")
+				j = 2;
+			else if ((*myObjData).mtlName[i] == "Face")
+				j = 3;
+			else if ((*myObjData).mtlName[i] == "Hair")
+				j = 4;
+			glBindTexture(GL_TEXTURE_2D, (*myObjData).tex[j]);
+			glBindVertexArray(myObjData->VAO[i]);
+			glDrawArrays(GL_TRIANGLES, 0, myObjData->Size[i]);
+			glBindVertexArray(0);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+	}
+	*/
+	/*
+	else
+	{
+		MyShader::setInt("numOfTexture", (*myObjData).tex.size());
+
+		switch (mappingFromStringToInt[unit->name])
+		{
+		case PLAYER: case ENEMY: case BACKWALL: case FRONTWALL: case LEFTWALL: case RIGHTWALL: case BOTTOMWALL:
+			MyShader::setVec4("myColor", zeroColor);
+			break;
+		case BALL:
+			MyShader::setVec4("myColor", ballColor);
+		}
+		for (int i = 0; i < (*myObjData).tex.size(); i++)
+		{
+			if (i == 0)
+				glActiveTexture(GL_TEXTURE0);
+			else if (i == 1)
+				glActiveTexture(GL_TEXTURE1);
+			else
+				glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, (*myObjData).tex[i]);
+		}
+
+		glBindVertexArray(myObjData->VAO[0]);
+		glDrawArrays(GL_TRIANGLES, 0, myObjData->Size[0]);
+		glBindVertexArray(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	*/
 }
 /*
 void representScore(int score, glm::vec2 pos)

@@ -16,18 +16,24 @@
 // - More secure. Change another line and you can inject code.
 // - Loading from memory, stream, etc
 
-bool loadOBJ(const char * path,	ObjData* objData) {
+bool loadOBJ(const char* path, ObjData* objData) {
 	printf("Loading OBJ file %s...\n", path);
 
-	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
+	std::vector<std::vector<unsigned int>> vertexIndices, uvIndices, normalIndices;
+
+	vertexIndices.push_back(std::vector<unsigned int>());
+	uvIndices.push_back(std::vector<unsigned int>());
+	normalIndices.push_back(std::vector<unsigned int>());
 	std::vector<glm::vec3> temp_vertices;
 	std::vector<glm::vec2> temp_uvs;
 	std::vector<glm::vec3> temp_normals;
 	std::vector<glm::vec3> temp_triangles;
 	std::vector<glm::vec2> range;// 3 vec2 for x, y, z, vec2.x is min, vec2.y is max
 
+	int index = 0;
+	bool mtlFlag = false;
 
-	FILE * file = fopen(path, "r");
+	FILE* file = fopen(path, "r");
 	if (file == NULL) {
 		printf("Impossible to open the file ! Are you in the right path ? See Tutorial 1 for details\n");
 		getchar();
@@ -69,38 +75,55 @@ bool loadOBJ(const char * path,	ObjData* objData) {
 				return false;
 			}
 			if (matches == 9) {
-				vertexIndices.push_back(vertexIndex[0]);
-				vertexIndices.push_back(vertexIndex[1]);
-				vertexIndices.push_back(vertexIndex[2]);
-				uvIndices.push_back(uvIndex[0]);
-				uvIndices.push_back(uvIndex[1]);
-				uvIndices.push_back(uvIndex[2]);
-				normalIndices.push_back(normalIndex[0]);
-				normalIndices.push_back(normalIndex[1]);
-				normalIndices.push_back(normalIndex[2]);
+				vertexIndices[index].push_back(vertexIndex[0]);
+				vertexIndices[index].push_back(vertexIndex[1]);
+				vertexIndices[index].push_back(vertexIndex[2]);
+				uvIndices[index].push_back(uvIndex[0]);
+				uvIndices[index].push_back(uvIndex[1]);
+				uvIndices[index].push_back(uvIndex[2]);
+				normalIndices[index].push_back(normalIndex[0]);
+				normalIndices[index].push_back(normalIndex[1]);
+				normalIndices[index].push_back(normalIndex[2]);
 			}
 			else {
-				vertexIndices.push_back(vertexIndex[0]);
-				vertexIndices.push_back(vertexIndex[1]);
-				vertexIndices.push_back(vertexIndex[2]);
-				uvIndices.push_back(uvIndex[0]);
-				uvIndices.push_back(uvIndex[1]);
-				uvIndices.push_back(uvIndex[2]);
-				normalIndices.push_back(normalIndex[0]);
-				normalIndices.push_back(normalIndex[1]);
-				normalIndices.push_back(normalIndex[2]);
+				vertexIndices[index].push_back(vertexIndex[0]);
+				vertexIndices[index].push_back(vertexIndex[1]);
+				vertexIndices[index].push_back(vertexIndex[2]);
+				uvIndices[index].push_back(uvIndex[0]);
+				uvIndices[index].push_back(uvIndex[1]);
+				uvIndices[index].push_back(uvIndex[2]);
+				normalIndices[index].push_back(normalIndex[0]);
+				normalIndices[index].push_back(normalIndex[1]);
+				normalIndices[index].push_back(normalIndex[2]);
 
-				vertexIndices.push_back(vertexIndex[0]);
-				vertexIndices.push_back(vertexIndex[2]);
-				vertexIndices.push_back(vertexIndex[3]);
-				uvIndices.push_back(uvIndex[0]);
-				uvIndices.push_back(uvIndex[2]);
-				uvIndices.push_back(uvIndex[3]);
-				normalIndices.push_back(normalIndex[0]);
-				normalIndices.push_back(normalIndex[2]);
-				normalIndices.push_back(normalIndex[3]);
+				vertexIndices[index].push_back(vertexIndex[0]);
+				vertexIndices[index].push_back(vertexIndex[2]);
+				vertexIndices[index].push_back(vertexIndex[3]);
+				uvIndices[index].push_back(uvIndex[0]);
+				uvIndices[index].push_back(uvIndex[2]);
+				uvIndices[index].push_back(uvIndex[3]);
+				normalIndices[index].push_back(normalIndex[0]);
+				normalIndices[index].push_back(normalIndex[2]);
+				normalIndices[index].push_back(normalIndex[3]);
 
 			}
+		}
+		else if (strcmp(lineHeader, "usemtl") == 0) {
+			char* temp = new char[10];
+			fscanf(file, "%s", temp);
+			objData->mtlName.push_back(temp);
+			delete temp;
+			if (!mtlFlag)
+			{
+				mtlFlag = true;
+				index = -1;
+			}
+			if (index != -1) {
+				vertexIndices.push_back(std::vector<unsigned int>());
+				uvIndices.push_back(std::vector<unsigned int>());
+				normalIndices.push_back(std::vector<unsigned int>());
+			}
+			index++;
 		}
 		else {
 			// Probably a comment, eat up the rest of the line
@@ -148,23 +171,26 @@ bool loadOBJ(const char * path,	ObjData* objData) {
 	}
 
 	// For each vertex of each triangle
-	for (unsigned int i = 0; i < vertexIndices.size(); i++) {
+	for (unsigned int i= 0; i < vertexIndices.size(); i++) {
+		objData->vertices.push_back(vector<glm::vec3>());
+		objData->uvs.push_back(vector<glm::vec2>());
+		objData->normals.push_back(vector<glm::vec3>());
+		for (unsigned int j = 0; j < vertexIndices[i].size(); j++) {
+			// Get the indices of its attributes
+			unsigned int vertexIndex = vertexIndices[i][j];
+			unsigned int uvIndex = uvIndices[i][j];
+			unsigned int normalIndex = normalIndices[i][j];
 
-		// Get the indices of its attributes
-		unsigned int vertexIndex = vertexIndices[i];
-		unsigned int uvIndex = uvIndices[i];
-		unsigned int normalIndex = normalIndices[i];
+			// Get the attributes thanks to the index
+			glm::vec3 vertex = temp_vertices[vertexIndex - 1];
+			glm::vec2 uv = temp_uvs[uvIndex - 1];
+			glm::vec3 normal = temp_normals[normalIndex - 1];
 
-		// Get the attributes thanks to the index
-		glm::vec3 vertex = temp_vertices[vertexIndex - 1];
-		glm::vec2 uv = temp_uvs[uvIndex - 1];
-		glm::vec3 normal = temp_normals[normalIndex - 1];
-
-		// Put the attributes in buffers
-		objData->vertices.push_back(vertex);
-		objData->uvs.push_back(uv);
-		objData->normals.push_back(normal);
-
+			// Put the attributes in buffers
+			objData->vertices[i].push_back(vertex);
+			objData->uvs[i].push_back(uv);
+			objData->normals[i].push_back(normal);
+		}
 	}
 	fclose(file);
 	return true;
