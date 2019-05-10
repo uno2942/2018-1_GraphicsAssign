@@ -3,7 +3,7 @@
 #include"Objects.h"
 #include"MyDataType.h"
 
-enum RenderingMode {NO_HIDDEN_LINE_REMOVAL, HIDDEN_LINE_REMOVAL};
+enum RenderingMode { GOURAUD, PHONG };
 
 extern RenderingMode renMode;
 extern bool ReshapeFlag;

@@ -39,8 +39,8 @@ void myKeyboard(unsigned char c, int x, int y) {
 			myCamera::SetHangingxy(a, b);
 			GameManager::getInstance().FreshTime();
 			break;
-		case '4': renMode = NO_HIDDEN_LINE_REMOVAL; break;
-		case '5': renMode = HIDDEN_LINE_REMOVAL;
+		case '4': renMode = GOURAUD; break;
+		case '5': renMode = PHONG;
 
 		}
 	}

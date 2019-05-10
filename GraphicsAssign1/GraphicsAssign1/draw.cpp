@@ -20,6 +20,17 @@ void myReshape(int width, int height)
 	ReshapeFlag = !ReshapeFlag;
 }
 
+void ChangeShader(RenderingMode renMode) {
+	switch (renMode) {
+	case GOURAUD: MyShader::SetGouraudShader(); break;
+	case PHONG: MyShader::SetPhongShader(); break;
+	}
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	MyShader::setInt("diffuseTexture", 0);
+	MyShader::setInt("specularTexture", 1);
+	MyShader::setInt("normalTexture", 2);
+}
 void PrepareDrawingAtFirstTime() {
 	GLenum err = glewInit();
 	if (err != GLEW_OK)
@@ -27,7 +38,6 @@ void PrepareDrawingAtFirstTime() {
 	if (!GLEW_VERSION_2_1)  // check that the machine supports the 2.1 API.
 		exit(1); // or handle the error in a nicer way
 
-	glUseProgram(MyShader::GetShader());
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
@@ -90,7 +100,7 @@ void display()
 		GameManager::getInstance().FreshTime();
 		ReshapeFlag = !ReshapeFlag;
 	}
-
+	ChangeShader(renMode);
 	PrepareDrawing();	
 	//=============================== Draw Start
 	/*
@@ -106,20 +116,10 @@ void display()
 	GameManager::getInstance().mLight->SetLightToShader();
 	MyShader::setMat4("Model", glm::identity<glm::mat4>());
 
-	
-	switch (renMode) {
-	case NO_HIDDEN_LINE_REMOVAL:
-	{glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	for (map<string, MyObjData*>::iterator iter = ObjData_map.begin(); iter != ObjData_map.end(); ++iter) {
 		drawObject(mappingFromStringToUnit[(*iter).first], ObjData_map[(*iter).first]);
 	}
-	break;
-	}
-	case HIDDEN_LINE_REMOVAL:
-	{
-		for (map<string, MyObjData*>::iterator iter = ObjData_map.begin(); iter != ObjData_map.end(); ++iter) {
-			drawObject(mappingFromStringToUnit[(*iter).first], ObjData_map[(*iter).first]);
-		}
 		/*
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -134,9 +134,7 @@ void display()
 		}
 		glDisable(GL_POLYGON_OFFSET_FILL);
 		*/
-		break;
-	}
-	}
+
 	glutSwapBuffers();
 }
 

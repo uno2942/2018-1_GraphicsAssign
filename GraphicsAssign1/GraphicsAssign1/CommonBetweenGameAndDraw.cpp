@@ -1,6 +1,6 @@
 #include "CommonBetweenGameAndDraw.h"
 
-RenderingMode renMode = HIDDEN_LINE_REMOVAL;
+RenderingMode renMode = GOURAUD;
 bool ReshapeFlag = false;
 
 vector<GameObjectTree> objectsTreeVectorForDraw = vector<GameObjectTree>();

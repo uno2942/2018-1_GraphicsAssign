@@ -1,5 +1,5 @@
 #include"Draw.h"
-#define LATTICE_PT 100
+#define LATTICE_PT 200
 void genWallVAO(const Transform* object, map<string, MyObjData*>* ObjData_map);
 MyObjData* GetObj(string path);
 void genPolygonVAO(const Transform* object, map<string, MyObjData*>* ObjData_map, string objPath);
