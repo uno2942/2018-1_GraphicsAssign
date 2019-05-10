@@ -75,7 +75,8 @@ public:
 	Object* bottomWall;
 
 	myLight* mLight = NULL;
-
+	double mLightTheta = 0;
+	bool isSun = true;
 	static GLint BALL_VELOCITY;
 	GLint myScore = 0;
 	GLint enemyScore = 0;

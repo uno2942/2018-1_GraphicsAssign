@@ -90,6 +90,9 @@ void GameManager::StartGame() {
 	enemyScore = 0;
 	WhoFinallyWin = 0;
 	InitializeGame();
+	mLightTheta = 0;
+	isSun = true;
+	mLight->SetDirectionalLightI(0.125, 0.5);
 }
 
 void GameManager::InitializeGame() {
@@ -115,6 +118,7 @@ void GameManager::InitObjectsPosition() {
 	ball->SetRotation(0);
 
 	mLight->SetLightPosition(vec3(INITIAL_BALL_POSITION.x, INITIAL_BALL_POSITION.y + 300, INITIAL_BALL_POSITION.z));
+	mLight->DirectionalLightDirection(vec3(cos(mLightTheta), sin(mLightTheta), 0));
 }
 
 /**
@@ -129,6 +133,23 @@ void GameManager::SetObjectPosition() {
 	ball->position += ball->velocity*((((GLdouble)timeSinceStart - (GLdouble)prevTime) / 1000.) + collisionManager.ballDeltaTime);
 
 	mLight->SetLightPosition(vec3(ball->position.x, ball->position.y+300, ball->position.z));
+	mLightTheta += 0.001;
+	if (mLightTheta > 3.141592)
+	{
+		if (isSun)
+		{
+			isSun = false;
+			mLightTheta -= 3.141592;
+			mLight->SetDirectionalLightI(0.125/4, 0.5/4);
+		}
+		else
+		{
+			isSun = true;
+			mLightTheta -= 3.141592;;
+			mLight->SetDirectionalLightI(0.125, 0.5);
+		}
+	}
+	mLight->DirectionalLightDirection(vec3(cos(mLightTheta), sin(mLightTheta), 0));
 }
 
 void GameManager::OneGameEnd(bool whoWin) {

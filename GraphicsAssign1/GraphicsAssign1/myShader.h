@@ -61,6 +61,11 @@ public:
 				"uniform float diffuseIpkd;\n"
 				"uniform float specularIpks;\n"
 
+				"uniform vec3 LightDirection;\n"
+				"uniform float DambientIaka;\n"
+				"uniform float DdiffuseIpkd;\n"
+				"uniform float DspecularIpks;\n"
+
 				"uniform int numOfTexture;\n"
 				"uniform sampler2D diffuseTexture;\n"
 				"uniform sampler2D specularTexture;\n"
@@ -74,7 +79,9 @@ public:
 				"   vec3 N = normalize(fN);\n"
 				"   vec3 E = normalize(fE);\n"
 				"   vec3 L = normalize(fL);\n"
+				"   vec3 DL = normalize(LightDirection);\n"
 				"	vec3 H = normalize( L + E );\n"
+				"	vec3 DH = normalize( DL + E );\n"
 
 				"	vec4 diffuseColor = vec4(0, 0, 0, 0);\n"
 				"	vec4 specularColor = vec4(0, 0, 0, 0);\n"
@@ -89,6 +96,7 @@ public:
 				"		specularColor = myColor;\n"
 
 				"   FragColor = (ambientIaka * myColor + fatt * (diffuseIpkd* max(dot(N, L), 0.0) * diffuseColor+ specularIpks * pow(max(dot(H, N), 0.0), 16) * specularColor));\n"
+				"   FragColor = FragColor + (DambientIaka * myColor + (DdiffuseIpkd* max(dot(N, DL), 0.0) * diffuseColor+ DspecularIpks * pow(max(dot(DH, N), 0.0), 16) * specularColor));\n"
 				"}\n\0";
 			//code copy from here
 
