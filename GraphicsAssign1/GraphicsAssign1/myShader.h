@@ -22,6 +22,9 @@ public:
 				"uniform mat4 Projection;\n"
 				"uniform mat4 Model;\n"
 
+				"uniform int isNormalTextureExists;\n"
+
+				"uniform sampler2D normalTexture;\n"
 				"uniform vec3 LightPosition;\n"
 				"uniform vec3 CameraPos;\n"
 
@@ -35,7 +38,12 @@ public:
 				"{\n"
 				"	TexCoord = aTexCoord;\n"
 				"   FragPos = vec3(Model * vec4(aPos, 1.0));\n"
-				"	fN = aNormal;\n"
+				"	vec3 N;\n"
+				"	if(isNormalTextureExists==1)"
+				"		N=normalize((2.*(1./0xff))*vec3(texture(normalTexture, aTexCoord))-vec3(1, 1, 1));\n"
+				"	else"
+				"		N = aNormal;\n"
+				"	fN = mat3(transpose(inverse(Model))) * N;\n"
 				"	fE = CameraPos-FragPos;\n"
 				"	fL = LightPosition-FragPos;\n"
 				"   gl_Position = (Projection * View * vec4(FragPos, 1.0));\n"
@@ -56,19 +64,14 @@ public:
 				"uniform int numOfTexture;\n"
 				"uniform sampler2D diffuseTexture;\n"
 				"uniform sampler2D specularTexture;\n"
-				"uniform sampler2D normalTexture;\n"
 
 				"out vec4 FragColor;\n"
 				"void main()\n"
 				"{\n"
 				"	float dL = length(fL);\n"
 				"	float fatt = 1./(1+0.001*dL + (0.001*dL)*(0.001*dL));\n"
-
-				"	vec3 N;\n"
-				"	if(numOfTexture==3)"
-				"		N=normalize((2.*(1./0xff))*vec3(texture(diffuseTexture, TexCoord))-vec3(1, 1, 1));\n"
-				"	else"
-				"		N = normalize(fN);\n"
+				
+				"   vec3 N = normalize(fN);\n"
 				"   vec3 E = normalize(fE);\n"
 				"   vec3 L = normalize(fL);\n"
 				"	vec3 H = normalize( L + E );\n"
