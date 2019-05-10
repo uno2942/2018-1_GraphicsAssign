@@ -5,6 +5,7 @@
 #include"Objects.h"
 #include"Units.h"
 #include"CommonBetweenGameAndDraw.h"
+#include"Light.h"
 #define THRESHOLDSCORE 13
 #define ZBORDER_FOR_PLAYER 0
 #define ZBORDER_FOR_ENEMY WORLD_COORD_MAP_ZLEN
@@ -72,6 +73,8 @@ public:
 	Object* frontWall;
 	Object* backWall;
 	Object* bottomWall;
+
+	myLight* mLight = NULL;
 
 	static GLint BALL_VELOCITY;
 	GLint myScore = 0;

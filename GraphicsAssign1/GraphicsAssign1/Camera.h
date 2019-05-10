@@ -38,7 +38,7 @@ public:
 		mat4 Projection;
 		switch (camMode) {
 		case CHARACTER:
-			unitpos = glm::vec3(player->GetCurrentPosition().x - 100 * sin(player->rotation + 3.141592), player->GetCurrentPosition().y, player->GetCurrentPosition().z - 100 * cos(player->rotation + 3.141592));
+			unitpos = glm::vec3(player->GetCurrentPosition().x - ((player->zlen + 90) /2) * sin(player->rotation + 3.141592), player->GetCurrentPosition().y * 1.5, player->GetCurrentPosition().z - ((player->zlen + 90) / 2) * cos(player->rotation + 3.141592));
 			rotationAxis = glm::vec3(player->rotationAxis.x, player->rotationAxis.y, player->rotationAxis.z);
 
 			glm::mat4 rotatemat = glm::rotate(glm::mat4(1.0f), (float)player->rotation + 3.141592f, rotationAxis);

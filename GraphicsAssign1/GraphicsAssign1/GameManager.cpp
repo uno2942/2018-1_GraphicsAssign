@@ -1,6 +1,7 @@
 #include<ctime>
 #include "GameManager.h"
 using namespace std;
+using namespace glm;
 /**
 여기서 srand 함수를 실행시킨다.
 **/
@@ -31,6 +32,7 @@ GameManager::GameManager() {
 	frontWall = GetFrontWall()->root->data->object;
 	backWall = GetBackWall()->root->data->object;
 	bottomWall = GetBottomWall()->root->data->object;
+	mLight = new myLight();
 	BALL_VELOCITY = 300;
 
 	objectsTreeVectorForDraw.push_back(*(GetPlayer()));
@@ -54,6 +56,8 @@ GameManager::~GameManager() {
 	deleteTree(*GetFrontWall());
 	deleteTree(*GetBackWall());
 	deleteTree(*GetBottomWall());
+	if(mLight != NULL)
+		delete mLight;
 }
 
 void GameManager::OneFramePipeline() {
@@ -109,6 +113,8 @@ void GameManager::InitObjectsPosition() {
 	ball->SetPosition(INITIAL_BALL_POSITION);	
 	ball->rotationAxis = Vector3(0, 0, 1);
 	ball->SetRotation(0);
+
+	mLight->SetLightPosition(vec3(INITIAL_BALL_POSITION.x, INITIAL_BALL_POSITION.y + 300, INITIAL_BALL_POSITION.z));
 }
 
 /**
@@ -121,7 +127,8 @@ void GameManager::SetObjectPosition() {
 	player->position += player->velocity*PLAYER_BOX_VELOCITY;
 	enemy->position += enemy->velocity*ENEMY_BOX_VELOCITY;
 	ball->position += ball->velocity*((((GLdouble)timeSinceStart - (GLdouble)prevTime) / 1000.) + collisionManager.ballDeltaTime);
-	
+
+	mLight->SetLightPosition(vec3(ball->position.x, ball->position.y+300, ball->position.z));
 }
 
 void GameManager::OneGameEnd(bool whoWin) {

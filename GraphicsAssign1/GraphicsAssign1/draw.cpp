@@ -6,10 +6,9 @@ using namespace glm;
 static map< string, int > mappingFromStringToInt;
 static map< string, Object* > mappingFromStringToUnit;
 static map<string, MyObjData*> ObjData_map;
-myLight* mLight;
 
 const vec4 backgroundColor = vec4(0.2f, 0.3f, 0.3f, 1.0f);
-const vec4 polygonInnerColor = vec4(0.5, 0.5, 0.5, 1);
+const vec4 ballColor = vec4(1, 0, 0, 1);
 const vec4 lineColor = vec4(1, 1, 1, 1);
 const vec4 zeroColor = vec4(0, 0, 0, 0);
 void drawResult();
@@ -63,12 +62,12 @@ void PrepareDrawingAtFirstTime() {
 	PlayerTexturePath.push_back("Cat_diffuse.bmp");
 
 	genVAO(mappingFromStringToInt, &ObjData_map, ballObjPath, playerObjPath, enemyObjPath);
+
 	addTexture(mappingFromStringToInt, &ObjData_map, WallTexturePath, PlayerTexturePath);
 	MyShader::setInt("diffuseTexture", 0);
 	MyShader::setInt("specularTexture", 1);
 	MyShader::setInt("normalTexture", 2);
 	myCamera::InitiateCamera(GameManager::getInstance().player);
-	mLight = new myLight();
 }
 
 void PrepareDrawing() {
@@ -104,7 +103,7 @@ void display()
 	*/
 
 	myCamera::SetModelAndViewMatrix(camMode);
-	mLight->SetLightToShader();
+	GameManager::getInstance().mLight->SetLightToShader();
 	MyShader::setMat4("Model", glm::identity<glm::mat4>());
 
 	
@@ -118,8 +117,6 @@ void display()
 	}
 	case HIDDEN_LINE_REMOVAL:
 	{
-		MyShader::setVec4("myColor", zeroColor);
-
 		for (map<string, MyObjData*>::iterator iter = ObjData_map.begin(); iter != ObjData_map.end(); ++iter) {
 			drawObject(mappingFromStringToUnit[(*iter).first], ObjData_map[(*iter).first]);
 		}
@@ -207,12 +204,23 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 		yratio = 1;
 	else
 		yratio = unit->GetSize().y / myObjData->width3D.y;
+	if (mappingFromStringToInt[unit->name] == PLAYER || mappingFromStringToInt[unit->name] == ENEMY) {
+		model = rotate(model, -3.141592f / 2, vec3(1, 0, 0));
+	}
 	model = scale(model, vec3(unit->GetSize().x / myObjData->width3D.x, yratio,
 		unit->GetSize().z / myObjData->width3D.z));
 	MyShader::setMat4("Model", model);
 
 	MyShader::setInt("numOfTexture", (*myObjData).tex.size());
 
+	switch (mappingFromStringToInt[unit->name])
+	{
+	case PLAYER: case ENEMY: case BACKWALL: case FRONTWALL: case LEFTWALL: case RIGHTWALL: case BOTTOMWALL:
+		MyShader::setVec4("myColor", zeroColor);
+		break;
+	case BALL:
+		MyShader::setVec4("myColor", ballColor);
+	}
 	for (int i = 0; i < (*myObjData).tex.size(); i++)
 	{
 		if (i == 0)

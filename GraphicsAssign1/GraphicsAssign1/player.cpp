@@ -6,7 +6,7 @@ GameObjectTree* GetPlayer() {
 	if (playerTree == NULL)
 	{
 		playerTree = new GameObjectTree("player");
-		player = new Box("player", WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_XLEN / 8, WORLD_COORD_MAP_YLEN / 18, MY_YELLOW);
+		player = new Box("player", 62.775997161865234, 188.03649902343750, 304.41650390625000, MY_YELLOW);
 		GameObject* playerObject = new GameObject(player);
 		GameObjectNode* playerNode = new GameObjectNode(playerObject, "player");
 		playerObject->AddCollisionComponentAsItself(playerNode);

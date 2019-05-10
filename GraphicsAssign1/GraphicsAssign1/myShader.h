@@ -81,8 +81,12 @@ public:
 
 				"   if(numOfTexture>0)\n"
 				"		diffuseColor = texture(diffuseTexture, TexCoord);\n"
+				"	else\n"
+				"		diffuseColor = myColor;\n"
 				"   if(numOfTexture>1)\n"
 				"		specularColor = texture(specularTexture, TexCoord);\n"
+				"	else\n"
+				"		specularColor = myColor;\n"
 
 				"   FragColor = (ambientIaka * myColor + fatt * (diffuseIpkd* max(dot(N, L), 0.0) * diffuseColor+ specularIpks * pow(max(dot(H, N), 0.0), 16) * specularColor));\n"
 				"}\n\0";

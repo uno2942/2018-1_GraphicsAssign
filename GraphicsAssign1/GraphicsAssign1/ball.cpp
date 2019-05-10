@@ -19,6 +19,7 @@ void InitBallVelocity(GLint BALL_VELOCITY) {
 
 	theta = (GLdouble)(rand() % 600 - 300);
 	theta = theta * 3.141592 / (180. * 10.);
-	GetBall()->root->data->object->SetVelocity((Vector3::normalize(Vector3(sin(theta), cos(theta), 0))) * 0);
+	theta = 0.15;
+	GetBall()->root->data->object->SetVelocity((Vector3::normalize(Vector3(sin(theta), cos(theta), 0))) * BALL_VELOCITY);
 	//GetBall()->root->data->object->SetVelocity((Vector3::normalize(Vector3(sin(theta), cos(theta), 0)))*BALL_VELOCITY);
 }
