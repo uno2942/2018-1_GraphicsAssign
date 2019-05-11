@@ -9,3 +9,5 @@ extern RenderingMode renMode;
 extern bool ReshapeFlag;
 
 extern vector<GameObjectTree> objectsTreeVectorForDraw;
+
+void deleteindraw();

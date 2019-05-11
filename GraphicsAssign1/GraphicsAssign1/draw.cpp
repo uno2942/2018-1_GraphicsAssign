@@ -14,6 +14,13 @@ const vec4 zeroColor = vec4(0, 0, 0, 0);
 void drawResult();
 void drawObject(Object* unit, MyObjData* myObjData);
 void drawScore(int playerScore, int enemyScore);
+
+void deleteindraw() {
+	for (auto i = ObjData_map.begin(); i != ObjData_map.end(); i++) {
+		delete (*i).second;
+	}
+}
+
 void myReshape(int width, int height)
 {	
 	glViewport(0, 0, (GLsizei)width, (GLsizei)height);

@@ -12,6 +12,7 @@ void GameManager::deleteTree_aux(GameObjectNode* root) {
 	if (root == NULL) return;
 	GameObjectNode* temp1 = root->successor;
 	GameObjectNode* temp2 = root->sibling;
+	delete root->data;
 	delete root;
 	if (temp1 != NULL)
 		deleteTree_aux(temp1);
@@ -58,6 +59,7 @@ GameManager::~GameManager() {
 	deleteTree(*GetBottomWall());
 	if(mLight != NULL)
 		delete mLight;
+	deleteindraw();
 }
 
 void GameManager::OneFramePipeline() {
