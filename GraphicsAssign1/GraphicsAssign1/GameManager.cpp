@@ -73,7 +73,6 @@ void GameManager::OneFramePipeline() {
 	collisionManager.CollisionHandler(collisionManager.RestoreBallPosition(collisionManager.CollisionCheck()));
 	SetObjectPosition();
 	prevTime = timeSinceStart;
-	cout << player->position.x << endl;
 }
 
 void GameManager::SpecialKeyboardInputHandler(GLint key) {

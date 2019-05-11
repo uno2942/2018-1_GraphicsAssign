@@ -72,6 +72,7 @@ void PrepareDrawingAtFirstTime() {
 
 	GameManager::getInstance().player->xlen = ObjData_map["player"]->width3D.x * 6;
 	GameManager::getInstance().player->ylen = ObjData_map["player"]->width3D.y * 6;
+	GameManager::getInstance().player->position.y = ObjData_map["player"]->width3D.y * 3;
 	GameManager::getInstance().player->zlen = ObjData_map["player"]->width3D.z * 6;
 	GetPlayer()->root->data->collisionComponent->collisionObject->xlen  = ObjData_map["player"]->width3D.x * 6;
 	GetPlayer()->root->data->collisionComponent->collisionObject->ylen = ObjData_map["player"]->width3D.y * 6;
@@ -79,6 +80,7 @@ void PrepareDrawingAtFirstTime() {
 
 	GameManager::getInstance().enemy->xlen = ObjData_map["enemy"]->width3D.x * 6;
 	GameManager::getInstance().enemy->ylen = ObjData_map["enemy"]->width3D.y * 6;
+	GameManager::getInstance().enemy->position.y = ObjData_map["enemy"]->width3D.y * 3;
 	GameManager::getInstance().enemy->zlen = ObjData_map["enemy"]->width3D.z * 6;
 	GetEnemy()->root->data->collisionComponent->collisionObject->xlen = ObjData_map["enemy"]->width3D.x * 6;
 	GetEnemy()->root->data->collisionComponent->collisionObject->ylen = ObjData_map["enemy"]->width3D.y * 6;
