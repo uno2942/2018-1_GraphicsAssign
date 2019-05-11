@@ -31,6 +31,7 @@ void AddWallTexture(const vector<string> filePaths, MyObjData* ObjData) {
 	GLuint tex3 = loadBMP_custom("normal.bmp");
 	ObjData->tex.push_back(tex3);
 }
+
 void AddPolygonTexture(const vector<string> filePaths, MyObjData* ObjData) {
 	GLuint tex1 = loadBMP_custom("Image09C37780_09C26A60.bmp");
 	ObjData->tex.push_back(tex1);

@@ -5,7 +5,7 @@ GameObjectTree* GetEnemy() {
 	if (enemyTree == NULL)
 	{
 		enemyTree = new GameObjectTree("enemy");
-		Object* enemy = new Box("enemy", 208.0530092, 75.627212, 282.6852112, MY_YELLOW);
+		Object* enemy = new Box("enemy", 260.0662615, 94.534015, 353.356514, MY_YELLOW);
 		GameObject* enemyObject = new GameObject(enemy);
 		GameObjectNode* enemyNode = new GameObjectNode(enemyObject, "enemy");
 		enemyObject->AddCollisionComponentAsItself(enemyNode);

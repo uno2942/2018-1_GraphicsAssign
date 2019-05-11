@@ -70,6 +70,20 @@ void PrepareDrawingAtFirstTime() {
 
 	genVAO(mappingFromStringToInt, &ObjData_map, ballObjPath, playerObjPath, enemyObjPath);
 
+	GameManager::getInstance().player->xlen = ObjData_map["player"]->width3D.x * 6;
+	GameManager::getInstance().player->ylen = ObjData_map["player"]->width3D.y * 6;
+	GameManager::getInstance().player->zlen = ObjData_map["player"]->width3D.z * 6;
+	GetPlayer()->root->data->collisionComponent->collisionObject->xlen  = ObjData_map["player"]->width3D.x * 6;
+	GetPlayer()->root->data->collisionComponent->collisionObject->ylen = ObjData_map["player"]->width3D.y * 6;
+	GetPlayer()->root->data->collisionComponent->collisionObject->zlen = ObjData_map["player"]->width3D.z * 6;
+
+	GameManager::getInstance().enemy->xlen = ObjData_map["enemy"]->width3D.x * 6;
+	GameManager::getInstance().enemy->ylen = ObjData_map["enemy"]->width3D.y * 6;
+	GameManager::getInstance().enemy->zlen = ObjData_map["enemy"]->width3D.z * 6;
+	GetEnemy()->root->data->collisionComponent->collisionObject->xlen = ObjData_map["enemy"]->width3D.x * 6;
+	GetEnemy()->root->data->collisionComponent->collisionObject->ylen = ObjData_map["enemy"]->width3D.y * 6;
+	GetEnemy()->root->data->collisionComponent->collisionObject->zlen = ObjData_map["enemy"]->width3D.z * 6;
+
 	addTexture(mappingFromStringToInt, &ObjData_map, WallTexturePath, PlayerTexturePath);
 	myCamera::InitiateCamera(GameManager::getInstance().player);
 }
@@ -97,14 +111,14 @@ void display()
 	ChangeShader(renMode);
 	PrepareDrawing();	
 	//=============================== Draw Start
-	/*
+	
 	if (GameManager::getInstance().WhoFinallyWin != 0)
 	{
 		drawResult();
 		return;
 	}
 	drawScore(GameManager::getInstance().myScore, GameManager::getInstance().enemyScore);
-	*/
+	
 
 	myCamera::SetModelAndViewMatrix(camMode);
 	GameManager::getInstance().mLight->SetLightToShader();
@@ -114,33 +128,28 @@ void display()
 	for (map<string, MyObjData*>::iterator iter = ObjData_map.begin(); iter != ObjData_map.end(); ++iter) {
 		drawObject(mappingFromStringToUnit[(*iter).first], ObjData_map[(*iter).first]);
 	}
-		/*
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(1.0, 1.0);
-
-		MyShader::setVec4("myColor", backgroundColor);
-
-		for (map<string, MyObjData*>::iterator iter = ObjData_map.begin(); iter != ObjData_map.end(); ++iter) {
-			drawObject(mappingFromStringToUnit[(*iter).first], ObjData_map[(*iter).first]);
-		}
-		glDisable(GL_POLYGON_OFFSET_FILL);
-		*/
 
 	glutSwapBuffers();
 }
 
-void drawResult() {/*
+void drawResult() {
+	MyShader::setInt("isText", 1);
+	MyShader::setInt("diffuseTexture", 0);
+	MyShader::setInt("specularTexture", 1);
+	MyShader::setInt("normalTexture", 2);
+
+	MyShader::setVec4("myColor", glm::vec4(1, 1, 1, 1));
+	MyShader::setInt("numOfTexture", 0);
+	MyShader::setInt("isNormalTextureExists", 0);
+
 	MyShader::setMat4("Model", glm::scale(glm::mat4(1.0f), glm::vec3(5, 5, 5)));
 	glm::vec3 cameraPos = glm::vec3(0, 0, 1);
 	glm::vec3 cameraTarget = glm::vec3(0, 0, 0);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::mat4 view = glm::lookAt(cameraPos, cameraTarget, up);
 	glm::mat4 Projection = glm::ortho((float)-0.1, (float)0.1, (float)-0.1, (float)0.1, (float)0.1, (float)10); // 월드 좌표로 표현 수정 필
+	
 	MyShader::setMat4("View", view);
-	MyShader::setVec4("myColor", glm::vec4(0, 0, 0, 1));
 	MyShader::setMat4("Projection", Projection);
 
 	string str;
@@ -149,18 +158,25 @@ void drawResult() {/*
 	else
 		str = "ENEMY WIN";
 
-	MyShader::setInt("numOfTexture", 0);
 	glRasterPos2d(0, 0);
 	for (int n = 0; n < str.size(); ++n) {
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[n]);
 	}
-	glutSwapBuffers();*/
+	glutSwapBuffers();
 	return;
 }
 
 void drawScore(int playerScore, int enemyScore) {
-	/*
-	MyShader::setVec4("myColor", glm::vec4(0, 0, 0, 1));
+	MyShader::setInt("isText", 1);
+	MyShader::setInt("diffuseTexture", 0);
+	MyShader::setInt("specularTexture", 1);
+	MyShader::setInt("normalTexture", 2);
+
+
+	MyShader::setVec4("myColor", glm::vec4(1, 1, 1, 1));
+	MyShader::setInt("numOfTexture", 0);
+	MyShader::setInt("isNormalTextureExists", 0);
+
 	MyShader::setMat4("Model", glm::mat4(1.0f));
 	glm::vec3 cameraPos = glm::vec3(0, 0, 1);
 	glm::vec3 cameraTarget = glm::vec3(0, 0, 0);
@@ -173,7 +189,6 @@ void drawScore(int playerScore, int enemyScore) {
 	MyShader::setMat4("Projection", Projection);
 	string str = to_string(playerScore);
 
-	MyShader::setInt("numOfTexture", 0);
 	glRasterPos3d(-0.09, 0.075, 0.9);
 	for (int n = 0; n < str.size(); ++n) {
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str[n]);
@@ -182,10 +197,11 @@ void drawScore(int playerScore, int enemyScore) {
 	glRasterPos3d(0.09, 0.075, 0.9);
 	for (int n = 0; n < str2.size(); ++n) {
 		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, str2[n]);
-	}*/
+	}
 }
 
 void drawObject(Object* unit, MyObjData* myObjData) {
+	MyShader::setInt("isText", 0);
 	mat4 trans = glm::identity<glm::mat4>();
 	vec3 unitpos;
 	vec3 rotationAxis = glm::vec3(unit->rotationAxis.x, unit->rotationAxis.y, unit->rotationAxis.z);
@@ -199,7 +215,6 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 	model = scale(model, vec3(unit->GetSize().x / myObjData->width3D.x, yratio,
 		unit->GetSize().z / myObjData->width3D.z));
 	MyShader::setMat4("Model", model);
-	MyShader::setVec4("myColor", zeroColor);
 
 	MyShader::setInt("diffuseTexture", 0);
 	MyShader::setInt("specularTexture", 1);

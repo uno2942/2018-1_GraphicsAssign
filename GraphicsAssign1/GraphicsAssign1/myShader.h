@@ -85,11 +85,14 @@ public:
 				"uniform int numOfTexture;\n"
 				"uniform sampler2D diffuseTexture;\n"
 				"uniform sampler2D specularTexture;\n"
-
+				"uniform int isText;\n"
 				"out vec4 FragColor;\n"
 				"void main()\n"
 				"{\n"
-
+				"	if(isText==1)"
+				"		FragColor = myColor;\n"
+				"	else"
+				"	{\n"
 				"	vec4 diffuseColor = vec4(0, 0, 0, 0);\n"
 				"	vec4 specularColor = vec4(0, 0, 0, 0);\n"
 
@@ -103,6 +106,7 @@ public:
 				"		specularColor = myColor;\n"
 
 				"   FragColor = (ambientIntensity + diffuseIntensity) * diffuseColor + specularIntensity * specularColor;\n"
+				"	}\n"
 				"}\n\0";
 			//code copy from here
 
@@ -163,10 +167,10 @@ public:
 				"uniform mat4 Model;\n"
 
 				"uniform int isNormalTextureExists;\n"
-
-				"uniform sampler2D normalTexture;\n"
 				"uniform vec3 LightPosition;\n"
 				"uniform vec3 CameraPos;\n"
+
+				"uniform sampler2D normalTexture;\n"
 
 				"out vec2 TexCoord;\n"
 
@@ -195,6 +199,11 @@ public:
 				"in vec3 fE;\n"
 				"in vec3 fL;\n"
 				"uniform vec4 myColor;\n"
+				"uniform int numOfTexture;\n"
+				"uniform int isText;\n"
+
+				"uniform sampler2D diffuseTexture;\n"
+				"uniform sampler2D specularTexture;\n"
 
 				"uniform float ambientIaka;\n"
 				"uniform float diffuseIpkd;\n"
@@ -205,13 +214,14 @@ public:
 				"uniform float DdiffuseIpkd;\n"
 				"uniform float DspecularIpks;\n"
 
-				"uniform int numOfTexture;\n"
-				"uniform sampler2D diffuseTexture;\n"
-				"uniform sampler2D specularTexture;\n"
 
 				"out vec4 FragColor;\n"
 				"void main()\n"
 				"{\n"
+				"	if(isText==1)"
+				"		FragColor = myColor;\n"
+				"	else"
+				"	{\n"
 				"	float dL = length(fL);\n"
 				"	float fatt = 1./(1+0.001*dL + (0.001*dL)*(0.001*dL));\n"
 				
@@ -236,6 +246,7 @@ public:
 
 				"   FragColor = (ambientIaka * diffuseColor + fatt * (diffuseIpkd* max(dot(N, L), 0.0) * diffuseColor+ specularIpks * pow(max(dot(H, N), 0.0), 16) * specularColor));\n"
 				"   FragColor = FragColor + (DambientIaka * diffuseColor + (DdiffuseIpkd* max(dot(N, DL), 0.0) * diffuseColor+ DspecularIpks * pow(max(dot(DH, N), 0.0), 16) * specularColor));\n"
+				"	}\n"
 				"}\n\0";
 			//code copy from here
 
