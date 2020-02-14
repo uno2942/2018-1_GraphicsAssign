@@ -16,7 +16,7 @@ public:
 		static bool isGouraudShaderGenerated = false;
 		if (!isGouraudShaderGenerated)
 		{
-			const char* vertexShaderSource = "#version 460 core\n"
+			const char* vertexShaderSource = "#version 430 core\n"
 				"layout (location = 0) in vec3 aPos;\n"
 				"layout (location = 1) in vec3 aNormal;\n"
 				"layout (location = 2) in vec2 aTexCoord;\n"
@@ -24,6 +24,7 @@ public:
 				"uniform mat4 View;\n"
 				"uniform mat4 Projection;\n"
 				"uniform mat4 Model;\n"
+				"uniform mat3 tiModel;\n"
 
 				"uniform int isNormalTextureExists;\n"
 
@@ -60,7 +61,7 @@ public:
 				"	float dL = length(LightPosition-FragPos);\n"
 				"	float fatt = 1./(1+0.001*dL + (0.001*dL)*(0.001*dL));\n"
 
-				"	N = normalize(mat3(transpose(inverse(Model))) * N);\n"
+				"	N = normalize(tiModel * N);\n"
 				"	vec3 E = normalize(CameraPos-FragPos);\n"
 				"	vec3 L = normalize(LightPosition-FragPos);\n"
 				"   vec3 DL = normalize(LightDirection);\n"
@@ -74,7 +75,7 @@ public:
 				"   gl_Position = (Projection * View * vec4(FragPos, 1.0));\n"
 				"}\0";
 
-			const char* fragmentShaderSource = "#version 460 core\n"
+			const char* fragmentShaderSource = "#version 430 core\n"
 				"in vec2 TexCoord;\n"
 
 				"in float ambientIntensity;\n"
@@ -157,7 +158,7 @@ public:
 		static bool isPhongShaderGenerated = false;
 		if (!isPhongShaderGenerated)
 		{
-			const char* vertexShaderSource = "#version 460 core\n"
+			const char* vertexShaderSource = "#version 430 core\n"
 				"layout (location = 0) in vec3 aPos;\n"
 				"layout (location = 1) in vec3 aNormal;\n"
 				"layout (location = 2) in vec2 aTexCoord;\n"
@@ -165,6 +166,7 @@ public:
 				"uniform mat4 View;\n"
 				"uniform mat4 Projection;\n"
 				"uniform mat4 Model;\n"
+				"uniform mat3 tiModel;\n"
 
 				"uniform int isNormalTextureExists;\n"
 				"uniform vec3 LightPosition;\n"
@@ -187,13 +189,13 @@ public:
 				"		 N = vec3(N.x, N.z, -N.y);}\n"
 				"	else"
 				"		N = aNormal;\n"
-				"	fN = normalize(mat3(transpose(inverse(Model))) * N);\n"
+				"	fN = normalize(tiModel * N);\n"
 				"	fE = CameraPos-FragPos;\n"
 				"	fL = LightPosition-FragPos;\n"
 				"   gl_Position = (Projection * View * vec4(FragPos, 1.0));\n"
 				"}\0";
 
-			const char* fragmentShaderSource = "#version 460 core\n"
+			const char* fragmentShaderSource = "#version 430 core\n"
 				"in vec2 TexCoord;\n"
 				"in vec3 fN;\n"
 				"in vec3 fE;\n"

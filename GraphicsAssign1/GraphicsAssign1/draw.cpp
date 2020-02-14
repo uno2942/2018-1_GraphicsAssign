@@ -151,7 +151,9 @@ void drawResult() {
 	MyShader::setInt("numOfTexture", 0);
 	MyShader::setInt("isNormalTextureExists", 0);
 
-	MyShader::setMat4("Model", glm::scale(glm::mat4(1.0f), glm::vec3(5, 5, 5)));
+	mat4 Model = glm::scale(glm::mat4(1.0f), glm::vec3(5, 5, 5));
+	MyShader::setMat4("Model", Model);
+	MyShader::setMat3("tiModel", mat3(transpose(inverse(Model))));
 	glm::vec3 cameraPos = glm::vec3(0, 0, 1);
 	glm::vec3 cameraTarget = glm::vec3(0, 0, 0);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -187,6 +189,7 @@ void drawScore(int playerScore, int enemyScore) {
 	MyShader::setInt("isNormalTextureExists", 0);
 
 	MyShader::setMat4("Model", glm::mat4(1.0f));
+	MyShader::setMat3("tiModel", mat3(transpose(inverse(glm::mat4(1.0f)))));
 	glm::vec3 cameraPos = glm::vec3(0, 0, 1);
 	glm::vec3 cameraTarget = glm::vec3(0, 0, 0);
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -224,6 +227,7 @@ void drawObject(Object* unit, MyObjData* myObjData) {
 	model = scale(model, vec3(unit->GetSize().x / myObjData->width3D.x, yratio,
 		unit->GetSize().z / myObjData->width3D.z));
 	MyShader::setMat4("Model", model);
+	MyShader::setMat3("tiModel", mat3(transpose(inverse(model))));
 
 	MyShader::setInt("diffuseTexture", 0);
 	MyShader::setInt("specularTexture", 1);

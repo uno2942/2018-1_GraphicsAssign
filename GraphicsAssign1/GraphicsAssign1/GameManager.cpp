@@ -132,7 +132,7 @@ void GameManager::SetObjectPosition() {
 	player->position += player->velocity*PLAYER_BOX_VELOCITY;
 	enemy->position += enemy->velocity*ENEMY_BOX_VELOCITY;
 	ball->position += ball->velocity*((((GLdouble)timeSinceStart - (GLdouble)prevTime) / 1000.) + collisionManager.ballDeltaTime);
-
+	cout << timeSinceStart << ' ' << prevTime << endl;
 	mLight->SetLightPosition(vec3(ball->position.x, ball->position.y+300, ball->position.z));
 	mLightTheta += 0.001;
 	if (mLightTheta > 3.141592)
